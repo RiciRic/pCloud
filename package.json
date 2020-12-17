@@ -1,0 +1,57 @@
+{
+  "name": "pCloud",
+  "version": "1.0.0",
+  "description": "Password Manager",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --x64",
+    "gh-publish": "electron-builder build --win --publish always"
+  },
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/RiciRic/pCloud.git"
+  },
+  "keywords": [
+    "Password",
+    "Manager",
+    "Sick",
+    "idk",
+    "pCloud"
+  ],
+  "author": "RiciRic",
+  "license": "CC0-1.0",
+  "build": {
+    "appId": "com.pCloud",
+    "mac": {
+      "category": "com.electron.pCloud"
+    },
+    "win": {
+      "icon": "pictures/icon.ico"
+    },
+    "productName":"pCloud",
+    "copyright":"Copyright © 2020 pCloud",
+    "nsis": {
+      "oneClick":false,
+      "createStartMenuShortcut": true,
+      "allowToChangeInstallationDirectory": true
+    }
+    
+  },
+  "devDependencies": {
+    "electron": "^8.2.3",
+    "electron-builder": "^22.9.1"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "electron-context-menu": "^2.3.0",
+    "electron-store": "^6.0.0",
+    "electron-updater": "^4.3.5",
+    "googleapis": "^39.2.0",
+    "jquery": "^3.5.1",
+    "qrcode": "^1.4.4",
+    "request": "^2.88.2",
+    "superagent": "^6.0.0"
+  }
+}

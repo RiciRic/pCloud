@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content ="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content ="ie=edge">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" type="text/css" href="css/master.css">!-->
+    <link rel="stylesheet" type="text/css" href="css/master.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/table.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+
+    <script>window.$ = window.jQuery = require('jquery');</script>
+
+    <!--<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!--<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>-->
+    
+    <title>pCloud</title>
+    
+    <style>
+
+    </style>
+
+
+  </head>
+  <body>
+    <header class="header"></header>
+    <div class="centerdivzwei" onclick=''>
+    <center>
+      <div id="context-menuzwei">
+        <div class="item">
+            <form id="passwordGeneratorForm" class="form">
+            <div class="character-amount-container">
+              <label style="font-size: 14px;" for="labelzwei">Number of Character</label>
+              <input style="outline: 0;" class="number-input" type="number" min="1" max="50" value="20" id="characterAmountNumber">
+              <div class="slidecontainer">
+              <input type="range" min="1" max="50" value="20" id="characterAmountRange">
+            </div>
+          
+            </div>
+            <label style="font-size: 13px;" class="contsheesh labelzwei" for="includeUppercase">Include Uppercase
+            <input type="checkbox" id="includeUppercase" checked>
+            <span class="checkmark"></span>
+            </label>
+            <label style="font-size: 13px;" class="contsheesh labelzwei" for="includeNumbers">Include Numbers
+            <input type="checkbox" id="includeNumbers" checked>
+            <span class="checkmark"></span>
+            </label>
+            <label style="font-size: 13px;" class="contsheesh labelzwei" for="includeSymbols">Include Symbols
+            <input type="checkbox" id="includeSymbols" checked>
+            <span class="checkmark"></span>
+            </label>
+  
+            <input type="submit" class="button effectbutton" id="gnrpw" onclick="createpw()" value="Generate Password" >
+            <input type="button" class="button effectbutton" id="cancelpw" value="‹ Cancel" onclick=" oncl()">
+            </form>
+          </div>
+      </div>
+    </center>
+
+    <center>
+      <div id="context-menudrei">
+        <div class="item">
+
+          <div id="lel" style="outline: 0; float: left; width: 63px;" class="select-wrapper">
+            <select id="sltzwei" style="outline: 0; -moz-border-radius: 6px 0px 0px 6px; border-radius: 6px 0px 0px 6px;" onchange="urlwifi()">
+              <option style="outline: 0;" value="URL">URL</option>
+              <option style="outline: 0;" value="Wifi">Wifi</option>
+            </select>
+          </div>
+          
+          <div id="lelzwei" style="outline: 0; width: 115px;" class="select-wrapper disablediv">
+            <select id="sltdrei" style="outline: 0;" onchange="qrcodevor()">
+              <option style="outline: 0;" value="WPA/WPA2">WPA/WPA2</option>
+              <option style="outline: 0;" value="No Password">No Password</option>
+              <option style="outline: 0;" value="WEP">WEP</option>
+              <option style="outline: 0;" value="WPA2-EAP">WPA2-EAP</option>
+            </select>
+          </div>
+          <canvas id="canvas" width="112px" height="112px" style="margin-top:8px; outline: rgba(83, 83, 83, 0.66) 3px solid;"></canvas>
+          <!--<input type="button" class="button effectbutton" id="btnqrcode" value="Show QR Code" onclick="qrcodevor()" >-->
+          <input type="button" class="button effectbutton" id="cancelpw" value="‹ Cancel" onclick=" oncl()">
+            
+          </div>
+      </div>
+    </center>
+  </div>
+
+    <div id="bg-modal">
+      <div id="modal-contents" onclick="">
+
+        
+
+        <div style="float: left;">
+      <input class="loginzwei effectkreis" type="text" placeholder="Titel" value="" id="txttitel"/></br>
+      <div><input class="loginzwei effectkreislel" type="text" placeholder="Username" value="" id="txtusername"/></div>
+      <input class="loginzwei effectkreis" type="password" placeholder="Password" value="" id="txtpassword"/></br>
+      <input class="loginzwei effectkreis" type="text" placeholder="URL" value="" id="txturl"/>
+    </br>
+    </div>
+    <div id="strich" style="margin-top: 13px; margin-left: 6px; float:left; width:2px; height: 100px; background-color:rgb(94, 94, 94);"></div>
+    <div style="float: right;">
+      <textarea class="notelel effectkreis" type="text" style="resize: none;" placeholder="Note" value="" id="txtnote"></textarea></br>
+      <div id="tools">
+      <input type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); height: 16px; margin-right: 4px;" class="buttonzwei effectbutton" id="sh" onclick="showpw()" value="👁">
+      <input type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); height: 16px; margin-right: 4px;" class="buttonzwei effectbutton" id="gen" onclick="showpwgen()" value="Generate">
+      <input type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); height: 16px;" class="buttonzwei effectbutton" id="qr" onclick="showqr()" value="▣">
+    </div>
+    </br>
+    </div>
+    <div style="position:absolute; margin-top:132px;">
+      <input type="button" style="float: left; margin-right:292px;" class="button effectbutton" id="cancel" value="‹ Cancel" onclick="cancel()">
+      <input type="button" style="float: right;" class="effectbuttonle" id="saverly" value="🞤Add" onclick="save()">
+      
+    </div>
+    
+      </div>
+    </div>
+    
+    <div id="sklel" class="navbarlel">
+
+      <div style="margin-top: 2px; margin-right: 2; margin-left: 2px;" class="loader">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      
+      <div style="padding-left:20px; padding-top:5px; position: absolute;">
+      <div id="tit" class='label containerle'>pCloud</div>
+    </div>
+      
+      <input type="button" class="button effectnavbutton navlabel exit leexit" id="close-btn" value="✖" onclick="ex()">
+      <input type="button" class="button effectnavbutton navlabel navbtn" id="max-btn" value="🗖" onclick="maxi()">
+      <input type="button" class="button effectnavbutton navlabel navbtn" id="min-btn" value="🗕" onclick="mini()">
+      <input type="button" style="padding-top:4px; padding-bottom:3px; float: right; color: rgb(160, 160, 160); -webkit-app-region: no-drag;" class="button effectnavsettbutton navbtnzw" id="btnEd" value="⚙ Settings" onclick="canc()">
+    
+    </div>
+  </br>
+</br>
+
+<div onclick="closesec()" class="svglel hide" style="z-index: 99999;" id="sec">
+  <center>
+    <span id="secspan" class='labeldrei'>─────────▄──────────────▄</span></br><span id="secspan" class='labeldrei'>────────▌▒█───────────▄▀▒▌</span></br><span id="secspan" class='labeldrei'>────────▌▒▒▀▄───────▄▀▒▒▒▐</span></br><span id="secspan" class='labeldrei'>───────▐▄▀▒▒▀▀▀▀▄▄▄▀▒▒▒▒▒▐</span></br><span id="secspan" class='labeldrei'>─────▄▄▀▒▒▒▒▒▒▒▒▒▒▒█▒▒▄█▒▐</span></br><span id="secspan" class='labeldrei'>───▄▀▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▀██▀▒▌</span></br><span id="secspan" class='labeldrei'>──▐▒▒▒▄▄▄▒▒▒▒▒▒▒▒▒▒▒▒▒▀▄▒▒▌</span></br><span id="secspan" class='labeldrei'>──▌▒▒▐▄█▀▒▒▒▒▄▀█▄▒▒▒▒▒▒▒█▒▐</span></br><span id="secspan" class='labeldrei'>─▐▒▒▒▒▒▒▒▒▒▒▒▌██▀▒▒▒▒▒▒▒▒▀▄▌</span></br><span id="secspan" class='labeldrei'>─▌▒▀▄██▄▒▒▒▒▒▒▒▒▒▒▒░░░░▒▒▒▒▌</span></br><span id="secspan" class='labeldrei'>─▌▀▐▄█▄█▌▄▒▀▒▒▒▒▒▒░░░░░░▒▒▒▐</span></br><span id="secspan" class='labeldrei'>▐▒▀▐▀▐▀▒▒▄▄▒▄▒▒▒▒▒░░░░░░▒▒▒▒▌</span></br><span id="secspan" class='labeldrei'>▐▒▒▒▀▀▄▄▒▒▒▄▒▒▒▒▒▒░░░░░░▒▒▒▐</span></br><span id="secspan" class='labeldrei'>─▌▒▒▒▒▒▒▀▀▀▒▒▒▒▒▒▒▒░░░░▒▒▒▒▌</span></br><span id="secspan" class='labeldrei'>─▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▐</span></br><span id="secspan" class='labeldrei'>──▀▄▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▄▒▒▒▒▌</span></br><span id="secspan" class='labeldrei'>────▀▄▒▒▒▒▒▒▒▒▒▒▄▄▄▀▒▒▒▒▄▀</span></br><span id="secspan" class='labeldrei'>───▐▀▒▀▄▄▄▄▄▄▀▀▀▒▒▒▒▒▄▄▀</span></br><span id="secspan" class='labeldrei'>──▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▀▀</span></br><span id="secspan" class='labelzwei'>Hello ಠ_ಠ</span>
+</center>
+</div>
+
+  <div class= "container" id="containerid">
+
+
+    
+      <div class='body '></div>
+      
+    </br>
+
+      <!--<div id="MyDiv" style ="background-color: #272727; color: #afafaf; border-radius: 0.5rem; background-color: #272727; border-bottom: 1px solid #000000;">
+        <center>
+        </br>
+      <input class="loginzwei effectkreis" type="text" placeholder="Titel" value="" id="txttitel"/>
+      <input class="loginzwei effectkreislel" type="text" placeholder="Username" value="" id="txtusername"/><br>
+      <input class="loginzwei effectkreis" type="text" placeholder="Password" value="" id="txtpassword"/>
+      <input class="loginzwei effectkreis" type="text" placeholder="URL" value="" id="txturl"/><br>
+      <textarea class="notelel effectkreis" type="text" placeholder="Note" value="" id="txtnote"></textarea></br>
+    </center>
+      <input type="button" class="button effectbutton" id="cancel" value="‹ Cancel" onclick="cancel()">
+      <input type="button" style="float: right;" class="button effectbutton" id="saverly" value="🖫 Save" onclick="save()">
+      
+    
+      </div>-->
+
+
+      
+    
+      
+      <input type="button" style="outline-color: #1e1e1e;" class="button effectbutton" id="save" value="🞤" onclick="add()">
+      
+      <input class="login effectkreis" style="padding: 10px 170px 10px 21px;" type="text" placeholder="⌕ Search" value="" id="search"/>
+      <input type="button" style="margin-right: 0px;" class="button effectbutton navbtnzw" id="delsearch" onclick="clearsrch()" value="✖">
+      <input type="button" style="margin-left: 0px;" class="button effectbutton leexit" id="searchbtn" onclick="srch()" value="❯">
+
+      <!--<input type="button" class="button effectbutton" id="collector" value="Collector" onclick="collector()">//-->
+      
+      <div id="lel" style="outline: 0;" class="select-wrapper">
+        <select id="slt" style="outline: 0;" onchange="slt_change()">
+          <option style="outline: 0;" value="Passwort">Passwort</option>
+          <option style="outline: 0;" value="Key">Key</option>
+        </select>
+      </div>
+
+      
+
+      <input type="button" style="float:right;" class="button effectbutton navbtnzw" id="favbutton" value="" onclick="favbtnclick()">
+
+      <div class="svglel" id="svglelid">
+        <center>
+        <div id="haha" class="loading-spinner"></div>
+        <input type="button" class="button effectbutton hide" id="resetzwei" value="↺Retry" onclick="relo()">
+      </center>
+      </div>
+
+      
+      
+    <div style="margin-top: 5px; margin-bottom: 55px;">
+    <div class="scrollbar" style="height:69vh;" id="scrollbar-custom">
+
+      <div id="context-menu">
+        <div class="item">
+          <span id="cont" class='labelzwei'></span>
+          <!--<i class="fa fa-cut"></i> Cut-->
+        </div>
+      </div>
+
+      <div id="blur">
+      <table style="text-align: left; position: relative; border-collapse: collapse; overflow:scroll" class="content-table" id="passwort">
+        <tbody></tbody>
+      </table>
+    </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="navcancel">
+    <input type="button" class="button effectbutton hide" id="reset" value="↺Reset" onclick="relo()">
+    <input type="button" class="effectbuttonle hide" id="rlsave" value="🖫Save" onclick="allesSaven()">
+    <div id="hahaha" class="loading-spinnerzwei hide"></div>
+    <input type="button" class="button effectbutton containerle" style="float: right;" id="ana" value="🗠 Analytics" onclick="analy()">
+    
+  </div>
+
+    <div class="navbartwo" id="sk">
+      <input type="button" id="topkek" style="border-top-left-radius: 10px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px; border-top-right-radius: 0px; padding-top: 2px; height:12px; margin-right: 0px;" class='buttonzwei effectbutton' onclick="ontop()" value="○">
+      <input type="button" id="topkekle" style="padding-top: 2px; height:12px; border-bottom-left-radius: 0px; border-top-left-radius: 0px;" class='buttonzwei effectbutton' onclick="lock()" value="⚿">
+      <span onclick="idk()" id="con" style="margin-left: 0.3em" class='labelzwei'>ಠ_ಠ</span>
+      <input type="button" id="relobut" style="float: right; border-bottom-right-radius: 0px; border-top-right-radius: 10px; padding-top: 2px; height:12px; margin-right: 0px;" class='buttonzwei effectbutton' onclick="relo()" value="↺">
+      <span id="coun" style="float: right; margin-right: 0.5em" class='labelzwei'></span>
+      <!--<input type="button" style="float: right; outline-color: #272727;" class="buttonzwei effectbutton" id="btnEd" value="Analytics" onclick="window.location.href='analytics.html'">-->
+    </div>
+    <script src="JSfiles/home.js"></script>
+  </body>
+
+
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content ="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content ="ie=edge">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/master.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/table.css">
+    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <title>pCloud</title>
+
+    <style>
+
+    </style>
+
+
+  </head>
+  <body>
+    <header class="header"></header>
+
+    <div id="sklel" class="navbarlel">
+
+      <div style="margin-top: 2px; margin-right: 2; margin-left: 2px;" class="loader">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div style="padding-left:20px; padding-top:2px; position: absolute;">
+      <div id="tit" class='label containerle'>🗠Analytics</div>
+      </div>
+      <input type="button" class="button effectnavbutton navlabel exit leexit" id="close-btn" value="✖" onclick="window.close()">
+      <input type="button" class="button effectnavbutton navlabel navbtn" id="max-btn" value="🗖" onclick="maxi()">
+      <input type="button" class="button effectnavbutton navlabel navbtn" id="min-btn" value="🗕" onclick="mini()">
+      <input type="button" style="padding-top:4px; padding-bottom:3px; float: right; color: rgb(160, 160, 160); -webkit-app-region: no-drag;" class="button effectnavsettbutton navbtnzw" id="btnEd" value="⚙ Settings" onclick="sett()">
+      </div>
+    </br>
+  </br>
+
+  
+    <div class="scrollbar containerle" style="height:84vh;"  id="scrollbar-customdrei">
+      <div style="margin-bottom: 20px">
+
+    <div class="container" id="containerid">
+
+      <div id="context-menu">
+        <div class="item">
+          <span id="cont" class='labelzwei'></span>
+
+        </div>
+      </div>
+    
+      <div class='body'></div>
+      </br></br>
+      
+
+      <div class="labelzwei containersettings">
+        <canvas id="myChart" width="400" height="200"></canvas>
+      </div>
+    </br>
+  
+    <div class="labelzwei full-height containersettings"></br>
+        <table class="content-table" id="passwort">
+          
+        </table>
+    </div>
+
+    
+
+
+  </div>
+    </div>
+  </div>
+<div class="navcancel">
+<input type="button" class="button effectbutton containerle" id="btncancel" value="‹ Cancel" onclick="canc()">
+</div>
+
+  <div class="navbartwo" id="sk">
+    <input type="button" id="topkek" style="border-top-left-radius: 10px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px; border-top-right-radius: 0px; padding-top: 2px; height:12px; margin-right: 0px;" class='buttonzwei effectbutton' onclick="ontop()" value="○">
+      <input type="button" id="topkekle" style="padding-top: 2px; height:12px; border-bottom-left-radius: 0px; border-top-left-radius: 0px;" class='buttonzwei effectbutton' onclick="lock()" value="⚿">
+      <span id="con" style="margin-left: 0.3em" class='labelzwei'>ಠ_ಠ</span>
+    <span id="coun" style="float: right; margin-right: 1.5em" class='labelzwei'></span>
+  </div>
+
+    <script src = './JSfiles/analytics.js'> 
+    
+    </script>
+  </body>
+
+
+</html>

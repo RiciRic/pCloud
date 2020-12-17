@@ -1,0 +1,91 @@
+.loader{
+    float: left;
+    position: relative;
+    width: 25px;
+    height: 25px;
+    padding: 0px 0px 0px 0px;
+    padding-bottom: 5px;
+    border-radius: 50%;
+    background: linear-gradient(#97DBED, #00B2EE, #006DFE);
+    animation: animate 1.9s linear infinite;
+    margin: 0 auto;
+    
+    
+    
+    }
+    
+    .loader span{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 80%;
+        background: linear-gradient(#97DBED, #00B2EE, #006DFE);
+        opacity: 0.4;
+
+    }
+    
+    @keyframes animate {
+    0%
+    {
+    transform: rotate(0deg);
+    }
+    100%
+    {
+    transform: rotate(360deg);
+    }
+    }
+    
+    .loader span:nth-child(1){
+        filter: blur(5px);
+        }
+        
+        .loader span:nth-child(2){
+        filter: blur(10px);
+        }
+        
+        .loader span:nth-child(3){
+        filter: blur(25px);
+        }
+        
+        .loader span:nth-child(4){
+        filter: blur(50px);
+        }
+    
+        #loader-container{
+            width: 30px;
+            height: 30px;
+            position: relative;
+            top: 10%;
+            left: 10%;
+            transform: translate(-50%, -50%)
+            
+            }
+    
+            .loader-div{
+                width: calc(100% - 50px);
+                height: calc(100% - 50px);
+                border: 5px solid #162534;
+                border-top: 5px solid #09f;
+                border-radius: 50%;
+                animation: rotate 7s linear infinite;
+                }
+    
+    @keyframes rotate{
+    100% 
+    {
+    transform: rotate(360deg);
+    }
+    }
+
+    #MyDiv{
+        position: relative;
+        background-color: #1e1e1e;
+        display:none;
+        border-bottom: 0px solid #09f;
+
+        
+        -moz-box-shadow:0 3px 3px #09f;
+        -webkit-box-shadow: 0 0px 0px #09f;
+        box-shadow: 0 5px 5px -5px rgb(1, 138, 230);
+
+    }
