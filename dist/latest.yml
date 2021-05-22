@@ -1,8 +1,0 @@
-version: 1.0.0
-files:
-  - url: pCloud-Setup-1.0.0.exe
-    sha512: o1aGXdTTnSXDV8oQEYV/HQYgKTzK8eesbHa2Cug6m/rpU9xsA9S6VYO3PUSWtKP6yfu9EsYRqpYmgzFtWPaLYQ==
-    size: 53034496
-path: pCloud-Setup-1.0.0.exe
-sha512: o1aGXdTTnSXDV8oQEYV/HQYgKTzK8eesbHa2Cug6m/rpU9xsA9S6VYO3PUSWtKP6yfu9EsYRqpYmgzFtWPaLYQ==
-releaseDate: '2020-12-17T21:20:27.605Z'

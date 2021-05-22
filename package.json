@@ -1,6 +1,6 @@
 {
   "name": "pCloud",
-  "version": "1.0.0",
+  "version": "1.1.7",
   "description": "Password Manager",
   "main": "main.js",
   "scripts": {
@@ -10,8 +10,8 @@
     "gh-publish": "electron-builder build --win --publish always"
   },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/RiciRic/pCloud.git"
+    "type": "git",
+    "url": "https://github.com/RiciRic/pCloud.git"
   },
   "keywords": [
     "Password",
@@ -30,14 +30,22 @@
     "win": {
       "icon": "pictures/icon.ico"
     },
-    "productName":"pCloud",
-    "copyright":"Copyright © 2020 pCloud",
+    "productName": "pCloud",
+    "copyright": "Copyright © 2021 pCloud",
     "nsis": {
-      "oneClick":false,
+      "oneClick": false,
+      "perMachine": true,
       "createStartMenuShortcut": true,
-      "allowToChangeInstallationDirectory": true
-    }
-    
+      "allowToChangeInstallationDirectory": true,
+	  "license":"license.txt"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "RiciRic",
+        "repo": "pCloud"
+      }
+    ]
   },
   "devDependencies": {
     "electron": "^8.2.3",
@@ -45,7 +53,10 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "dropbox": "^9.1.0",
+    "dropbox-v2-api": "^2.4.36",
     "electron-context-menu": "^2.3.0",
+    "electron-log": "^4.3.1",
     "electron-store": "^6.0.0",
     "electron-updater": "^4.3.5",
     "googleapis": "^39.2.0",

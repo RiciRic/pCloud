@@ -2,6 +2,8 @@ console.log('analytics loaded')
 
 const Store = require('./JSfiles/store.js');
 
+const { ipcRenderer } = require('electron');
+
 $("#paniclel").attr('disabled', true);
 
 const BrowserWindow = require('electron').remote.BrowserWindow;
@@ -30,13 +32,18 @@ const store = new Store({
     max:false,
     indexclose:false,
     dropboxtoken:"",
-    dropboxurl:"",
     ontop:false,
     blur:true,
     navbaricon:false,
     lock:true,
     lastsett:false,
-    backupkey:""
+    backupkey:"",
+    eventhome:false,
+    eventindex:false,
+    eventanalytics:false,
+    download:false,
+    down:false,
+    delcache:false
   }
 });
 
@@ -53,13 +60,14 @@ var heightvar = store.get('height');
 var ontopvar = store.get('ontop');
 var lockvar = store.get('lock');
 
-var bot = "ಠ_ಠ";
+var bot = "";
 
 var count = 1;
 var quitsicherung = true;
 
 pwlel = store.get('list')
 let arr = [];
+let arrname = [];
 let dat = [];
 let bgclr = [];
 let bgclrzw = [];
@@ -112,6 +120,12 @@ let datzero= [];
           }
         })
 
+        if(store.get("eventanalytics") == false)
+        {
+          ipcRenderer.send('eventanalytics');
+          store.set("eventanalytics", true);
+        }
+
     function anf(){
       var pw = anfang();
       var i = 0;
@@ -127,8 +141,9 @@ let datzero= [];
   
         if(pwlel[i].id > 0)
         {
-        pw += pew(row_id, id, titel, username, password, url, note);
+        pw += pew(row_id, id, titel, username, password, url, note, count);
         arr.push(count);
+        arrname.push(count+" | "+decrypt(titel));
         dat.push(pwCheck(decrypt(password))-10);
         datzero.push(0);
         count = count + 1;
@@ -187,6 +202,14 @@ let datzero= [];
     $('#btnEd').hover(function(){$('#con').text('Settings');},
     function() {$('#con').text(bot);});
 
+    $('#da').hover(function(){document.getElementById("da").style.cursor = "pointer";},
+      function() {document.getElementById("da").style.cursor = "initial";});
+
+    if(store.get('download')==true)
+    {
+      document.getElementById("da").classList.remove('hide');
+    }
+
     function encrypt(text){
       var message = text;
       var key= pwtemp;
@@ -214,9 +237,9 @@ function anfang(){
   return '<tr><th class="analy"></th><th class="analy"></th><th class="labeltable analy">Titel</th><th class="labeltable analy">Username</th><th class="labeltable analy">Password</th><th class="analy"></th><th class="analy"></th></tr>';
 }
 
-function pew(row_id, id, titel, username, password, url, note){
+function pew(row_id, id, titel, username, password, url, note, count){
   var pw = "";
-      pw += '<tr row_id="' + row_id +'" id="table-row" class="trsh">';
+      pw += '<tr row_id="'+row_id+'" id="tr' + count +'" onmousedown="hoch('+count+')" class="trsh">';
       pw += '<td><div class="labelzwei">'+count+'</div></td>';
       if(decrypt(url) == ""){
         pw += '<td style="user-select: none;"></td>';
@@ -227,7 +250,7 @@ function pew(row_id, id, titel, username, password, url, note){
       pw += '<td><div class="labelzwei" edit_type="click" col_name="tit">' + decrypt(titel) + '</div></td>';
       pw += '<td><div class="labelzwei" edit_type="click" col_name="user">' + decrypt(username) + '</div></td>';
       pw += '<td><div class="labelzwei" edit_type="click" col_name="psw">' + stern(decrypt(password)) + '</div></td>'
-      pw += '<td><input type="button" class="buttonzwei effectbutton" id="auge' + id + '" onfocusout="mouseUp()" onmousedown="mouseDown(\'' + decrypt(password) + '\')" onmouseup="mouseUp()" value="👁" />' +'</td>';
+      pw += '<td><input type="button" class="buttonzwei effectbuttonanders" id="auge' + id + '" onfocusout="mouseUp()" onmousedown="mouseDown(\'' + decrypt(password) + '\', \'auge' + id + '\')" onmouseup="mouseUp()" value="👁" />' +'</td>';
       var ch = pwcheckAnfang(decrypt(password));
       if(ch < 10){
         pw += '<td><div class="labelzwei" style="color:rgba(234, 0, 0, 1);" edit_type="click" col_name="kak">●</div></td>';
@@ -240,10 +263,10 @@ function pew(row_id, id, titel, username, password, url, note){
       }
       
       pw += '</tr>';
-      //' + id + '
       return pw;
 
 }
+
 
 function copy(text){
   var dummy = document.createElement("textarea");
@@ -269,6 +292,9 @@ element.dispatchEvent(event)
 //Navbarstuff
 
 function ex(){
+  store.set("eventhome", false);
+  store.set("eventanalytics", false);
+  store.set("eventindex", false);
   if(maxim == false){
   quitsicherung = false;
   let remote = require('electron').remote;
@@ -283,7 +309,16 @@ function ex(){
   store.set('width', widthvar);
   store.set('height', heightvar);
   }
-  window.close();
+  if(store.get('down')==true)
+  {
+    store.set("delcache", true);
+    store.set('download',false);
+    store.set('down',false);
+    ipcRenderer.send('restart_app');
+  }
+  else{
+    window.close();
+  }
 
 }
 
@@ -305,12 +340,13 @@ function maxi(){
 }
 
 //chart
+var myChart;
 async function chartIt(){
 var ctx = document.getElementById('myChart').getContext('2d');
-var myChart = new Chart(ctx, {
+myChart = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: arr,
+        labels: arrname,
         datasets: [{
             label: 'Password Value',
             data: dat,
@@ -322,6 +358,7 @@ var myChart = new Chart(ctx, {
         },
         {
           data: datzero,
+          label: '',
           pointRadius: 0,
           borderColor: 'rgb(177, 177, 177, 0.6)',
           fill: false,
@@ -330,10 +367,27 @@ var myChart = new Chart(ctx, {
       }
         ]
     },
+    plugins: {
+      datalabels: {
+          display: false,
+      },
+  },
     options: {
       legend: {
         display: false,
      },
+     interaction: {
+      mode: 'x'
+    },
+     'onClick' : function (evt, item) {
+        if(item.length != 0)
+        {
+          var itemindex = item[0]._index;
+          console.log(itemindex)
+          runter(itemindex)
+        }
+    },
+     
         scales: {
             yAxes: [{
               scaleLabel: {
@@ -345,12 +399,52 @@ var myChart = new Chart(ctx, {
                     suggestedMin: -10,
                     suggestedMax: 10
                 }
-            }]
+            }],
+            xAxes: [{
+              ticks: {
+                  display: false
+              }
+          }]
         }
     }
 });
 }
 
+function runter(index)
+{
+  index++;
+  var elmnt = document.getElementById('tr'+index+'');
+  elmnt.scrollIntoView({
+    behavior: 'smooth'
+  });
+  //elmnt.addC
+  elmnt.classList.add("trshclick");
+  setTimeout(() => {  
+    elmnt.classList.remove("trshclick");
+   }, 1500);
+  
+}
+
+var hochsperre = false;
+function hoch(count)
+{
+  if(hochsperre == false)
+  {
+    count = count-1;
+    var elmnt = document.getElementById("containerid");
+    elmnt.scrollIntoView({
+      behavior: 'smooth'
+    });
+    var tmp = bgclr[count];
+    var i;
+    bgclr[count] = "rgb(1, 138, 230)";
+      myChart.update();
+      setTimeout(() => {  
+        bgclr[count] = tmp;
+        myChart.update();
+      }, 2000);
+  }
+}
 
 
 function getLower(wert) {
@@ -466,10 +560,9 @@ function pwCheck(wort){
         sheesh += 3;
       }
     }
-
-    if (wort.length > 40)
+    if (wort.length > 35)
     {
-      if(sheesh <= 17)
+      if(sheesh <= 18)
       {
         sheesh += 2;
       }
@@ -484,7 +577,7 @@ function pwCheck(wort){
       bgclr.push('rgba(255, 238, 0, 1)')
       bgclrzw.push('rgba(0, 153, 255, 1)')
     }
-    if(sheesh > 13){
+    if(sheesh >= 13){
       bgclr.push('rgba(71, 218, 71, 1)')
       bgclrzw.push('rgba(71, 218, 71, 1)')
     }
@@ -564,6 +657,8 @@ function pwcheckAnfang(wort){
         sheesh += 2;
       }
     }
+
+    
     return sheesh;
 }
 
@@ -580,6 +675,11 @@ function canc(){
   elementdrei.classList.add("animateLeft");
   let remote = require('electron').remote;
   const winAnalytics = remote.getCurrentWindow();
+  parentWindow.removeAllListeners('resize');
+  parentWindow.removeAllListeners('focus');
+    parentWindow.removeAllListeners('blur');
+    parentWindow.removeAllListeners('unmaximize');
+    parentWindow.removeAllListeners('maximize');
   winAnalytics.loadURL(url.format( {
     pathname: path.join(__dirname, 'home.html'),
     protocol: 'file',
@@ -599,6 +699,11 @@ function sett(){
   elementvier.classList.add("animateLeft");
   let remote = require('electron').remote;
   const winAnalytics = remote.getCurrentWindow();
+  parentWindow.removeAllListeners('resize');
+  parentWindow.removeAllListeners('focus');
+  parentWindow.removeAllListeners('blur');
+  parentWindow.removeAllListeners('unmaximize');
+  parentWindow.removeAllListeners('maximize');
   winAnalytics.loadURL(url.format( {
     pathname: path.join(__dirname, 'settings.html'),
     protocol: 'file',
@@ -625,10 +730,17 @@ function rez(){
 }
 
 function mouseUp(){
+  hochsperre = false;
   document.getElementById("context-menu").classList.remove("active");
+  var i;
+  for(i=0;i<bgclr.length;i++)
+    {
+      console.log(bgclr[i]);
+    }
 }
 
-function mouseDown(text){
+function mouseDown(text, id){
+  hochsperre = true;
   var laenge = text.length;
   var extr = 0;
   var min = 0;
@@ -639,7 +751,7 @@ function mouseDown(text){
     var i = 0;
     for(i=0;i<min;i++)
     {
-      extr += 8;
+      extr += 6;
     }
   }
 
@@ -648,8 +760,8 @@ function mouseDown(text){
   document.getElementById('cont').innerHTML = text;
   event.preventDefault();
   var contextElement = document.getElementById("context-menu");
-  var y = event.clientY - 20;
-  var x = event.clientX - 170 - extr;
+  var y = window.scrollY + document.querySelector('#'+id+'').getBoundingClientRect().top -6// Y
+  var x = window.scrollX + document.querySelector('#'+id+'').getBoundingClientRect().left - 145 - extr// X
   var sh = 150 + extr;
   var kek = "";
   kek = sh.toString() + "px";
@@ -776,3 +888,25 @@ powerMonitor.on('lock-screen', () => {
     lock();
   }
 }); 
+
+const { remote } = require('electron');
+  let parentWindow = remote.getCurrentWindow();
+  
+  function once(){
+    const bounds = parentWindow.getSize();
+    document.getElementById("scrollbar-customdrei").style.height = bounds[1]-90 +"px";
+  }
+  once();
+  
+  parentWindow.on('resize', function() {
+    const bounds = parentWindow.getSize();
+    document.getElementById("scrollbar-customdrei").style.height = bounds[1]-90 +"px";
+  });
+
+  ipcRenderer.on('download', (event, arg) => {
+    store.set('download',true);
+  });
+
+  ipcRenderer.on('downloaded', (event, arg) => {
+    store.set('down',true);
+  });

@@ -2,7 +2,7 @@
     font-family: sans-serif;
   }
 
-  :root{
+  /*:root{
     --clr-primary: #1e1e1e;
     --clr-tblrw: rgba(56, 56, 56, 0);
     --clr-tblrwzw: rgba(56, 56, 56, 1);
@@ -65,20 +65,4 @@
   100%{
     background-color: rgba(56, 56, 56, 1);
   }
-}
-
-  .labeltable{
-    -webkit-user-select: none;
-       -moz-user-select: -moz-none;
-        -ms-user-select: none;
-            user-select: none;
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
-    border: none;
-    font: bold 15px/normal "Arial", "Helvetica", sans-serif;
-    color: #09f;
-    -o-text-overflow: ellipsis;
-    text-overflow: ellipsis;
-    text-shadow: 0 0px 5px rgb(1, 138, 230);
-  }
+}*/

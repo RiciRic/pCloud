@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content ="width=device-width, initial-scale=1.0">
@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/master.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'></script>
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
     <title>pCloud</title>
@@ -25,7 +25,7 @@
 
     <div id="sklel" class="navbarlel">
 
-      <div style="margin-top: 2px; margin-right: 2; margin-left: 2px;" class="loader">
+      <div style="margin-top: 2px; margin-right: 2px; margin-left: 2px;" class="loader">
         <span></span>
         <span></span>
         <span></span>
@@ -35,8 +35,11 @@
       <div style="padding-left:20px; padding-top:5px; position: absolute;">
       <div class='label'>Login</div>
       </div>
-      <input type="button" class="button effectnavbutton navlabel exit leexit" id="close-btn" value="✖" onclick="window.close()">
+      <input type="button" class="button effectnavbutton navlabel exit leexit" id="close-btn" value="✖" onclick="closefunc()">
       <input type="button" class="button effectnavbutton navlabel navbtnzw" id="min-btn" value="🗕" onclick="mini()">
+      <div id="strich" style="margin-top: 6px; float:right; width:1px; height: 20px; background-color:rgb(94, 94, 94); margin-right:5px;"></div>
+      <input type="button" class="button effectnavbutton navlabel" style="padding-right: 10px; padding-left:10px; margin-right:5px; border-radius: 50%;" id="impid" value="+" onclick="imp()">
+      <span id="settlabel" style="margin-right: 0.3em; float:right; color: rgb(94, 94, 94); margin-right:5px; margin-top: 5px; display:none" class='labelzwei'>Import Settings</span>
       </div>
     </br>
   </br>
@@ -46,21 +49,24 @@
       <div class='body'></div>
     </br></br>
       <center>
-        <label style="font-size:25px; margin-bottom: 5px; font-weight:10; color:#e6e6e6" class='labelzwei'>Passwort</label></br>
-      <input align="middle" class="login effectkreis anfanglog" type="password" style="padding-left:0px; padding-right:0px; width:250px; color:#2196F3; font-size: larger;" placeholder="" id=pw value="" autofocus/></br>
+        <label style="font-size:25px; margin-bottom: 5px; font-weight:100; color:#e6e6e6" class='labelzwei'>Password</label></br>
+        
+      <input class="login effectkreis anfanglog" type="password" style="padding-left:0px; padding-right:0px; width:250px; color:#2196F3; font-size: larger;" placeholder="" id="pw" value="" autofocus/></br>
       <input type="button" style="margin-top: 4px;" class="button effectbutton" id="weiter"  value="Login" /><br>
-      <a class="labelzwei" style="color: #5f5f5f" onclick="moinmeister()">Reset Password</a>
-    </center>
+      <a class="labelzwei" id="rp" style="color: #5f5f5f" onclick="moinmeister()">Reset Password</a></br>
+      <label class="labelzwei" id="capslock" style="color: #2196F3; display:none">Capslock is aktivated</label>
+      </center>
     </div>
 
     <div id="zwei" class= "container hide">
     </br>
       <br>
       <center>
-        <label style="font-size:80;" class='label labelzwei'>New Password</label></br>
+        <label style="font-size:80px;" class='label labelzwei'>New Password</label></br>
       <input class="login effectkreis" type="password" placeholder="New Password" id="pwneu" value="" autofocus/></br></br>
-      <input class="login effectkreis" type="password" placeholder="Confirm Password" id="pwneuzwei" value="" autofocus/></br>
+      <input class="login effectkreis" type="password" placeholder="Confirm Password" id="pwneuzwei" value=""/></br>
       <input type="button" class="button effectbutton" id="weiterneu" onclick="weiterneu()" value="Use Password" /><br>
+      <label class="labelzwei" id="capslockzwei" style="color: #2196F3; display:none">Capslock is aktivated</label>
     </center>
     </div>
 
@@ -70,9 +76,7 @@
           <img src="pictures/dropbox.png" alt="Dropbox" width="50" height="50">
           <input type="button" class="button effectbutton" style="border: 1px solid rgba(83, 83, 83, 0.66); -webkit-border-radius: 3px;border-radius: 10px;" id="btncloud" onclick="erstmal()" value="Use Assistant" >
       <div class='labelzwei'>I have an Upload Token:</div>
-      <input class="loginzwei effectkreis" type="text" placeholder="Access Token" value="" id="droptok"/><input type="button" class="buttonzwei effectbutton" onclick="dropsettoken()" id="tokenuse" value="Use" >
-      <div class='labelzwei'>I have a Download URL:</div>
-      <input class="loginzwei effectkreis" type="text" placeholder="URL" value="" id="dropurl"/><input type="button" class="buttonzwei effectbutton" onclick="dropseturl()" id="urluse" value="Use" ></br>
+      <input class="loginzwei effectkreis" type="text" placeholder="Access Token" value="" id="droptok"/><input type="button" class="buttonzwei effectbutton" onclick="dropsettoken()" id="tokenuse" value="Use" ></br>
       <input type="button" class="button effectbutton" id="okaydrop" onclick="okaysk()" value="Okay" />
     </center>
     </div>
@@ -82,7 +86,6 @@
     <script src = './JSfiles/index.js'> 
 </script>
     
-    </script>
   </body>
 
 

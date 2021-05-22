@@ -2,6 +2,8 @@ console.log('renderer loaded')
 
 const Store = require('./JSfiles/store.js');
 
+const { ipcRenderer } = require('electron');
+
 const BrowserWindow = require('electron').remote.BrowserWindow;
 const path = require('path');
 const url = require('url');
@@ -30,13 +32,18 @@ const store = new Store({
     max:false,
     indexclose:false,
     dropboxtoken:"",
-    dropboxurl:"",
     ontop:false,
     blur:true,
     navbaricon:false,
     lock:true,
     lastsett:false,
-    backupkey:""
+    backupkey:"",
+    eventhome:false,
+    eventindex:false,
+    eventanalytics:false,
+    download:false,
+    down:false,
+    delcache:false
   }
 });
 
@@ -98,6 +105,44 @@ var password = "";
 const weiterbtn = document.getElementById('weiter');
 const text = document.getElementById('pw');
 
+if(store.get("eventindex") == false)
+{
+  ipcRenderer.send('eventindex');
+  store.set("eventindex", true);
+}
+
+document.getElementById("pw").addEventListener('keydown', (event)=>{
+  if(event.getModifierState("CapsLock"))
+    {
+      $('#capslock').fadeIn('fast');
+    }
+    else
+    {
+      $('#capslock').fadeOut('fast');
+    }
+})
+
+document.getElementById("pwneu").addEventListener('keydown', (event)=>{
+  if(event.getModifierState("CapsLock"))
+    {
+      $('#capslockzwei').fadeIn('fast');
+    }
+    else
+    {
+      $('#capslockzwei').fadeOut('fast');
+    }
+})
+
+document.getElementById("pwneuzwei").addEventListener('keydown', (event)=>{
+  if(event.getModifierState("CapsLock"))
+    {
+      $('#capslockzwei').fadeIn('fast');
+    }
+    else
+    {
+      $('#capslockzwei').fadeOut('fast');
+    }
+})
 
 const contextMenu = require('electron-context-menu');
 
@@ -139,6 +184,17 @@ $(document).ready(function(){
   });*/
 });
 
+//$('#impid').hover(function(){$('#settlabel').text('Import Settings');},
+  //  function() {$('#settlabel').text("");});
+
+  $('#impid').hover(function(){
+    $('#settlabel').fadeIn('fast');
+  }, function() {
+    $('#settlabel').fadeOut('fast');
+});
+
+$('#rp').hover(function(){document.getElementById("rp").style.cursor = "pointer";},
+      function() {document.getElementById("rp").style.cursor = "initial";});
 
 weiterbtn.addEventListener('click', (e) => {
     input();
@@ -174,19 +230,18 @@ function input(){
 
     var element = document.getElementById("pw");
     element.classList.remove("anfanglog");
-    element.classList.add("rotborder");
+    element.classList.add("rotborder2");
     setTimeout(() => { 
-    element.classList.remove("rotborder");
+    element.classList.remove("rotborder2");
     element.classList.add("anfanglog");
-    }, 1500);
+    }, 1000);
     console.log("LELE");
   }
 
 if(pwtemp == le)
 {
   var tokenle = decrypt(store.get('dropboxtoken'));
-  var urlle = decrypt(store.get('dropboxurl'));
-  if(tokenle != 0 && urlle != 0)
+  if(tokenle != 0)
   {
   store.set('pwtemp', pwtemp);
   winHome = new BrowserWindow({
@@ -244,12 +299,12 @@ function renduhaha(){
   document.getElementById("pw").value = "";
 
   var element = document.getElementById("pw");
-  element.classList.add("rotborder");
+  element.classList.add("rotborder2");
   element.classList.remove("anfanglog");
   setTimeout(() => { 
-  element.classList.remove("rotborder");
+  element.classList.remove("rotborder2");
   element.classList.add("anfanglog");
-  }, 2000);
+  }, 1000);
   console.log("LELE");
 }
 
@@ -257,7 +312,6 @@ function moinmeister(){
   store.set('pw','');
   store.set('pwtemp','');
   store.set('dropboxtoken','');
-  store.set('dropboxurl','');
   window.location.reload();
 }
 
@@ -318,31 +372,6 @@ function rendundanzlel(){
   }, 1000)
 }
 
-function dropseturl(){
-  const drop = document.getElementById("dropurl").value;
-  if(drop == "")
-  {
-    $('#con').text('Enter a valid URL!');
-    var element = document.getElementById("dropurl");
-    element.classList.add("rotborder");
-    setTimeout(() => {  $('#con').text(bot); 
-    var element = document.getElementById("dropurl");
-    element.classList.remove("rotborder");
-    }, 2000);
-  }
-  else
-  {
-    var end = drop.charAt(drop.length-1);
-    if(end == "0")
-    {
-      droplel = drop.substr(0, drop.length-1);
-      droplel = droplel + "1";
-    }
-    store.set('dropboxurl',encrypt(droplel));
-    document.getElementById("dropurl").value = "";
-  }
-}
-
 function dropsettoken(){
   const drop = document.getElementById("droptok").value;
   if(drop == "")
@@ -367,7 +396,7 @@ function dropsettoken(){
 function okaysk(){
   //document.getElementById("drei").classList.add("hide");
   //document.getElementById("eins").classList.remove("hide");
-  if(store.get('dropboxtoken') != "" && store.get('dropboxurl') != "")
+  if(store.get('dropboxtoken') != "")
   {
     store.set('pwtemp', pwtemp);
     winHome = new BrowserWindow({
@@ -403,23 +432,13 @@ function okaysk(){
   })
   }
   else{
-    if(store.get('dropboxtoken') == "")
-    {
       var element = document.getElementById("droptok");
       element.classList.add("rotborder");
       setTimeout(() => {
         var element = document.getElementById("droptok");
         element.classList.remove("rotborder");
       }, 2000);
-    }
-    else{
-      var element = document.getElementById("dropurl");
-      element.classList.add("rotborder");
-      setTimeout(() => {
-        var element = document.getElementById("dropurl");
-        element.classList.remove("rotborder");
-      }, 2000);
-    }
+    
 
   }
 
@@ -443,10 +462,13 @@ function erstmal(){
   store.set('pwtemp',pwtemp);
   store.set('indexclose', true);
   
-  let wind = new BrowserWindow({
-    width: 310,
-    height: 290,
-    parent: winCloud,
+  let winSettings = new BrowserWindow({
+    //width: 1000,
+    //height: 630,
+    width: 300,
+    height: 350,
+    minWidth: 300,
+    minHeight: 350,
     alwaysOnTop: true,
     frame: false,
     icon: 'pictures/icon.ico',
@@ -456,10 +478,11 @@ function erstmal(){
       nodeIntegration: true,
       preload: path.join(__dirname, 'JSfiles/preload.js')
     }
-  })
+  }) 
 
-  wind.loadURL(url.format( {
-    pathname: path.join(__dirname, 'DropbCloud.html'),
+  winSettings.loadURL(url.format( {
+    pathname: path.join(__dirname, 'DropbCloud-Short.html'),
+    //pathname: path.join(__dirname, 'sesses.html'),
     protocol: 'file',
     slashes: true
 
@@ -472,7 +495,71 @@ function erstmal(){
   window.close();
 }
 
+function closefunc()
+{
+  store.set("eventhome", false);
+  store.set("eventanalytics", false);
+  store.set("eventindex", false);
+  if(store.get('down')==true)
+  {
+    store.set("delcache", true);
+    store.set('download',false);
+    store.set('down',false);
+    ipcRenderer.send('restart_app');
+  }
+  else{
+    window.close();
+  }
+}
 
+function decryptkey(text, keyle){
+  var encrypted = text;
+  var key= keyle;
+  var decrypted = CryptoJS.AES.decrypt(encrypted, key);
+  return decrypted.toString(CryptoJS.enc.Utf8);
+}
+
+function imp()
+{
+    const { remote } = require('electron');
+    var dialog = require('electron').remote.dialog;
+    var fs = require('fs');
+    var app = require('electron').remote; 
+    var dialog = app.dialog;
+  
+    const files = dialog.showOpenDialogSync(null, {
+      title: "Import Settings",
+      buttonLabel: "Load Settings",
+      properties: ['openFile'],
+      filters: [{name:'JSON', extensions: ['json'] }]
+    });
+  
+    if(!files) return;
+  
+    const file = files[0];
+    const fileContent = fs.readFileSync(file).toString();
+    const obj = JSON.parse(fileContent);
+    try {
+      if(obj.settings == "settings")
+      {
+        store.set('pw',encrypt(decryptkey(obj.pw, "Backup")));
+        pwtemp = decryptkey(obj.pw, "Backup");
+        store.set('dropboxtoken',encrypt(decryptkey(obj.dropboxtoken, "Backup")));
+        store.set('backupkey',encrypt(decryptkey(obj.backupkey, "Backup")));
+      }
+    } catch (error) {
+      $('#con').text('Wrong File!');
+    }
+  window.location.reload();
+}
+
+ipcRenderer.on('download', (event, arg) => {
+  store.set('download',true);
+});
+
+ipcRenderer.on('downloaded', (event, arg) => {
+  store.set('down',true);
+});
 
 
 

@@ -1,8 +1,10 @@
 console.log('home loaded')
 const Store = require('./JSfiles/store.js');
 
+const { ipcRenderer } = require('electron');
+
 const { shell } = window.require('electron');
-const { BrowserWindow } = require('electron')
+const { BrowserWindow, systemPreferences } = require('electron')
 const fs = require('fs');
 
 const axios = require('axios');
@@ -18,12 +20,14 @@ const nativeTheme = electron.remote.nativeTheme;
 var sicherung = true;
 var onclvar = false;
 
+var vorhersaven = false;
+
 var idkvar = false;
 var idkcount = 0;
 
 
 const contextMenu = require('electron-context-menu');
-const { SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG } = require('constants');
+const { SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG, SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION } = require('constants');
 
             contextMenu({
                 prepend: (params, browserWindow) => [
@@ -35,7 +39,7 @@ const { SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG } = require('constants');
                 showInspectElement:false
             });
 
-var bot = "ಠ_ಠ";
+var bot = "";
 
 var edit = false;
 
@@ -55,13 +59,18 @@ const store = new Store({
     max:false,
     indexclose:false,
     dropboxtoken:"",
-    dropboxurl:"",
     ontop:false,
     blur:true,
     navbaricon:false,
     lock:true,
     lastsett:false,
-    backupkey:""
+    backupkey:"",
+    eventhome:false,
+    eventindex:false,
+    eventanalytics:false,
+    download:false,
+    down:false,
+    delcache:false
   }
 });
 
@@ -135,6 +144,15 @@ var lastsettvar = store.get('lastsett');
           element.classList.add("blau");
         }
 
+        if(store.get("eventhome") == false)
+        {
+          ipcRenderer.send('eventhome');
+          store.set("eventhome", true);
+        }
+
+        document.getElementById("svglelid").style.height = heightvar + "px";
+        document.getElementById("svglelid").style.width = widthvar + "px";
+
 var pwlel = [];
 
 var indexsheesh = "";
@@ -186,7 +204,6 @@ $("#ed").click(function(){
 });
 
   $("#save").click(function(){
-    //$("#MyDiv").css("display","block");
     if(pwkey == 1)
     {
       
@@ -267,6 +284,17 @@ $("#ed").click(function(){
   
   $('#close-btn').hover(function(){$('#con').text('Exit');},
     function() {$('#con').text(bot);});
+
+    $('#favoritebtn').hover(function(){$('#con').text('Flag as Favorite');},
+    function() {$('#con').text(bot);});
+
+    $('#da').hover(function(){document.getElementById("da").style.cursor = "pointer";},
+      function() {document.getElementById("da").style.cursor = "initial";});
+
+    if(store.get('download')==true)
+    {
+      document.getElementById("da").classList.remove('hide');
+    }
 
   $('#save').hover(function(){
     const slt = document.getElementById('slt');
@@ -390,36 +418,52 @@ $("#ed").click(function(){
     //---------------SHEEEEEESH------------------
 
     function getVer(){
+      
       try {
-        var dropburl = store.get('dropboxurl');
+        var dropboxToken = store.get('dropboxtoken');
       }
       catch(err) {
-        console.log('no');
-        $('#con').text('No Connection to Cloud');
-        var element = document.getElementById("resetzwei");
-        element.classList.remove("hide");
-        var elementzwei = document.getElementById("haha");
-        elementzwei.classList.add("hide");
-        sicherung = false;
+        $('#con').text('Dropbox Token is wrong!');
       }
-      dropburl = decrypt(dropburl);
-      axios.get(dropburl)
-    .then((response) => {
-      var she = response.data;
-      pwlel = she;
-      var lel = she[0].version;
-      hideload();
-      slt_change();
-      sicherung = false;
-  }).catch((err) => {
-      console.log('no');
-      $('#con').text('No Connection to Cloud');
-      var element = document.getElementById("resetzwei");
-      element.classList.remove("hide");
-      var elementzwei = document.getElementById("haha");
-      elementzwei.classList.add("hide");
-      sicherung = false;
-  })
+      dropboxToken = decrypt(dropboxToken);
+
+      var xhr = new XMLHttpRequest();
+      xhr.responseType = 'json';
+      xhr.upload.onprogress = function(evt) {
+        var percentComplete = parseInt(100.0 * evt.loaded / evt.total);
+        console.log(percentComplete);
+      };
+      
+      xhr.onload = function(e) {
+        if (xhr.status === 200) {
+          console.log("fertig gedownloaded")
+          pwlel = e.currentTarget.response;
+          console.log(pwlel);
+          hideload();
+          slt_change();
+          sicherung = false;
+        }
+        else {
+          var errorMessage = xhr.response || 'Unable to download file';
+          console.log(errorMessage);
+
+          $('#con').text('No Connection to Cloud');
+          var element = document.getElementById("resetzwei");
+          element.classList.remove("hide");
+          var elementzwei = document.getElementById("haha");
+          elementzwei.classList.add("hide");
+          sicherung = false;
+        }
+      };
+      
+      xhr.open('POST', 'https://content.dropboxapi.com/2/files/download');
+      xhr.setRequestHeader('Authorization', 'Bearer ' + dropboxToken);
+      xhr.setRequestHeader('Dropbox-API-Arg', JSON.stringify({
+        path: '/pw.json'
+      }));
+      
+      xhr.send();
+
     }
     getVer();
 
@@ -432,11 +476,11 @@ $("#ed").click(function(){
 });
 
 function anfang(){
-  return '<tr><th></th><th></th><th class="labeltable">Titel</th><th class="labeltable">Username</th><th></th><th class="labeltable">Password</th><th></th><th></th><th class="labeltable">URL</th><th class="labeltable"></th><th></th></tr>';
+  return '<tr style="cursor:pointer" onclick="sortieren()"><th></th><th></th><th class="labeltable">Titel</th><th class="labeltable">Username</th><th></th><th class="labeltable">Password</th><th></th><th></th><th class="labeltable">URL</th><th class="labeltable"></th><th></th></tr>';
 }
 
 function anfangzwei(){
-  return '<tr><th></th><th></th><th class="labeltable">Titel</th><th class="labeltable">Key</th><th></th><th class="labeltable">URL</th><th class="labeltable"></th><th></th></tr>';;
+  return '<tr style="cursor:pointer" onclick="sortieren()"><th></th><th></th><th class="labeltable">Titel</th><th class="labeltable">Key</th><th></th><th class="labeltable">URL</th><th class="labeltable"></th><th></th></tr>';
 }
 
 function pew(row_id, id, titel, username, password, url, note, fav){
@@ -444,12 +488,12 @@ function pew(row_id, id, titel, username, password, url, note, fav){
   var us = decrypt(username);
   var ur = decrypt(url);
   var pw = "";
-      pw += '<tr row_id="' + row_id +'" id="table-row" class="trsh">';
+      pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\')" onmouseleave="mleave(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\')">';
       if(fav == "1"){
-      pw += '<td><input type="button" style="padding: 0px 5px 0px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbutton" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /></td>';
+      pw += '<td><input type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbutton" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /></td>';
       }
       else{
-        pw += '<td><input type="button" style="padding: 0px 5px 0px 5px; font-size: 15px; border-radius: 50%;" class="buttonzwei effectbutton" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="☆" /></td>';
+        pw += '<td><input type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; border-radius: 50%;" class="buttonzwei effectbutton" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="☆" /></td>';
       }
       if(ur == ""){
         pw += '<td style="user-select: none;"></td>';
@@ -458,22 +502,83 @@ function pew(row_id, id, titel, username, password, url, note, fav){
         pw += '<td style="user-select: none;"><img src="https://s2.googleusercontent.com/s2/favicons?domain=' + ur + '"></td>';
       }
       pw += '<td><div class="labelzwei" edit_type="click" col_name="tit">' + decrypt(titel) + '</div></td>';
-      pw += '<td><div class="labelzwei" edit_type="click" col_name="user">' + kurz(us) + '</div></td>';
-      pw += '<td><input type="button" class="buttonzwei effectbutton" id="username' + id + '" style="outline: 0;" onmouseover="copyus()" onmouseout="leave()" onclick="copy(\'' + us + '\')" value="🗐" />' +'</td>';
-      pw += '<td><div class="labelzwei" edit_type="click" col_name="psw">' + kurzst(stern(dec)) + '</div></td>'
-      pw += '<td><input type="button" class="buttonzwei effectbutton" id="auge' + id + '" onfocusout="mouseUp()" onmouseover="showbot()" onmouseout="leave()" onmousedown="mouseDown(\'' + dec + '\')" onmouseup="mouseUp()" value="👁" />' +'</td>';
-      pw += '<td><input type="button" class="buttonzwei effectbutton" id="password' + id + '" style="outline: 0;" onmouseover="copypw()" onmouseout="leave()" onclick="copy(\'' + dec + '\')" value="🗐" />' +'</td>';
+      pw += '<td><div class="labelzwei" edit_type="click" col_name="user" oncontextmenu="copy(\'' + us + '\')">' + kurz(us) + '</div></td>';
+      pw += '<td><input type="button" class="buttonzwei effectbuttonanders nada" id="username' + id + '" style="outline: 0;" onmouseover="copyus()" onmouseout="leave()" onclick="copy(\'' + us + '\')" value="🗐" />' +'</td>';
+      pw += '<td><div class="labelzwei" edit_type="click" col_name="psw" oncontextmenu="copy(\'' + dec + '\')">' + kurzst(stern(dec)) + '</div></td>'
+      pw += '<td><input type="button" class="buttonzwei effectbuttonanders" id="auge' + id + '" onfocusout="mouseUp()" onmouseover="showbot()" onmouseout="leave()" onmousedown="mouseDown(\'' + dec + "\', \'auge" + id + '\')" onmouseup="mouseUp()" value="👁" />' +'</td>';
+      pw += '<td><input type="button" class="buttonzwei effectbuttonanders nada" id="password' + id + '" style="outline: 0;" onmouseover="copypw()" onmouseout="leave()" onclick="copy(\'' + dec + '\')" value="🗐" />' +'</td>';
       if(ur == ""){
         pw += '<td style="user-select: none;"></td>';
       }
       else{
-        pw += '<td><input style="outline: 0;" type="button" class="buttonzwei effectbutton" id="url' + kurz(id) + '" onmouseover="run()" onmouseout="leave()"  onclick="ope(\'' + ur + '\')" value="ᐅ" />' +'</td>';
+        pw += '<td><input style="outline: 0;" type="button" class="buttonzwei effectbuttonanders" id="url' + kurz(id) + '" onmouseover="run()" onmouseout="leave()"  onclick="ope(\'' + ur + '\')" value="ᐅ" />' +'</td>';
       }
-      pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<input data-modal-target="#modallel" type="button" style="outline: 0;" class="buttonzwei effectbutton" id="ed" onmouseover="editme()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\')" value="✎Edit" /></td>';
-      pw += '<td><input type="button" style="color: red;" onmouseover="entfern()" onmouseout="leave()" class="buttonzwei effectbutton btn_row_delete" id="delete' + id + '" style="outline: 0;" value="×" onclick="del(' + id +')">' + '</td>';
+      pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<input data-modal-target="#modallel" type="button" style="outline: 0;" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editme()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\')" value="✎" /></td>';
+      pw += '<td><input type="button" onmouseover="entfern()" onmouseout="leave()" class="buttonzwei btn_row_delete rot gray" id="delete' + id + '" value="✖" onclick="del(' + id +')">' + '</td>';
       pw += '</tr>';
       return pw;
 
+}
+
+function mover(delid, edid, usid, passid)
+{
+  document.getElementById(delid).classList.remove("gray");
+  document.getElementById(edid).classList.remove("gray");
+  document.getElementById(usid).classList.remove("nada");
+  document.getElementById(passid).classList.remove("nada");
+}
+
+function mleave(delid, edid, usid, passid)
+{
+  document.getElementById(delid).classList.add("gray");
+  document.getElementById(edid).classList.add("gray");
+  document.getElementById(usid).classList.add("nada");
+  document.getElementById(passid).classList.add("nada");
+}
+
+function mover2(delid, edid, passid)
+{
+  document.getElementById(delid).classList.remove("gray");
+  document.getElementById(edid).classList.remove("gray");
+  document.getElementById(passid).classList.remove("nada");
+}
+
+function mleave2(delid, edid, passid)
+{
+  document.getElementById(delid).classList.add("gray");
+  document.getElementById(edid).classList.add("gray");
+  document.getElementById(passid).classList.add("nada");
+}
+
+var rever = false;
+
+function sortieren(){
+  console.log("HEHE");
+  var byName = pwlel.slice(0);
+  byName.sort(function(a,b) {
+    var x = decrypt(a.titel);
+    x = x.toLowerCase();
+    var y = decrypt(b.titel);
+    y = y.toLowerCase();
+    return x < y ? -1 : x > y ? 1 : 0;
+  });
+
+  pwlel = byName;
+
+  if(rever == false)
+  {
+    rever = true;
+  }
+  else{
+    rever = false;
+    pwlel.reverse()
+  }
+  slt_change();
+  var element = document.getElementById("reset");
+  element.classList.remove("hide");
+  var element = document.getElementById("rlsave");
+  element.classList.remove("hide");
+  vorhersaven = true;
 }
 
 function leave(){
@@ -507,12 +612,12 @@ function editme(){
 function keky(row_id, id, titel, username, password, url, note, fav){
   var pw = "";
   var ur = decrypt(url);
-  pw += '<tr row_id="' + row_id +'" id="table-row" class="trsh">';
+  pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\')" onmouseleave="mleave2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \'' + decrypt(password) + '\', \'' + decrypt(url) + '\', \'' + decrypt(note) +'\', \'' + fav + '\')">';
   if(fav == "1"){
-    pw += '<td><input type="button" style="padding: 0px 5px 0px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbutton" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /></td>';
+    pw += '<td><input type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbutton" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /></td>';
     }
     else{
-      pw += '<td><input type="button" style="padding: 0px 5px 0px 5px; font-size: 15px; border-radius: 50%;" class="buttonzwei effectbutton" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="☆" /></td>';
+      pw += '<td><input type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; border-radius: 50%;" class="buttonzwei effectbutton" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="☆" /></td>';
     }
   if(ur == ""){
     pw += '<td style="user-select: none;"></td>';
@@ -521,19 +626,83 @@ function keky(row_id, id, titel, username, password, url, note, fav){
     pw += '<td style="user-select: none;"><img src="https://s2.googleusercontent.com/s2/favicons?domain=' + ur + '"></td>';
   }
   pw += '<td><div class="labelzwei" edit_type="click" col_name="tit">' + decrypt(titel) + '</div></td>';
-  pw += '<td><div class="labelzwei" edit_type="click" col_name="psw">' + decrypt(password) + '</div></td>';
-  pw += '<td><input type="button" class="buttonzwei effectbutton" id="password' + id + '" onmouseover="copykey()" onmouseout="leave()" onclick="copy(\'' + decrypt(password) + '\')" value="🗐" />' +'</td>';
+  pw += '<td><div class="labelzwei" edit_type="click" col_name="psw" oncontextmenu="copy(\'' + decrypt(password) + '\')">' + decrypt(password) + '</div></td>';
+  pw += '<td><input type="button" class="buttonzwei effectbuttonanders nada" id="password' + id + '" onmouseover="copykey()" onmouseout="leave()" onclick="copy(\'' + decrypt(password) + '\')" value="🗐" />' +'</td>';
   if(ur == ""){
     pw += '<td style="user-select: none;"></td>';
   }
   else{
-    pw += '<td><input type="button" class="buttonzwei effectbutton" id="url' + kurz(id) + '" onmouseover="run()" onmouseout="leave()" onclick="ope(\'' + ur + '\')" value="ᐅ" />' +'</td>';
+    pw += '<td><input type="button" class="buttonzwei effectbuttonanders" id="url' + kurz(id) + '" onmouseover="run()" onmouseout="leave()" onclick="ope(\'' + ur + '\')" value="ᐅ" />' +'</td>';
   }
-  pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<input data-modal-target="#modallel" type="button" class="buttonzwei effectbutton" id="' + id + '" onmouseover="editmekey()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \'' + decrypt(password) + '\', \'' + ur + '\', \'' + decrypt(note) +'\')" value="✎Edit" /></td>';
-  pw += '<td><input type="button" style="color: red;" class="buttonzwei effectbutton btn_row_delete" id="delete' + id + '" value="×" onmouseover="entfernkey()" onmouseout="leave()" onclick="del('+ id +')">' + '</td>';
+  pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<input data-modal-target="#modallel" type="button" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editmekey()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \'' + decrypt(password) + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\')" value="✎" /></td>';
+  pw += '<td><input type="button" class="buttonzwei btn_row_delete rot gray" id="delete' + id + '" value="✖" onmouseover="entfernkey()" onmouseout="leave()" onclick="del('+ id +')">' + '</td>';
   pw += '</tr>';
       return pw;
 
+}
+
+var row;
+var entfrow;
+function start(id){
+  row = event.target;
+  entfrow = id;
+}
+
+var oldY = 0;
+var direct = 0;
+function dragover(id){
+  var e = event;
+  e.preventDefault();
+  if(event.pageY<oldY)
+  {
+    console.log("oben");
+    direct = 0;
+    document.getElementById(''+id+'').classList.add("dragdropoben")
+    document.getElementById(''+id+'').classList.add("bordertr")
+    document.getElementById(''+id+'').classList.remove("dragdropunten")
+  }
+  else if(event.pageY>oldY){
+    console.log("unten");
+    direct = 1;
+    document.getElementById(''+id+'').classList.add("dragdropunten")
+    document.getElementById(''+id+'').classList.remove("bordertr")
+    document.getElementById(''+id+'').classList.remove("dragdropoben")
+  }
+  oldY = event.pageY;
+}
+
+function std(einf)
+{
+  var i = 0;
+  var objeinf;
+  var ind = 0;
+  for(i=0; i < pwlel.length; i++)
+  {
+    if(pwlel[i].id == einf)
+    {
+      ind = i+direct;
+      console.log("einf gefunden | "+pwlel[i].id+" == "+einf);
+    }
+    if(pwlel[i].id == entfrow)
+    {
+      objeinf = pwlel[i];
+      pwlel.splice(i, 1);
+      console.log("entf gefunden | " +objeinf.id+" == "+entfrow);
+    }
+  }
+  pwlel.splice(ind, 0, objeinf);
+  var element = document.getElementById("reset");
+  element.classList.remove("hide");
+  var element = document.getElementById("rlsave");
+  element.classList.remove("hide");
+  vorhersaven = true;
+  slt_change();
+}
+
+function dragleave(id){
+  document.getElementById(''+id+'').classList.remove("dragdropoben")
+  document.getElementById(''+id+'').classList.remove("dragdropunten")
+  document.getElementById(''+id+'').classList.add("bordertr")
 }
 
 function copykey(){
@@ -590,6 +759,7 @@ function del(idsheesh){
   element.classList.remove("hide");
   var element = document.getElementById("rlsave");
   element.classList.remove("hide");
+  vorhersaven = true;
 }
 
 function copy(text){
@@ -604,7 +774,7 @@ function copy(text){
     setTimeout(() => {  $('#con').text(bot); }, 2000);
 }
 
-function check(id, titel, username, password, url, note){
+function check(id, titel, username, password, url, note, fav){
     edit = true;
     document.getElementById("saverly").value = "✎Edit";
 
@@ -622,11 +792,13 @@ function check(id, titel, username, password, url, note){
   {
     document.getElementById("txtpassword").placeholder = "Password";
     var element = document.getElementById("txtusername");
+    document.getElementById("txtpassword").type = "password";
     element.classList.remove("hide");
   }
   else{
     document.getElementById("txtpassword").placeholder = "Key";
     var element = document.getElementById("txtusername");
+    document.getElementById("txtpassword").type = "text";
       element.classList.add("hide");
   }
     
@@ -635,6 +807,57 @@ function check(id, titel, username, password, url, note){
   document.getElementById("txtpassword").value = password;
   document.getElementById("txturl").value = url;
   document.getElementById("txtnote").value = note;
+  if(fav == "1")
+  {
+    document.getElementById("favoritebtn").value = "★";
+    var element = document.getElementById("favoritebtn");
+    element.classList.add("blau");
+  }
+  else{
+    document.getElementById("favoritebtn").value = "☆";
+    var element = document.getElementById("favoritebtn");
+    element.classList.remove("blau");
+  }
+}
+
+function testttt(i)
+{
+  console.log(i);
+}
+
+function openrly(i)
+{
+  document.getElementById("cancel2").setAttribute('onclick','cancel2('+i+')');
+  document.getElementById("saverly2").setAttribute('onclick','allesSaven(1, '+i+')');
+  $('#bg-modal2').css("z-index", "9997");
+  $('#bg-modal2').animate({
+    opacity: 1
+}, 'swing');
+}
+
+function cancel2(i)
+{
+  vorhersaven = false;
+  if(i == 0)
+  {
+    canc();
+    cancelto();
+  }
+  else if(i == 1){
+    analy();
+    cancelto();
+  }
+  else{
+    ex();
+  }
+}
+
+function cancelto()
+{
+  $('#bg-modal2').animate({
+    opacity: 0
+  }, 'swing');
+  setTimeout(() => {  $('#bg-modal2').css("z-index", "0"); }, 350);
 }
 
 function cancel(){
@@ -646,12 +869,6 @@ function cancel(){
 setTimeout(() => {  $('#bg-modal').css("z-index", "0"); }, 350);
 
   $("#lel").attr('disabled', false);
-  
-  document.getElementById("txttitel").value = "";
-  document.getElementById("txtusername").value = "";
-  document.getElementById("txtpassword").value = "";
-  document.getElementById("txturl").value = "";
-  document.getElementById("txtnote").value = "";
 
   document.getElementById("save").style.visibility = "visible";
   indexsheesh = "";
@@ -665,6 +882,35 @@ setTimeout(() => {  $('#bg-modal').css("z-index", "0"); }, 350);
     contextElementzwei.classList.remove("bordercolor");
     var contextElementzwei = document.getElementById("txtusername");
     contextElementzwei.classList.remove("bordercolor");
+    modalcanc = false;
+
+    setTimeout(() => {  
+      document.getElementById("txttitel").value = "";
+      document.getElementById("txtusername").value = "";
+      document.getElementById("txtpassword").value = "";
+      document.getElementById("txturl").value = "";
+      document.getElementById("txtnote").value = "";
+    }, 500);
+}
+
+var modalcanc = false;
+
+function cancelmodal(){
+  var obj = $("#modal-contents");
+  if (!obj.is(event.target) && !obj.has(event.target).length) {
+    if(modalcanc == false)
+    {
+      cancel();
+      cancelto();
+    }
+  }
+  modalcanc = false;
+}
+
+function setcanc()
+{
+  modalcanc = true;
+  oncl();
 }
 
 function stringlel(someObject){
@@ -677,9 +923,9 @@ function slices(str){
 }
 
 function kurz(str){
-  if(str.length > 10)
+  if(str.length > 17)
   {
-    return str.slice(0, 10) + "..";
+    return str.slice(0, 17) + "..";
   }
   else{
     return str;
@@ -703,6 +949,17 @@ function add(){
   $("#lel").attr('disabled', true);
   document.getElementById("saverly").value = "🞤Add";
 
+  if(favbtn == 0)
+  {
+    document.getElementById("favoritebtn").value = "☆";
+    var element = document.getElementById("favoritebtn");
+    element.classList.remove("blau");
+  }
+  else{
+    document.getElementById("favoritebtn").value = "★";
+    var element = document.getElementById("favoritebtn");
+    element.classList.add("blau");
+  }
 
   const slt = document.getElementById('slt');
   if(slt.value == "Passwort")
@@ -753,46 +1010,57 @@ function save(){
     kekkk += url.charAt(4);
     kekkk += url.charAt(5);
     kekkk += url.charAt(6);
-  if(kekkk == "http://")
-  {
-    url = url.substr(7, url.length);
+    if(kekkk == "http://")
+    {
+      url = url.substr(7, url.length);
+    }
+
+    var kekkk = url.charAt(0);
+    kekkk += url.charAt(1);
+    kekkk += url.charAt(2);
+    kekkk += url.charAt(3);
+    kekkk += url.charAt(4);
+    kekkk += url.charAt(5);
+    kekkk += url.charAt(6);
+    kekkk += url.charAt(7);
+    if(kekkk == "https://")
+    {
+      url = url.substr(8, url.length);
+    }
+
+    var charpos = url.charAt(0);
+    charpos += url.charAt(1);
+    charpos += url.charAt(2);
+    charpos += url.charAt(3);
+    if(charpos != "www."){
+      url = "www." + url;
+    }
+
+    var end = url.charAt(url.length-1);
+    if(end == "/")
+    {
+      url = url.substr(0, url.length-1);
+    }
   }
 
-  var kekkk = url.charAt(0);
-  kekkk += url.charAt(1);
-  kekkk += url.charAt(2);
-  kekkk += url.charAt(3);
-  kekkk += url.charAt(4);
-  kekkk += url.charAt(5);
-  kekkk += url.charAt(6);
-  kekkk += url.charAt(7);
-  if(kekkk == "https://")
-  {
-    url = url.substr(8, url.length);
-  }
 
-  var charpos = url.charAt(0);
-  charpos += url.charAt(1);
-  charpos += url.charAt(2);
-  charpos += url.charAt(3);
-  if(charpos != "www."){
-    url = "www." + url;
-  }
-
-  var end = url.charAt(url.length-1);
-  if(end == "/")
-  {
-    url = url.substr(0, url.length-1);
-  }
-}
-
-
-//url = url.replace("http://","");
+  //url = url.replace("http://","");
 
   url = encrypt(url);
   var note = tarea();
   note = encrypt(note);
   var fav = currentfav;
+
+  var favinform = "";
+  if(document.getElementById("favoritebtn").value == "☆")
+  {
+    favinform = "0";
+    console.log("fav: 0");
+  }
+  else{
+    favinform = "1";
+    console.log("fav: 1");
+  }
 
   if(decrypt(titel) != "" | decrypt(username) != "" | decrypt(password) != "")
   {
@@ -803,19 +1071,13 @@ function save(){
 
       const slt = document.getElementById('slt');
       if(slt.value == "Passwort"){
-        var pw = pew(row_id, count, titel, username, password, url, note, "0");
-        const idk = {"id":count.toString(), "fav":"0", "titel":titel, "username":username, "password":password, "url":url, "note":note};
+        const idk = {"id":count.toString(), "fav":favinform, "titel":titel, "username":username, "password":password, "url":url, "note":note};
         pwlel.push(idk);
-        $('#passwort > tbody:last-child').append(pw);
-        $('#coun').text(count + ' Passwords');
       }
       else{
         var sek = "-" + count.toString();
-        var pw = keky(row_id, sek, titel, username, password, url, note, "0");
-        const idk = {"id":sek, "fav":"0", "titel":titel, "username":username, "password":password, "url":url, "note":note};
+        const idk = {"id":sek, "fav":favinform, "titel":titel, "username":username, "password":password, "url":url, "note":note};
         pwlel.push(idk);
-        $('#passwort > tbody:last-child').append(pw);
-        $('#coun').text(count + ' Keys');
       }
       cancel();
     }
@@ -830,7 +1092,8 @@ function save(){
             pwlel[i].password = password;
             pwlel[i].url = url;
             pwlel[i].note = note;
-            editfunc(indexsheesh, titel, username, password, url, note, fav);
+            pwlel[i].fav = favinform;
+            editfunc(indexsheesh, titel, username, password, url, note, favinform);
             cancel();
             break;
           }
@@ -845,6 +1108,8 @@ function save(){
   element.classList.remove("hide");
   var element = document.getElementById("rlsave");
   element.classList.add("containerlezwei");
+  vorhersaven = true;
+  changefunc();
 
   }
   else{
@@ -936,9 +1201,14 @@ function searchfunc()
     slt_change();
   }
   else{
+    if(slt.value == "Passwort")
+    {
+      pw = anfang();
+    }
+    else{
+      pw = anfangzwei();
+    }
 
-  if(slt.value == "Passwort"){
-    pw = anfang();
     for(i=0; i < len; i++)
         {
           var row_id = random_id();
@@ -951,53 +1221,52 @@ function searchfunc()
 
           var pwfav = pwlel[i].fav;
 
-          var ti = pwtitel.toString().toLowerCase();
-          var us = pwusername.toString().toLowerCase();
-          var ur = pwurl.toString().toLowerCase();
-          var no = pwnote.toString().toLowerCase();
 
-
-
+          var ti = decrypt(pwtitel);
+          ti = ti.toString().toLowerCase();
+          var us = decrypt(pwusername);
+          us = us.toString().toLowerCase();
+          var ur = decrypt(pwurl);
+          ur = ur.toString().toLowerCase();
+          var no = decrypt(pwnote);
+          no = no.toString().toLowerCase();
           
             if(ti.indexOf(a) > -1 || us.indexOf(a) > -1 || ur.indexOf(a) > -1 || no.indexOf(a) > -1)
             {
-              if(pwlel[i].id > 0)
+              if(slt.value == "Passwort")
               {
-                pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+                if(pwlel[i].id > 0)
+                {
+                  if(favbtn == 0)
+                  {
+                    pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+                  }
+                  else{
+                    if(pwfav == "1")
+                    {
+                      pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+                    }
+                  }
+                }
+              }
+              else{
+                if(pwlel[i].id < 0)
+                {
+                  if(favbtn == 0)
+                  {
+                    pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+                  }
+                  else{
+                    if(pwfav == "1")
+                    {
+                      pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+                    }
+                  }
+                }
               }
             }
-          
         }
-        
-  }
-  else{
-    pw = anfangzwei();
-    for(i=0; i < len; i++)
-        {
-          var row_id = random_id();
-          var pwid = pwlel[i].id;
-          var pwtitel = pwlel[i].titel;
-          var pwusername = pwlel[i].username;
-          var pwpassword = pwlel[i].password;
-          var pwurl = pwlel[i].url;
-          var pwnote = pwlel[i].note;
-          var pwfav = pwlel[i].fav;
-
-          var ti = pwtitel.toString().toLowerCase();
-          var us = pwusername.toString().toLowerCase();
-          var ur = pwurl.toString().toLowerCase();
-          var no = pwnote.toString().toLowerCase();
-
-            if(ti.indexOf(a) > -1 || us.indexOf(a) > -1 || ur.indexOf(a) > -1 || no.indexOf(a) > -1)
-            {
-              if(pwlel[i].id < 0)
-              {
-                pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
-              }
-            }
           
-        }
-  }
   }
   $('#passwort').append(pw);
 }
@@ -1053,6 +1322,10 @@ function slt_change(){
           }
         }
         $('#coun').text(count + ' Passwords');
+        document.getElementById('sh').style.display = "inline";
+        document.getElementById('txtpassword').style.width = "164px";
+        document.getElementById('txtpassword').style.borderTopRightRadius = "0px";
+        document.getElementById('txtpassword').style.borderBottomRightRadius = "0px";
         dropdown = 0;
   }
   else{
@@ -1086,14 +1359,26 @@ function slt_change(){
         }
       }
       $('#coun').text(count + ' Keys');
+      document.getElementById('sh').style.display = "none";
+      document.getElementById('txtpassword').style.width = "198px";
+      document.getElementById('txtpassword').style.borderTopRightRadius = "10px";
+      document.getElementById('txtpassword').style.borderBottomRightRadius = "10px";
       dropdown = 1;
   }
   $('#passwort').append(pw);
 }
 
 function ex(){
+  if(vorhersaven == true)
+  {
+    openrly(2)
+    return;
+  }
   if(sicherung == false)
   {
+    store.set("eventhome", false);
+  store.set("eventanalytics", false);
+  store.set("eventindex", false);
   if(maxim == false){
   quitsicherung = false;
   let remote = require('electron').remote;
@@ -1110,8 +1395,16 @@ function ex(){
   store.set('favbtn', favbtn);
   store.set('dropdown', dropdown);
   }
-  
-  window.close();
+  if(store.get('down')==true)
+  {
+    store.set("delcache", true);
+    store.set('download',false);
+    store.set('down',false);
+    ipcRenderer.send('restart_app');
+  }
+  else{
+    window.close();
+  }
 }
 else{
   $('#con').text('Working.. Please wait');
@@ -1136,7 +1429,7 @@ function maxi(){
   }
 }
 
-function allesSaven(){
+function allesSaven(ind, wer){
   sicherung = true;
   var element = document.getElementById("hahaha");
   element.classList.remove("hide");
@@ -1144,6 +1437,8 @@ function allesSaven(){
   var i;
   var len = pwlel.length;
   var len2 = len - 1;
+  count = 1;
+  var minuscount = -1;
   for(i=0;i< len;i++)
   {
     var id = pwlel[i].id;
@@ -1153,7 +1448,20 @@ function allesSaven(){
     var url = pwlel[i].url;
     var note = pwlel[i].note;
     var fav = pwlel[i].fav;
-    amk += '{"id":"'+id+'", "fav":"'+fav+'", "titel":"'+titel+'","username":"'+username+'","password":"'+password+'","url":"'+url+'","note":"'+note+'"}';
+    var newid = 0;
+    if(id>0)
+    {
+      newid = count;
+      count++;
+    }
+    else if(id<0){
+      newid = minuscount;
+      minuscount--;
+    }
+    else{
+      newid = 0;
+    }
+    amk += '{"id":"'+newid+'", "fav":"'+fav+'", "titel":"'+titel+'","username":"'+username+'","password":"'+password+'","url":"'+url+'","note":"'+note+'"}';
     if(i < len2){
       amk += ",\n";
     }
@@ -1163,7 +1471,7 @@ function allesSaven(){
   }
   amk += "]";
 
-  uploadFile(amk);
+  uploadFile(amk, ind, wer);
 }
 
 function favfunc(id){
@@ -1171,6 +1479,7 @@ function favfunc(id){
   element.classList.remove("hide");
   var element = document.getElementById("rlsave");
   element.classList.remove("hide");
+  vorhersaven = true;
   var i;
   for(i=0; i < pwlel.length; i++)
   {
@@ -1285,6 +1594,21 @@ function favbtnclick(){
   }
 }
 
+function favbtnclickzwei(){
+  var inhalt = document.getElementById("favoritebtn").value
+  if(inhalt == "☆")
+  {
+    document.getElementById("favoritebtn").value = "★";
+    var element = document.getElementById("favoritebtn");
+    element.classList.add("blau");
+  }
+  else{
+    document.getElementById("favoritebtn").value = "☆";
+    var element = document.getElementById("favoritebtn");
+    element.classList.remove("blau");
+  }
+}
+
 function clearsrch(){
   document.getElementById("search").value = "";
   const input = document.getElementById('search');
@@ -1294,6 +1618,11 @@ function clearsrch(){
 }
 
 function canc(){
+  if(vorhersaven == true)
+  {
+    openrly(0)
+    return;
+  }
   if(sicherung == false){
   cancel();
   store.set('pwtemp',pwtemp);
@@ -1308,6 +1637,12 @@ function canc(){
   
 
     let remote = require('electron').remote;
+
+    parentWindow.removeAllListeners('resize');
+    parentWindow.removeAllListeners('focus');
+    parentWindow.removeAllListeners('blur');
+    parentWindow.removeAllListeners('unmaximize');
+    parentWindow.removeAllListeners('maximize');
         
         const winSettings = remote.getCurrentWindow();
         winSettings.loadURL(url.format( {
@@ -1323,7 +1658,7 @@ function canc(){
       }
 }
 
-function uploadFile(fil){
+function uploadFile(fil, i, wer){
   try {
     var dropboxToken = store.get('dropboxtoken');
   }
@@ -1356,6 +1691,22 @@ xhr.onload = function() {
   element.classList.add("hide");
   var element = document.getElementById("rlsave");
   element.classList.add("hide");
+  vorhersaven = false;
+    if(i != 0)
+    {
+      if(wer == 0)
+      {
+        canc();
+        cancelto();
+      }
+      else if(wer == 1){
+        analy();
+        cancelto();
+      }
+      else{
+        ex();
+      }
+    }
   }
   else {
     var errorMessage = xhr.response || 'Unable to upload file';
@@ -1444,7 +1795,7 @@ function mouseUp(){
   document.getElementById("context-menu").classList.remove("active");
 }
 
-function mouseDown(text){
+function mouseDown(text, id){
   var laenge = text.length;
   var extr = 0;
   var min = 0;
@@ -1455,14 +1806,16 @@ function mouseDown(text){
     var i = 0;
     for(i=0;i<min;i++)
     {
-      extr += 8;
+      extr += 6;
     }
   }
   document.getElementById('cont').innerHTML = text;
   event.preventDefault();
   var contextElement = document.getElementById("context-menu");
-  var y = event.clientY - 20;
-  var x = event.clientX - 170 - extr;
+  //var y = event.clientY - 20;
+  //var x = event.clientX - 170 - extr;
+  var y = window.scrollY + document.querySelector('#'+id+'').getBoundingClientRect().top -6// Y
+  var x = window.scrollX + document.querySelector('#'+id+'').getBoundingClientRect().left - 145 - extr// X
   var sh = 150 + extr;
   var kek = "";
   kek = sh.toString() + "px";
@@ -1477,6 +1830,11 @@ window.addEventListener("click",function(){
 });
 
 function analy(){
+  if(vorhersaven == true)
+  {
+    openrly(1)
+    return;
+  }
   if(sicherung == false){
   store.set('pwtemp',pwtemp);
   store.set('list',pwlel);
@@ -1489,6 +1847,11 @@ function analy(){
   elementdrei.classList.add("animateLeft");
   let remote = require('electron').remote;
   const winAnalytics = remote.getCurrentWindow();
+  parentWindow.removeAllListeners('resize');
+  parentWindow.removeAllListeners('focus');
+    parentWindow.removeAllListeners('blur');
+    parentWindow.removeAllListeners('unmaximize');
+    parentWindow.removeAllListeners('maximize');
   winAnalytics.loadURL(url.format( {
     pathname: path.join(__dirname, 'analytics.html'),
     protocol: 'file',
@@ -1727,10 +2090,22 @@ function qrcodefunc(){
   var textqr;
   if(slt.value == "URL"){
     textqr = document.getElementById("txturl").value;
+    if(textqr == "")
+    {
+      $('#con').text('URL need to be filled out..');
+      setTimeout(() => {  $('#con').text(bot); }, 2000);
+      return;
+    }
   }
   else{
     var qrname = document.getElementById("txtusername").value;
     var qrpw = document.getElementById("txtpassword").value;
+    if(qrname == "" || qrpw == "")
+    {
+      $('#con').text('Username and Password need to be filled out..');
+      setTimeout(() => {  $('#con').text(bot); }, 2000);
+      return;
+    }
     var wpa = "WPA";
     const sltdrei = document.getElementById('sltdrei');
     if(sltdrei.value == "WPA/WPA2"){
@@ -1869,19 +2244,17 @@ function lock(){
 function idk(){
   idkcount++;
 
-  if(idkcount == 8)
+  if(idkcount >= 8)
   {
-    console.log("ja");
+    document.getElementById("sec").classList.remove("hide");
+    document.getElementById("sec").classList.add("containerlezwei");
+    document.getElementById("sec").classList.remove("containerremove");
   }
 
   if(idkvar == false){
 
     idkvar = true;
     setTimeout(() => {  
-      document.getElementById("sec").classList.remove("hide");
-      document.getElementById("sec").classList.add("containerlezwei");
-      document.getElementById("sec").classList.remove("containerremove");
-      //$('#secspan').text(doge);
       idkcount = 0;
       idkvar = false;
     }, 2000);
@@ -1889,10 +2262,18 @@ function idk(){
   }
 }
 
+var chill = true;
+
 function closesec(){
-  document.getElementById("sec").classList.remove("containerlezwei");
-  document.getElementById("sec").classList.add("containerremove");
-  setTimeout(() => {  document.getElementById("sec").classList.add("hide"); }, 600);
+  if(chill == true)
+  {
+    chill = false;
+  }
+  else{
+    document.getElementById("sec").classList.remove("containerlezwei");
+    document.getElementById("sec").classList.add("containerremove");
+    setTimeout(() => {  document.getElementById("sec").classList.add("hide"); }, 600);
+  }
 }
 
 const powerMonitor = electron.remote.powerMonitor; 
@@ -1902,6 +2283,29 @@ powerMonitor.on('lock-screen', () => {
     lock();
   }
 }); 
+
+const { remote } = require('electron');
+let parentWindow = remote.getCurrentWindow();
+
+function once(){
+  const bounds = parentWindow.getSize();
+  document.getElementById("scrollbar-custom").style.height = bounds[1]-150 +"px";
+}
+once();
+
+parentWindow.on('resize', function() {
+  const bounds = parentWindow.getSize();
+  document.getElementById("scrollbar-custom").style.height = bounds[1]-150 +"px";
+});
+
+
+ipcRenderer.on('download', (event, arg) => {
+  store.set('download',true);
+});
+
+ipcRenderer.on('downloaded', (event, arg) => {
+  store.set('down',true);
+});
 
 
 

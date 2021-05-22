@@ -1,5 +1,7 @@
 console.log('settings loaded')
 
+const { ipcRenderer } = require('electron');
+
 const Store = require('./JSfiles/store.js');
 
 $("#paniclel").attr('disabled', true);
@@ -44,13 +46,18 @@ const store = new Store({
     max:false,
     indexclose:false,
     dropboxtoken:"",
-    dropboxurl:"",
     ontop:false,
     blur:true,
     navbaricon:false,
     lock:true,
     lastsett:false,
-    backupkey:""
+    backupkey:"",
+    eventhome:false,
+    eventindex:false,
+    eventanalytics:false,
+    download:false,
+    down:false,
+    delcache:false
   }
 });
 
@@ -73,11 +80,10 @@ var pwtempzwei;
 var quitsicherung = true;
 
 var pwtemp = store.get('pwtemp');
-console.log(pwtemp);
 store.set('pwtemp','');
 
 
-var bot = "ಠ_ಠ";
+var bot = "";
 
 let winCloud;
 
@@ -116,6 +122,7 @@ app.on('will-quit', () => {
 })
 
 $('#ver').text("Version: "+ver);
+
         
         if (theme == '1'){
           $("#btnhell").css("display","none");
@@ -166,21 +173,39 @@ $('#ver').text("Version: "+ver);
         checkbox.checked = !checkbox.checked;
     }
 
+    if(store.get('down')==true)
+    {
+      $('#updateinfo').text("Update Downloaded. It will be installed on restart. Restart now?");
+      $('#bytepersek').text(" " + formatBytes(0)+"/s |");
+      document.getElementById("restartupd").classList.remove('hide');
+    }
+
 $(document).ready(function(){
 
 });     
       
       $('#droptok').hover(function(){$('#con').text('Token');},
       function() {$('#con').text(bot);});
-      $('#dropurl').hover(function(){$('#con').text('URL');},
+
+      $('#clcache').hover(function(){document.getElementById("clcache").style.cursor = "pointer";},
+      function() {document.getElementById("clcache").style.cursor = "initial";});
+
+      $('#dropdropa').hover(function(){document.getElementById("dropdropa").style.cursor = "pointer";},
+      function() {document.getElementById("dropdropa").style.cursor = "initial";});
+
+      $('#hideqr').hover(function(){document.getElementById("hideqr").style.cursor = "pointer";},
+      function() {document.getElementById("hideqr").style.cursor = "initial";});
+
+      $('#currkeybut').hover(function(){document.getElementById("currkeybut").style.cursor = "pointer";},
+      function() {document.getElementById("currkeybut").style.cursor = "initial";});
+
+      $('#genkeybut').hover(function(){document.getElementById("genkeybut").style.cursor = "pointer";},
+      function() {document.getElementById("genkeybut").style.cursor = "initial";});
+
+      $('#clcache').hover(function(){$('#con').text('Delete some files that aren\'t nessessary anymore');},
       function() {$('#con').text(bot);});
 
       $('#tokenshow').hover(function(){$('#con').text('Show current Token');},
-      function() {$('#con').text(bot);});
-      $('#urlshow').hover(function(){$('#con').text('Show current Url');},
-      function() {$('#con').text(bot);});
-
-      $('#urluse').hover(function(){$('#con').text('Use URL');},
       function() {$('#con').text(bot);});
 
       $('#tokenuse').hover(function(){$('#con').text('Use Token');},
@@ -226,6 +251,33 @@ $(document).ready(function(){
       function() {$('#con').text(bot);});
 
       $('#arrrechts').hover(function(){$('#con').text('Show Title');},
+      function() {$('#con').text(bot);});
+
+      $('#btncloud').hover(function(){$('#con').text('Set up Dropbox');},
+      function() {$('#con').text(bot);});
+
+      $('#btnexp').hover(function(){$('#con').text('Export your Settings');},
+      function() {$('#con').text(bot);});
+
+      $('#btnimp').hover(function(){$('#con').text('Import your Settings');},
+      function() {$('#con').text(bot);});
+
+      $('#btnopenbackup').hover(function(){$('#con').text('Import your Passwords');},
+      function() {$('#con').text(bot);});
+
+      $('#btnsavebackup').hover(function(){$('#con').text('Export your Passwords');},
+      function() {$('#con').text(bot);});
+
+      $('#enkeybut').hover(function(){$('#con').text('Overwrite current Key');},
+      function() {$('#con').text(bot);});
+
+      $('#encryptionkey').hover(function(){$('#con').text('Enter encryption Key');},
+      function() {$('#con').text(bot);});
+
+      $('#currkeybut').hover(function(){$('#con').text('Show current Key');},
+      function() {$('#con').text(bot);});
+
+      $('#genkeybut').hover(function(){$('#con').text('Generate new Key');},
       function() {$('#con').text(bot);});
 
   $('#max-btn').hover(function(){
@@ -283,6 +335,12 @@ $(document).ready(function(){
 
     $('#topkekle').hover(function(){$('#con').text('Lock Program');},
     function() {$('#con').text(bot);});
+
+    if(store.get("delcache") == true)
+    {
+      store.set("delcache", false);
+      deletecache();
+    }
 
   $("#btndunkel").click(function(){
    theme = "0";
@@ -427,6 +485,9 @@ element.dispatchEvent(event)
 function ex(){
   if(sicherung == false)
   {
+  store.set("eventhome", false);
+  store.set("eventanalytics", false);
+  store.set("eventindex", false);
   if(maxim == false){
   quitsicherung = false;
   let remote = require('electron').remote;
@@ -441,11 +502,20 @@ function ex(){
   store.set('width', widthvar);
   store.set('height', heightvar);
   } 
-  window.close();
+  if(store.get('down')==true)
+  {
+    store.set("delcache", true);
+    store.set('download',false);
+    store.set('down',false);
+    ipcRenderer.send('restart_app');
+  }
+  else{
+    window.close();
+  }
 }
 else{
   $('#con').text('Working.. Please wait');
-  setTimeout(() => {  $('#con').text(bot); }, 2000);
+  setTimeout(() => {  $('#con').text(bot); ex();}, 2000);
 }
 
 }
@@ -470,6 +540,7 @@ function maxi(){
 function canc(){
   if(sicherung == false)
   {
+  stoppp = true;
   store.set('pwtemp',pwtemp);
   var element = document.getElementById("containerid");
   element.classList.add("animateLeft");
@@ -488,6 +559,12 @@ function canc(){
   globalShortcut.unregisterAll()
   
   let remote = require('electron').remote;
+
+  parentWindow.removeAllListeners('resize');
+  parentWindow.removeAllListeners('focus');
+    parentWindow.removeAllListeners('blur');
+    parentWindow.removeAllListeners('unmaximize');
+    parentWindow.removeAllListeners('maximize');
   
         const winSettings = remote.getCurrentWindow();
           winSettings.loadURL(url.format( {
@@ -550,10 +627,28 @@ function qrcodevor(){
 
 }
 
+function hideqrfunc()
+{
+  $("#qr").slideUp("slow", function(){
+  });
+}
+
+function dropdropfunc(){
+  if(document.getElementById("dropdropspan").innerHTML == "▼")
+  {
+    $("#dropdrop").slideDown("slow", function(){});
+    $('#dropdropspan').text("▲");
+  }
+  else{
+    $("#dropdrop").slideUp("slow", function(){});
+    $('#dropdropspan').text("▼");
+  }
+}
+
 function qrcodefunc(){
-  var textqr = '[{"pw":"'+ decrypt(store.get("pw"))+'", "droptoken":"'+ store.get("dropboxtoken")+'", "dropurl":"'+ store.get("dropboxurl")+'", "theme":"'+ store.get("theme")+'", "backupkey":"'+ store.get("backupkey")+'"}]';
-  var encrypted = CryptoJS.AES.encrypt(textqr, "pCloudSettings");
-  textqr = encrypted.toString();
+  var encrypted = CryptoJS.AES.encrypt(store.get("pw"), "o");
+  //textqr = encrypted.toString();
+  var textqr = ''+ encrypted.toString() +';'+ decrypt(store.get("dropboxtoken"));
   var QRCode = require('qrcode')
   var canvas = document.getElementById('canvas')
  
@@ -563,29 +658,19 @@ function qrcodefunc(){
   })
 }
 
-function downloadzip(){
-  //const request = require('request');
-  //var fileUrl = "https://www.dropbox.com/s/24k11ijnyva92tz/sheesh.zip?dl=1";
-
-  //var fileUrl = "https://www.dropbox.com/s/15zimv6mvo7n0o0/1.jpg?dl=1";
-  //axios.get("https://www.dropbox.com/s/gu89ibrva5hvnu8/version.json?dl=1")
-  axios.get("https://www.dropbox.com/s/24k11ijnyva92tz/sheesh.zip?dl=1", {responseType: 'blob',headers:{'Content-Type': 'application/json; application/octet-stream'}})
-  .then((response) => {
-    var she = response.data;
-    //console.log(she);
-  }).catch((err) => {
-  })
-}
-
 function erstmal(){
   let remote = require('electron').remote;
 
   store.set('pwtemp',pwtemp);
+  store.set('indexclose', false);
   
   let winSettings = new BrowserWindow({
-    width: 310,
-    height: 290,
-    parent: winCloud,
+    //width: 1000,
+    //height: 630,
+    width: 300,
+    height: 350,
+    minWidth: 300,
+    minHeight: 350,
     alwaysOnTop: true,
     frame: false,
     icon: 'pictures/icon.ico',
@@ -595,20 +680,18 @@ function erstmal(){
       nodeIntegration: true,
       preload: path.join(__dirname, 'JSfiles/preload.js')
     }
-  })
-  
-  
+  }) 
 
   winSettings.loadURL(url.format( {
-    pathname: path.join(__dirname, 'DropbCloud.html'),
+    pathname: path.join(__dirname, 'DropbCloud-Short.html'),
+    //pathname: path.join(__dirname, 'sesses.html'),
     protocol: 'file',
     slashes: true
 
   }))
-  winSettings.webContents.openDevTools()
-
-  const {shell} = require('electron');
-shell.openItem('https://dropbox.com/developers/apps');
+  //winSettings.webContents.openDevTools()
+  //const {shell} = require('electron');
+  //shell.openItem('https://dropbox.com/developers/apps');
   
 }
 
@@ -627,31 +710,6 @@ function rez(){
   store.set('y', ypos);
   store.set('width', widthvar);
   store.set('height', heightvar);
-}
-
-function dropseturl(){
-  const drop = document.getElementById("dropurl").value;
-  if(drop == "")
-  {
-    $('#con').text('Enter a valid URL!');
-    var element = document.getElementById("dropurl");
-    element.classList.add("rotborder");
-    setTimeout(() => {  $('#con').text(bot); 
-    var element = document.getElementById("dropurl");
-    element.classList.remove("rotborder");
-    }, 2000);
-  }
-  else
-  {
-    var end = drop.charAt(drop.length-1);
-    if(end == "0")
-    {
-      droplel = drop.substr(0, drop.length-1);
-      droplel = droplel + "1";
-    }
-    store.set('dropboxurl',encrypt(droplel));
-    document.getElementById("dropurl").value = "";
-  }
 }
 
 function dropsettoken(){
@@ -746,6 +804,13 @@ function versuchle(){
 
 function versuchlele(){
   var elmnt = document.getElementById("versuchlelediv");
+  elmnt.scrollIntoView({
+    behavior: 'smooth'
+  }); // false
+}
+
+function updatevar(){
+  var elmnt = document.getElementById("updatediv");
   elmnt.scrollIntoView({
     behavior: 'smooth'
   }); // false
@@ -878,8 +943,60 @@ function resetfunc(){
 
 //UPLOAD
 
+function uploadFilezwei(fil){
+  try {
+    var dropboxToken = store.get('dropboxtoken');
+  } catch (error) {
+    return
+  }
+  dropboxToken = decrypt(dropboxToken);
+  var savedrop = dropboxToken;
+
+var contents = fil;
+ var blob = new Blob([contents], { type: 'text/plain' });
+ var file = new File([blob], "pw.json", {type: "text/plain"});
+
+ 
+  
+var xhr = new XMLHttpRequest();
+ 
+xhr.upload.onprogress = function(evt) {
+  var percentComplete = parseInt(100.0 * evt.loaded / evt.total);
+  console.log(percentComplete);
+};
+ 
+xhr.onload = function() {
+  if (xhr.status === 200) {
+    var fileInfo = JSON.parse(xhr.response);
+    sicherung = false;
+    console.log(fileInfo);
+  }
+  else {
+    var errorMessage = xhr.response || 'Unable to upload file';
+    sicherung = false;
+    console.log(errorMessage);
+
+  }
+};
+
+xhr.open('POST', 'https://content.dropboxapi.com/2/files/upload');
+xhr.setRequestHeader('Authorization', 'Bearer ' + dropboxToken);
+xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+xhr.setRequestHeader('Dropbox-API-Arg', JSON.stringify({
+  path: '/' +  file.name,
+  mode: 'overwrite',
+  autorename: true,
+}));
+ 
+xhr.send(file);
+}
+
 function uploadFile(fil){
-  var dropboxToken = store.get('dropboxtoken');
+  try {
+    var dropboxToken = store.get('dropboxtoken');
+  } catch (error) {
+    
+  }
   dropboxToken = decrypt(dropboxToken);
   var savedrop = dropboxToken;
 
@@ -906,18 +1023,18 @@ xhr.onload = function() {
 
     store.set('dropboxtoken',encryptzwei(savedrop));
 
-    var dropboxUrl = store.get('dropboxurl');
-    dropboxUrl = decrypt(dropboxUrl);
-    store.set('dropboxurl',encryptzwei(dropboxUrl))
-
     pwtemp = pwtempzwei;
     pwtempzwei = "";
 
-    var element = document.getElementById("chpweins");
-    element.classList.remove("hide");
-    var element = document.getElementById("chpwzwei");
-    element.classList.add("hide");
+    //var element = document.getElementById("chpweins");
+    //element.classList.remove("hide");
+    //var element = document.getElementById("chpwzwei");
+    //element.classList.add("hide");
+    $('#chpw').show('fast');
+    $('#chpwzwei').hide('fast');
     document.getElementById("currpw").value = "";
+    document.getElementById("newpw").value = "";
+    document.getElementById("againpw").value = "";
     
   }
   else {
@@ -943,19 +1060,46 @@ xhr.send(file);
 //DOWNLOAD
 
 function getVer(){
-  var dropburl = store.get('dropboxurl');
-  dropburl = decrypt(dropburl);
-  axios.get(dropburl)
-.then((response) => {
-var she = response.data;
-pwlel = she;
-$('#con').text('Ready to Change Password');
-sicherung = false;
-}).catch((err) => {
-console.log('no');
-$('#con').text('No Connection to Cloud');
-sicherung = false;
-})
+try {
+  var dropboxToken = store.get('dropboxtoken');
+}
+catch(err) {
+  $('#con').text('Dropbox Token is wrong!');
+}
+dropboxToken = decrypt(dropboxToken);
+
+var xhr = new XMLHttpRequest();
+xhr.responseType = 'json';
+xhr.upload.onprogress = function(evt) {
+  var percentComplete = parseInt(100.0 * evt.loaded / evt.total);
+  console.log(percentComplete);
+};
+
+xhr.onload = function(e) {
+  if (xhr.status === 200) {
+    pwlel = e.currentTarget.response;
+    $('#con').text('Ready to Change Password');
+    sicherung = false;
+    
+  }
+  else {
+    var errorMessage = xhr.response || 'Unable to download file';
+    console.log(errorMessage);
+
+    console.log('no');
+    $('#con').text('No Connection to Cloud');
+    sicherung = false;
+  }
+};
+
+xhr.open('POST', 'https://content.dropboxapi.com/2/files/download');
+xhr.setRequestHeader('Authorization', 'Bearer ' + dropboxToken);
+xhr.setRequestHeader('Dropbox-API-Arg', JSON.stringify({
+  path: '/pw.json'
+}));
+
+xhr.send();
+
 }
 
 function showchangepw(){
@@ -963,10 +1107,11 @@ function showchangepw(){
   if(pwtemp == pwversuch)
   {
     $('#con').text('Downloading..');
-    var element = document.getElementById("chpweins");
-    element.classList.add("hide");
-    var element = document.getElementById("chpwzwei");
-    element.classList.remove("hide");
+    $('#chpw').hide('fast');
+    $('#chpwzwei').show('fast');
+    //document.getElementById("chpweins").classList.add("hide");
+    //var element = document.getElementById("chpwzwei");
+    //element.classList.remove("hide");
     sicherung = true;
     getVer();
   }
@@ -1088,22 +1233,62 @@ function openbackup(){
     }
   }
 
-  var i = 0;
-  for(i=0;i< obj.length;i++)
+  var objrdy="[\n";
+  objrdy='{"id":"0", "fav":"0", "titel":"","username":"","password":"","url":"","note":""},\n';
+  try {
+    if(obj[0].backup == "backup")
+    var i = 1;
+    for(i=1;i< obj.length;i++)
+      {
+        objrdy += '{"id":"'+i.toString()+'", "fav":"'+obj[i].fav+'", "titel":"'+encrypt(decryptkey(obj[i].titel, lelelele))+'","username":"'+encrypt(decryptkey(obj[i].username, lelelele))+'","password":"'+encrypt(decryptkey(obj[i].password, lelelele))+'","url":"'+encrypt(decryptkey(obj[i].url, lelelele))+'","note":"'+encrypt(decryptkey(obj[i].note, lelelele))+'"}';
+        if(obj.length-1 == i)
+        {
+          objrdy += "\n";
+        }
+        else{
+          objrdy += ",\n";
+        }
+      }
+    objrdy += "]"
+    console.log(objrdy);
+    uploadFilezwei(objrdy)
+  } catch (error) {
+    $('#con').text('Wrong File!');
+    console.log("Wrong File!")
+  }
+}
+
+function impfunc(){
+  const { remote } = require('electron');
+  var dialog = require('electron').remote.dialog;
+  var fs = require('fs');
+  var app = require('electron').remote; 
+  var dialog = app.dialog;
+
+  const files = dialog.showOpenDialogSync(null, {
+    title: "Import Settings",
+    buttonLabel: "Load Settings",
+    properties: ['openFile'],
+    filters: [{name:'JSON', extensions: ['json'] }]
+  });
+
+  if(!files) return;
+
+  const file = files[0];
+  const fileContent = fs.readFileSync(file).toString();
+  const obj = JSON.parse(fileContent);
+  try {
+    if(obj.settings == "settings")
     {
-      obj[i].titel = decryptkey(obj[i].titel, lelelele);
-      obj[i].titel = encrypt(obj[i].titel);
-      obj[i].username = decryptkey(obj[i].username, lelelele);
-      obj[i].username = encrypt(obj[i].username);
-      obj[i].password = decryptkey(obj[i].password, lelelele);
-      obj[i].password = encrypt(obj[i].password);
-      obj[i].url = decryptkey(obj[i].url, lelelele);
-      obj[i].url = encrypt(obj[i].url);
-      obj[i].note = decryptkey(obj[i].note, lelelele);
-      obj[i].note = encrypt(obj[i].note);
+      store.set('pw',encrypt(decryptkey(obj.pw, "Backup")));
+      pwtemp = decryptkey(obj.pw, "Backup");
+      store.set('dropboxtoken',encrypt(decryptkey(obj.dropboxtoken, "Backup")));
+      store.set('backupkey',encrypt(decryptkey(obj.backupkey, "Backup")));
     }
-    
-  console.log(obj);
+  } catch (error) {
+    $('#con').text('Wrong File!');
+    console.log("Wrong File!")
+  }
 }
 
 function createenKey(){
@@ -1136,7 +1321,7 @@ function savebackup(){
   const files = dialog.showSaveDialogSync(null, {
     title: "Save Backup File",
     buttonLabel: "Save Backup",
-    defaultPath : "backup",
+    defaultPath : "pCloud-Backup",
     properties: ['openFile'],
     filters: [{name:'JSON', extensions: ['json'] },]
   });
@@ -1155,7 +1340,8 @@ function savebackup(){
   }
 
   
-  var amk = "[\n"
+  var amk = "[\n";
+  amk += '{"backup":"backup"},\n';
     var i;
     var len = pwlel.length;
     var len2 = len - 1;
@@ -1189,30 +1375,73 @@ function savebackup(){
     }
     amk += "]";
 
-    console.log(amk);
-
   fs.writeFileSync(files, amk, 'utf-8');
   console.log("fertig");
 
 }
 
+function expfunc(){
+  const { remote } = require('electron');
+  var dialog = require('electron').remote.dialog;
+  var fs = require('fs');
+  var app = require('electron').remote; 
+  var dialog = app.dialog;
+
+  const files = dialog.showSaveDialogSync(null, {
+    title: "Export Settings",
+    buttonLabel: "Save Settings",
+    defaultPath : "pCloud-Settings",
+    properties: ['openFile'],
+    filters: [{name:'JSON', extensions: ['json'] },]
+  });
+
+  if(!files) return;
+
+  var amk = '{\n"settings":"'+"settings"+'",\n"pw":"'+encryptkey(decrypt(store.get("pw")), "Backup")+'",\n"dropboxtoken":"'+encryptkey(decrypt(store.get("dropboxtoken")), "Backup")+'",\n"backupkey":"'+encryptkey(decrypt(store.get("backupkey")), "Backup")+'"\n}';
+  fs.writeFileSync(files, amk, 'utf-8');
+}
+
 function getVerzwei(){
-  var dropburl = store.get('dropboxurl');
+try {
   $('#con').text('Loading..');
-  dropburl = decrypt(dropburl);
-  axios.get(dropburl)
-.then((response) => {
-var she = response.data;
-pwlel = she;
-$('#con').text('Downloaded');
-console.log(pwlel);
-savebackup();
-sicherung = false;
-}).catch((err) => {
-console.log('no');
-$('#con').text('No Connection to Cloud');
-sicherung = false;
-})
+  var dropboxToken = store.get('dropboxtoken');
+}
+catch(err) {
+  $('#con').text('Dropbox Token is wrong!');
+}
+dropboxToken = decrypt(dropboxToken);
+
+var xhr = new XMLHttpRequest();
+xhr.responseType = 'json';
+xhr.upload.onprogress = function(evt) {
+  var percentComplete = parseInt(100.0 * evt.loaded / evt.total);
+  console.log(percentComplete);
+};
+
+xhr.onload = function(e) {
+  if (xhr.status === 200) {
+    var she = e.currentTarget.response;;
+    pwlel = she;
+    $('#con').text('Downloaded');
+    savebackup();
+    sicherung = false;
+  }
+  else {
+    var errorMessage = xhr.response || 'Unable to download file';
+    console.log(errorMessage);
+
+    $('#con').text('No Connection to Cloud');
+    sicherung = false;
+  }
+};
+
+xhr.open('POST', 'https://content.dropboxapi.com/2/files/download');
+xhr.setRequestHeader('Authorization', 'Bearer ' + dropboxToken);
+xhr.setRequestHeader('Dropbox-API-Arg', JSON.stringify({
+  path: '/pw.json'
+}));
+
+xhr.send();
 }
 
 require('electron').remote.getCurrentWindow().on('focus', () => {
@@ -1255,6 +1484,21 @@ function closecredits(){
   //$("#cred").fadeOut("slow");
 }
 
+function infofunc(){
+  document.getElementById("txtlicense").value = 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
+  document.getElementById("infoscre").classList.remove("hide");
+  document.getElementById("infoscre").classList.add("containerlezwei");
+  document.getElementById("infoscre").classList.remove("containerremove");
+  //$("#cred").fadeIn(1000);
+  //$("#cred").fadeIn("slow");
+}
+
+function closeinfo(){
+  document.getElementById("infoscre").classList.remove("containerlezwei");
+  document.getElementById("infoscre").classList.add("containerremove");
+  setTimeout(() => {  document.getElementById("infoscre").classList.add("hide"); }, 600);
+}
+
 function getenkey(){
   document.getElementById("encryptionkey").value = decrypt(store.get('backupkey'));
 }
@@ -1275,10 +1519,6 @@ function dropshowtoken(){
   document.getElementById("droptok").value = decrypt(store.get('dropboxtoken'));
 }
 
-function dropshowurl(){
-  document.getElementById("dropurl").value = decrypt(store.get('dropboxurl'));
-}
-
 var holdtok = false;
 function holddroptok(){
   if(holdtok == false)
@@ -1292,19 +1532,6 @@ function holddroptok(){
   }
 }
 
-var holdurl = false;
-function holddropurl(){
-  if(holdurl == false)
-  {
-    holdurl = true;
-    document.getElementById("urlshow").value = "x";
-  }
-  else{
-    holdurl = false;
-    document.getElementById("urlshow").value = "•";
-  }
-}
-
 function leavedroptok(){
   if(holdtok == false)
   {
@@ -1313,10 +1540,215 @@ function leavedroptok(){
   }
 }
 
-function leavedropurl(){
-  if(holdurl == false)
+function formatBytes(bytes, decimals = 2) {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+var stoppp = true;
+
+function downloadup(){
+  document.getElementById("progrbar").classList.remove("hide");
+  stoppp = false
+  loop();
+}
+
+function loop(){
+  ipcRenderer.send('infopz');
+  if(stoppp == false)
   {
-    document.getElementById("dropurl").value = "";
-    holdurl = false;
+    setTimeout(() => {
+      loop();
+    }, 1000);
+  }
+  else{
+    ipcRenderer.send('infopz');
+    ipcRenderer.removeAllListeners('infopz');
   }
 }
+  var totaldown = 0;
+  ipcRenderer.on('infopz', (event, arg) => {
+    document.getElementById("progressid").value = arg.pctg;
+    $('#bytepersek').text(" " + formatBytes(arg.bytesek)+"/s |");
+    $('#vonb').text(" " + formatBytes(arg.transf));
+    totaldown = arg.total;
+    $('#bisb').text(" / " + formatBytes(arg.total));
+  });
+
+  function checkupd(){
+    ipcRenderer.send('update');
+  }
+  checkupd();
+
+  ipcRenderer.on('update', (event, arg) => {
+    console.log("Updaten?"+arg.update);
+    if(arg.update == true)
+    {
+      if(store.get("down") == false)
+      {
+        $('#updateinfo').text("Update available, downloading...");
+      }
+      //document.getElementById("checkbutt").classList.add('hidden');
+      //ipcRenderer.removeAllListeners('update');
+      downloadup();
+    }
+    else{
+      $('#con').text("No updates available");
+    }
+  });
+
+  ipcRenderer.on('download', (event, arg) => {
+    store.set('download',true);
+  });
+
+  ipcRenderer.on('downloaded', (event, arg) => {
+    store.set('down',true);
+  });
+
+  ipcRenderer.on('fertig', (event, arg) => {
+    ipcRenderer.removeAllListeners('update_downloaded');
+    ipcRenderer.removeAllListeners('update');
+    $('#updateinfo').text("Update Downloaded. It will be installed on restart. Restart now?");
+    $('#vonb').text(" " + formatBytes(totaldown));
+    document.getElementById("progressid").value = 100;
+    $('#bytepersek').text(" " + formatBytes(0)+"/s |");
+    document.getElementById("restartupd").classList.remove('hide');
+    stoppp = true;
+  });
+
+  function restartfunclel(){
+    if(maxim == false){
+      quitsicherung = false;
+      let remote = require('electron').remote;
+      const bounds = remote.getCurrentWindow().getBounds();
+      xpos = bounds.x;
+      ypos = bounds.y;
+      widthvar = bounds.width;
+      heightvar = bounds.height;
+    
+      store.set('x', xpos);
+      store.set('y', ypos);
+      store.set('width', widthvar);
+      store.set('height', heightvar);
+    } 
+    store.set("delcache", true);
+    store.set("download", false);
+    store.set("down", false);
+    ipcRenderer.send('restart_app');
+  }
+
+  function getsize(){
+    var fs = require("fs"); //Load the filesystem module
+    var str = app.getPath('appData');
+    var fields = str.split('\\');
+    var res = "";
+    for(var i=0;i<fields.length-2;i++)
+    {
+      res = res + fields[i] + "/";
+    }
+    var fileort = res+"AppData/Local/pcloud-updater/installer.exe";
+    var stats = "";
+    var fileSizeInBytes;
+    var fileSizeInMegabytes;
+    if (fs.existsSync(fileort)) {
+      stats = fs.statSync(res+"AppData/Local/pcloud-updater/installer.exe")
+      fileSizeInBytes = stats.size;
+      fileSizeInMegabytes = fileSizeInBytes / (1024*1024);
+    } else {
+      fileSizeInMegabytes = 0;
+    }
+    $('#foldersize').text("Cache size: "+Math.floor(fileSizeInMegabytes) + "MB | ");
+  }
+  getsize();
+
+  const deleteFolderRecursive = function(path) {
+    const Path = require('path');
+    if (fs.existsSync(path)) {
+      fs.readdirSync(path).forEach((file, index) => {
+        const curPath = Path.join(path, file);
+        if (fs.lstatSync(curPath).isDirectory()) { // recurse
+          deleteFolderRecursive(curPath);
+        } else { // delete file
+          fs.unlinkSync(curPath);
+        }
+      });
+      fs.rmdirSync(path);
+    }
+  };
+
+  function deletecache(){
+    var fs = require("fs");
+    var str = app.getPath('appData');
+    var fields = str.split('\\');
+    var res = "";
+    for(var i=0;i<fields.length-2;i++)
+    {
+      res = res + fields[i] + "/";
+    }
+    var filepath = res+"AppData/Local/pcloud-updater/installer.exe";
+    var filepathzwei = res+"AppData/Local/pcloud-updater/pending";
+    if (fs.existsSync(filepath)) {
+      fs.unlink(filepath, (err) => {
+          if (err) {
+              console.log("An error ocurred updating the file" + err.message);
+              $('#con').text("An error ocurred");
+          }
+          $('#foldersize').text("Cache size: "+ "0" + "MB | ");
+      });
+    } else {
+        console.log("This file doesn't exist, cannot delete");
+        $('#con').text("This file doesn't exist, cannot delete");
+    }
+    deleteFolderRecursive(filepathzwei);
+  }
+
+  const { remote } = require('electron');
+  let parentWindow = remote.getCurrentWindow();
+  
+  function once(){
+    const bounds = parentWindow.getSize();
+    document.getElementById("scrollbar-customzwei").style.height = bounds[1]-135 +"px";
+  }
+  once();
+  
+  parentWindow.on('resize', function() {
+    const bounds = parentWindow.getSize();
+    document.getElementById("scrollbar-customzwei").style.height = bounds[1]-135 +"px";
+  });
+
+  document.getElementById("currpw").addEventListener('keydown', (event)=>{
+    if(event.getModifierState("CapsLock"))
+      {
+        $('#capslock').fadeIn('fast');
+      }
+      else
+      {
+        $('#capslock').fadeOut('fast');
+      }
+  })
+  
+  document.getElementById("newpw").addEventListener('keydown', (event)=>{
+    if(event.getModifierState("CapsLock"))
+      {
+        $('#capslockzwei').fadeIn('fast');
+      }
+      else
+      {
+        $('#capslockzwei').fadeOut('fast');
+      }
+  })
+  
+  document.getElementById("againpw").addEventListener('keydown', (event)=>{
+    if(event.getModifierState("CapsLock"))
+      {
+        $('#capslockzwei').fadeIn('fast');
+      }
+      else
+      {
+        $('#capslockzwei').fadeOut('fast');
+      }
+  })

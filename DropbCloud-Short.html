@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content ="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content ="ie=edge">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/master.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+    <title>pCloud</title>
+
+    <style>
+
+
+    </style>
+
+
+  </head>
+  <body>
+    <header class="header"></header>
+
+    <div id="sklel" class="navbarlel">
+
+      <div style="margin-top: 2px; margin-right: 2px; margin-left: 2px;" class="loader">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div style="padding-left:20px; padding-top:5px; position: absolute;">
+      <div class='label'>Dropbox</div>
+      </div>
+      <input type="button" class="button effectnavbutton navlabel exit leexit" id="close-btn" value="✖" onclick="winclose()">
+      <input type="button" class="button effectnavbutton navlabel navbtnzw" id="min-btn" value="🗕" onclick="mini()">
+      </div>
+    </br>
+  </br>
+  
+    <div id="damnsheesh" class= "containerle">
+    </br>
+      <div id="diveins">
+        <div class="fuchs containerle">
+          <center>
+      <div style="font-weight: bolder;" class='labelzwei'>1. Step:</div>
+      <div class='labelzwei'>Login</div></br></br>
+      <div class='labelzwei blau'>If already logged in click Next</div></br>
+      <a id="openwebpage" class="labelzwei" style="color: #5f5f5f" onclick="openC()">Webpage</a>
+      </center>
+      </div>
+      <div id="huihui" class="navcloud">
+        <input type="button" class="button effectbutton" style="float:right" id="res" value="Next" onclick="showzwei()">
+        </div>
+      </div>
+
+
+      
+      <div id="divzwei" class="hide">
+        <div class="fuchs containerle">
+        <center>
+      <div style="font-weight: bolder;" class='labelzwei'>2. Step:</div>
+      <div class='labelzwei'>2.1 Select <div style="font-weight: bolder;" class='labelzwei blau'>Scoped Access</div></div></br>
+      <div class='labelzwei'>2.2 Select <div style="font-weight: bolder;" class='labelzwei blau'>App folder</div></div></br>
+      <div class='labelzwei'>2.3 Choose a Name</div></br>
+      <div class='labelzwei'>(Make something up or use this Generator)</div></br>
+      <input class="loginzwei effectkreis blauborder" type="text" placeholder="App Name" value="" id="txtname"/></br>
+      <a class="labelzwei" style="color: #5f5f5f" id="genname" onclick="namefunc()">Generate new Name</a></br>
+      </center>
+      </div>
+      <div class="navcloud">
+        <input type="button" class="button effectbutton containerle" id="btncancel" value="Back" onclick="back()">
+        <input type="button" class="button effectbutton" style="float: right;" id="res" value="Next" onclick="showzwischen()">
+        </div>
+      </div>
+
+      <div id="divzwischen" class="hide">
+        <div class="fuchs containerle">
+        <center>
+      <div style="font-weight: bolder;" class='labelzwei'>3. Step:</div>
+      
+      <div class='labelzwei'>3.1 Click on the Permissions Tab and select on the Files and Folders section</div></br>
+      <div style="font-weight: bolder;" class='labelzwei blau'>☑ files.content.write</div></br>
+      <div style="font-weight: bolder;" class='labelzwei blau'>☑ files.content.read</div></br>
+      <div class='labelzwei'>3.2 Don't forget to hit Submit at the bottom</div></br>
+      </center>
+      </div>
+      <div class="navcloud">
+        <input type="button" class="button effectbutton containerle" id="btncancel2" value="Back" onclick="backzwei()">
+        <input type="button" class="button effectbutton" style="float: right;" id="res2" value="Next" onclick="showdrei()">
+        </div>
+      </div>
+
+      <!--LELELELEL-->
+      <div id="divdrei" class="hide">
+        <div class="fuchs containerle">
+      <center>
+      <div style="font-weight: bolder;" class='labelzwei'>4. Step:</div>
+      <div class='labelzwei'>4.1 Go back to the Settings Tab</div></br>
+      <div class='labelzwei'>4.2 Set the Access Token expiration to:</div><div style="font-weight: bolder;" class='labelzwei blau'>No expiration</div>
+      <div class='labelzwei'>4.3 Generate Access Token and paste it here:</div></br>
+      <input class="loginzwei effectkreis blauborder" type="text" placeholder="Access Token" value="" id="txtaccess"/>
+    </center>
+    </div>
+      <div class="navcloud">
+        <input type="button" class="button effectbutton" id="btncancel3" value="Back" onclick="backzwischen()">
+        <input type="button" class="button effectbutton" style="float: right;" id="res3" value="Next" onclick="showvier()">
+        </div>
+      </div>
+
+    </div>
+  
+
+    <script>
+      const axios = require('axios');
+      const Store = require('./JSfiles/store.js');
+      const electron = require('electron');
+      const BrowserWindow = require('electron').remote.BrowserWindow;
+      const { remote } = require('electron');
+      const path = require('path');
+      const { ipcRenderer } = require('electron');
+      const {ipcMain } = require('electron')
+      const url = require('url');
+      const app = electron.app;
+      const store = new Store({
+        configName: 'user-preferences',
+        defaults: {
+          theme:"0",
+          pw:"",
+          pwtemp:"",
+          list:[],
+          x:455,
+          y:269,
+          width:700,
+          height:500,
+          dropdown:0,
+          favbtn:0,
+          max:false,
+          indexclose:false,
+          dropboxtoken:"",
+          ontop:false,
+          blur:true,
+          navbaricon:false,
+          lock:true,
+          lastsett:false,
+          backupkey:"",
+          eventhome:false,
+          eventindex:false,
+          eventanalytics:false,
+          download:false,
+          down:false,
+          delcache:false
+        }
+      });
+
+      var col;
+      console.log(store.get('indexclose'));
+
+      ipcRenderer.send('eventdropbox');
+
+      $('#genname').hover(function(){document.getElementById("genname").style.cursor = "pointer";},
+      function() {document.getElementById("genname").style.cursor = "initial";});
+
+      $('#openwebpage').hover(function(){document.getElementById("openwebpage").style.cursor = "pointer";},
+      function() {document.getElementById("openwebpage").style.cursor = "initial";});
+
+      window.addEventListener('contextmenu', (e) => {
+      e.preventDefault()
+      const { clipboard } = require('electron');
+      const text = clipboard.readText()
+      console.log(text);
+      
+        document.getElementById('txtaccess').value = text;
+      
+      }, false)
+
+      var sicherung = false;
+      var TokenDropbox = "";
+
+      let parentWindow = remote.getCurrentWindow();
+
+
+      var pwtemp = store.get('pwtemp');
+      console.log(pwtemp);
+      store.set('pwtemp','');
+
+      function openC(){
+        const {shell} = require('electron');
+        shell.openItem('https://dropbox.com/developers/apps/create');
+      }
+      openC()
+
+    const nativeTheme = electron.remote.nativeTheme;
+    var theme = store.get('theme');
+    if (theme == '1'){
+      col = "#ffffff";
+      document.body.classList.add('hell');
+      nativeTheme.themeSource = "light"; 
+
+    }
+    else if(theme == '0'){
+      col = "#1e1e1e";
+      document.body.classList.remove('hell');
+      nativeTheme.themeSource = "dark"; 
+    }
+    else{
+      if(nativeTheme.shouldUseDarkColors == true)
+      {
+        col = "#1e1e1e";
+        document.body.classList.remove('hell');
+        nativeTheme.themeSource = "dark"; 
+      }
+      else{
+        col = "#ffffff";
+        document.body.classList.add('hell');
+        nativeTheme.themeSource = "light"; 
+      }
+    }
+
+      function showzwei(){
+        var element = document.getElementById("divzwei");
+        element.classList.remove("hide");
+        var element = document.getElementById("diveins");
+        element.classList.add("hide");
+        var namelel = rndmnumber();
+        document.getElementById("txtname").value = namelel;
+      }
+
+      function showzwischen(){
+        var element = document.getElementById("divzwischen");
+        element.classList.remove("hide");
+        var element = document.getElementById("divzwei");
+        element.classList.add("hide");
+      }
+
+      function namefunc(){
+        var namelel = rndmnumber();
+        document.getElementById("txtname").value = namelel;
+        mainWindow.webContents.send("scope", { text: namelel});
+      }
+
+      function rndmnumber(){
+        var id_str = Math.random().toString(36).substr(2);
+        var wort = "pCloud(#" + id_str + ")";
+        return wort;
+      }
+
+      function showdrei(){
+        var element = document.getElementById("divdrei");
+        element.classList.remove("hide");
+        var element = document.getElementById("divzwischen");
+        element.classList.add("hide");
+        document.getElementById('txtaccess').value = "";
+      }
+
+      function showvier(){
+        var element = document.getElementById("txtaccess");
+        element.classList.remove("rotborder");
+        TokenDropbox = document.getElementById("txtaccess").value;
+        uploadFile('[{"id":"0", "fav":"0", "titel":"","username":"","password":"","url":"","note":""}]')
+        
+      }
+
+      function back(){
+        var element = document.getElementById("diveins");
+        element.classList.remove("hide");
+        var element = document.getElementById("divzwei");
+        element.classList.add("hide");
+      }
+
+      function backzwei(){
+        var element = document.getElementById("divzwei");
+        element.classList.remove("hide");
+        var element = document.getElementById("divzwischen");
+        element.classList.add("hide");
+      }
+
+      function backzwischen(){
+        var element = document.getElementById("divzwischen");
+        element.classList.remove("hide");
+        var element = document.getElementById("divdrei");
+        element.classList.add("hide");
+        document.getElementById('txtaccess').value = "";backzwischen()
+      }
+
+      setTimeout(() => {  $("#huihui").fadeIn("slow"); }, 1000);
+
+      //UPLOAD
+
+function uploadFile(fil){
+  var dropboxToken = TokenDropbox;
+
+var contents = fil;
+ var blob = new Blob([contents], { type: 'text/plain' });
+ var file = new File([blob], "pw.json", {type: "text/plain"});
+
+ 
+  
+var xhr = new XMLHttpRequest();
+ 
+xhr.upload.onprogress = function(evt) {
+  var percentComplete = parseInt(100.0 * evt.loaded / evt.total);
+  console.log(percentComplete);
+};
+ 
+xhr.onload = function() {
+  if (xhr.status === 200) {
+    var fileInfo = JSON.parse(xhr.response);
+    sicherung = false;
+    console.log(fileInfo);
+
+    store.set('dropboxtoken', encrypt(TokenDropbox));
+
+          console.log(store.get('indexclose'));
+
+          if(store.get('indexclose') == true)
+          {
+            indexclosefunc();
+          }
+          else{
+            window.close();
+          }
+    
+  }
+  else {
+    var errorMessage = xhr.response || 'Unable to upload file';
+    sicherung = false;
+    console.log(errorMessage);
+    var element = document.getElementById("txtaccess");
+    element.classList.add("rotborder");
+    document.getElementById("txtaccess").value = "";
+
+    
+  }
+};
+ 
+xhr.open('POST', 'https://content.dropboxapi.com/2/files/upload');
+xhr.setRequestHeader('Authorization', 'Bearer ' + dropboxToken);
+xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+xhr.setRequestHeader('Dropbox-API-Arg', JSON.stringify({
+  path: '/' +  file.name,
+  mode: 'overwrite',
+  autorename: true,
+}));
+ 
+xhr.send(file);
+}
+
+function encrypt(text){
+  var message = text;
+  var key= pwtemp;
+  var encrypted = CryptoJS.AES.encrypt(message, key); 
+  return encrypted.toString();
+}
+
+let winshe;
+function winclose()
+{
+  if(store.get('indexclose') == true)
+  {
+    const BrowserWindow = require('electron').remote.BrowserWindow;
+    const { remote } = require('electron');
+    winshe = new BrowserWindow({
+    width: 383,
+    height: 240,
+    minHeight: 240,
+    minWidth: 383,
+    maxHeight: 240,
+    maxWidth: 383,
+    icon: 'pictures/icon.png',
+    //show: false,
+    backgroundColor: "#1e1e1e",
+    maximizable: false,
+    contextIsolation: true,
+    frame: false,
+    webPreferences: {
+      nodeIntegration: true,
+      preload: path.join(__dirname, 'JSfiles/preload.js')
+    }
+
+    
+    
+    }) 
+  
+    winshe.loadURL(url.format( {
+      pathname: path.join(__dirname, 'index.html'),
+      protocol: 'file',
+      slashes: true
+
+    }))
+
+    winshe.on('closed', () => {
+      win = null;
+      
+    })
+    window.close();
+  }
+  else{
+    window.close();
+  }
+}
+
+function indexclosefunc(){
+  store.set('pwtemp', pwtemp);
+  store.set('indexclose', false);
+  const BrowserWindow = require('electron').remote.BrowserWindow;
+  const { remote } = require('electron');
+  winHome = new BrowserWindow({
+    width: store.get('width'),
+    height: store.get('height'),
+    minWidth:700,
+    minHeight:500,
+    show: false,
+    x: store.get('x'),
+    y: store.get('y'),
+    icon: 'pictures/icon.ico',
+    backgroundColor: col,
+    contextIsolation: true,
+    frame: false,
+    webPreferences: {
+      nodeIntegration: true,
+      preload: path.join(__dirname, 'JSfiles/preload.js')
+    }
+    
+  })
+
+  winHome.loadURL(url.format( {
+    pathname: path.join(__dirname, 'home.html'),
+    protocol: 'file',
+    slashes: true
+
+  }))
+
+  winHome.once('ready-to-show', () => {
+    winHome.show()
+    window.close()
+
+  })
+}
+
+require('electron').remote.getCurrentWindow().on('focus', () => {
+  var contextElement = document.getElementById("sklel");
+  contextElement.classList.remove("navbaroffle");
+})
+
+require('electron').remote.getCurrentWindow().on('blur', () => {
+  var contextElement = document.getElementById("sklel");
+  contextElement.classList.add("navbaroffle");
+})
+
+function mini(){
+  const { remote } = require('electron');
+remote.BrowserWindow.getFocusedWindow().minimize();
+}
+      
+    </script>
+  </body>
+
+
+</html>
