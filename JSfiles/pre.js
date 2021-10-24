@@ -2,12 +2,20 @@ const electron = require('electron');
 const { ipcRenderer, webContents, remote } = require("electron");
 const { app, BrowserWindow, Menu } = require('electron')
 
+window.onload = function() {
+  scopefunc()
+};
+
 ipcRenderer.on("scope", (event, arg) => {
+  scopefunc();
+});
+
+function scopefunc(){
   document.querySelector(".radio__label").click();
   document.querySelector("#app_folder_permission").click();
   //document.querySelectorAll("body").style.backgroundColor = "red";
   document.querySelector("#app-name").value = arg.text;
-});
+}
 
 ipcRenderer.on("app", () => {
   document.querySelector("#app_folder_permission").click();

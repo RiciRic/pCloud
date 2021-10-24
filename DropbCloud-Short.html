@@ -38,19 +38,19 @@
       <input type="button" class="button effectnavbutton navlabel exit leexit" id="close-btn" value="✖" onclick="winclose()">
       <input type="button" class="button effectnavbutton navlabel navbtnzw" id="min-btn" value="🗕" onclick="mini()">
       </div>
-    </br>
-  </br>
+    <br/>
+  <br/>
   
     <div id="damnsheesh" class= "containerle">
-    </br>
+    <br/>
       <div id="diveins">
         <div class="fuchs containerle">
-          <center>
+          <div class="centered">
       <div style="font-weight: bolder;" class='labelzwei'>1. Step:</div>
-      <div class='labelzwei'>Login</div></br></br>
-      <div class='labelzwei blau'>If already logged in click Next</div></br>
+      <div class='labelzwei'>Login</div><br/><br/>
+      <div class='labelzwei blau'>If already logged in click Next</div><br/>
       <a id="openwebpage" class="labelzwei" style="color: #5f5f5f" onclick="openC()">Webpage</a>
-      </center>
+          </div>
       </div>
       <div id="huihui" class="navcloud">
         <input type="button" class="button effectbutton" style="float:right" id="res" value="Next" onclick="showzwei()">
@@ -61,53 +61,53 @@
       
       <div id="divzwei" class="hide">
         <div class="fuchs containerle">
-        <center>
+        <div class="centered">>
       <div style="font-weight: bolder;" class='labelzwei'>2. Step:</div>
-      <div class='labelzwei'>2.1 Select <div style="font-weight: bolder;" class='labelzwei blau'>Scoped Access</div></div></br>
-      <div class='labelzwei'>2.2 Select <div style="font-weight: bolder;" class='labelzwei blau'>App folder</div></div></br>
-      <div class='labelzwei'>2.3 Choose a Name</div></br>
-      <div class='labelzwei'>(Make something up or use this Generator)</div></br>
-      <input class="loginzwei effectkreis blauborder" type="text" placeholder="App Name" value="" id="txtname"/></br>
-      <a class="labelzwei" style="color: #5f5f5f" id="genname" onclick="namefunc()">Generate new Name</a></br>
-      </center>
+      <div class='labelzwei'>2.1 Select <div style="font-weight: bolder;" class='labelzwei blau'>Scoped Access</div></div><br/>
+      <div class='labelzwei'>2.2 Select <div style="font-weight: bolder;" class='labelzwei blau'>App folder</div></div><br/>
+      <div class='labelzwei'>2.3 Choose a Name</div><br/>
+      <div class='labelzwei'>(Make something up or use this Generator)</div><br/>
+      <input class="loginzwei effectkreis blauborder" type="text" placeholder="App Name" value="" id="txtname"/><br/>
+      <a class="labelzwei" style="color: #5f5f5f" id="genname" onclick="namefunc()">Generate new Name</a><br/>
+        </div>
       </div>
       <div class="navcloud">
         <input type="button" class="button effectbutton containerle" id="btncancel" value="Back" onclick="back()">
-        <input type="button" class="button effectbutton" style="float: right;" id="res" value="Next" onclick="showzwischen()">
+        <input type="button" class="button effectbutton" style="float: right;" id="res2" value="Next" onclick="showzwischen()">
         </div>
       </div>
 
       <div id="divzwischen" class="hide">
         <div class="fuchs containerle">
-        <center>
+          <div class="centered">
       <div style="font-weight: bolder;" class='labelzwei'>3. Step:</div>
       
-      <div class='labelzwei'>3.1 Click on the Permissions Tab and select on the Files and Folders section</div></br>
-      <div style="font-weight: bolder;" class='labelzwei blau'>☑ files.content.write</div></br>
-      <div style="font-weight: bolder;" class='labelzwei blau'>☑ files.content.read</div></br>
-      <div class='labelzwei'>3.2 Don't forget to hit Submit at the bottom</div></br>
-      </center>
+      <div class='labelzwei'>3.1 Click on the Permissions Tab and select on the Files and Folders section</div><br/>
+      <div style="font-weight: bolder;" class='labelzwei blau'>☑ files.content.write</div><br/>
+      <div style="font-weight: bolder;" class='labelzwei blau'>☑ files.content.read</div><br/>
+      <div class='labelzwei'>3.2 Don't forget to hit Submit at the bottom</div><br/>
+          </div>
       </div>
       <div class="navcloud">
         <input type="button" class="button effectbutton containerle" id="btncancel2" value="Back" onclick="backzwei()">
-        <input type="button" class="button effectbutton" style="float: right;" id="res2" value="Next" onclick="showdrei()">
+        <input type="button" class="button effectbutton" style="float: right;" id="res3" value="Next" onclick="showdrei()">
         </div>
       </div>
 
       <!--LELELELEL-->
       <div id="divdrei" class="hide">
         <div class="fuchs containerle">
-      <center>
+          <div class="centered">
       <div style="font-weight: bolder;" class='labelzwei'>4. Step:</div>
-      <div class='labelzwei'>4.1 Go back to the Settings Tab</div></br>
+      <div class='labelzwei'>4.1 Go back to the Settings Tab</div><br/>
       <div class='labelzwei'>4.2 Set the Access Token expiration to:</div><div style="font-weight: bolder;" class='labelzwei blau'>No expiration</div>
-      <div class='labelzwei'>4.3 Generate Access Token and paste it here:</div></br>
+      <div class='labelzwei'>4.3 Generate Access Token and paste it here:</div><br/>
       <input class="loginzwei effectkreis blauborder" type="text" placeholder="Access Token" value="" id="txtaccess"/>
-    </center>
+          </div>
     </div>
       <div class="navcloud">
         <input type="button" class="button effectbutton" id="btncancel3" value="Back" onclick="backzwischen()">
-        <input type="button" class="button effectbutton" style="float: right;" id="res3" value="Next" onclick="showvier()">
+        <input type="button" class="button effectbutton" style="float: right;" id="res4" value="Next" onclick="showvier()">
         </div>
       </div>
 
@@ -152,7 +152,10 @@
           eventanalytics:false,
           download:false,
           down:false,
-          delcache:false
+          delcache:false,
+          copyrightclick:true,
+          copystayontop:true,
+          copyseconds:10
         }
       });
 
@@ -455,6 +458,10 @@ function mini(){
   const { remote } = require('electron');
 remote.BrowserWindow.getFocusedWindow().minimize();
 }
+
+ipcRenderer.on('exit', (event, arg) => {
+    ex();
+  });
       
     </script>
   </body>

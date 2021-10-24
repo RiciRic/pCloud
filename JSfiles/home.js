@@ -13,6 +13,8 @@ const path = require('path');
 const url = require('url');
 const { app, globalShortcut } = require('electron').remote;
 
+const { Menu } = require('electron');
+
 var request = require('request');
 
 const nativeTheme = electron.remote.nativeTheme; 
@@ -26,7 +28,7 @@ var idkvar = false;
 var idkcount = 0;
 
 
-const contextMenu = require('electron-context-menu');
+/*const contextMenu = require('electron-context-menu');
 const { SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG, SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION } = require('constants');
 
             contextMenu({
@@ -37,7 +39,7 @@ const { SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG, SSL_OP_NO_SESSION_RESUMPTION_ON
                 },
                 ],
                 showInspectElement:false
-            });
+            });*/
 
 var bot = "";
 
@@ -70,7 +72,10 @@ const store = new Store({
     eventanalytics:false,
     download:false,
     down:false,
-    delcache:false
+    delcache:false,
+    copyrightclick:true,
+    copystayontop:true,
+    copyseconds:10
   }
 });
 
@@ -126,6 +131,8 @@ var lastsettvar = store.get('lastsett');
     if(ontopvar == true){
       let remote = require('electron').remote;
       document.getElementById("topkek").value = "●";
+      document.getElementById("topkeki").classList.add("fas");
+      document.getElementById("topkeki").classList.remove("far");
       remote.getCurrentWindow().setAlwaysOnTop(true, 'screen');
       var element = document.getElementById("topkek");
       element.classList.add("blau");
@@ -136,22 +143,26 @@ var lastsettvar = store.get('lastsett');
     }
         
         if (favbtn == '0'){
-          document.getElementById("favbutton").value = "☆";
+          //document.getElementById("favbutton").value = "☆";
+          document.getElementById("favbuttoni").classList.remove("fas")
+          document.getElementById("favbuttoni").classList.add("far")
         }
         else{
-          document.getElementById("favbutton").value = "★";
+          //document.getElementById("favbutton").value = "★";
+          document.getElementById("favbuttoni").classList.add("fas")
+          document.getElementById("favbuttoni").classList.remove("far")
           var element = document.getElementById("favbutton");
           element.classList.add("blau");
         }
 
-        if(store.get("eventhome") == false)
+        /*if(store.get("eventhome") == false)
         {
           ipcRenderer.send('eventhome');
           store.set("eventhome", true);
-        }
+        }*/
 
-        document.getElementById("svglelid").style.height = heightvar + "px";
-        document.getElementById("svglelid").style.width = widthvar + "px";
+        //document.getElementById("svglelid").style.height = heightvar + "px";
+        //document.getElementById("svglelid").style.width = widthvar + "px";
 
 var pwlel = [];
 
@@ -163,7 +174,7 @@ var pwkey = 1;
 
 var quitsicherung = true;
 
-app.on('will-quit', () => {
+ipcRenderer.on('will-Quit', (event, arg) => {
   //globalShortcut.unregister('CommandOrControl+X')
   globalShortcut.unregisterAll()
 
@@ -191,6 +202,7 @@ var random_id = function(){
 var count = 0;
 
 $(document).ready(function(){
+  ipcRenderer.send('checkInBounds');
 
   if(maxim == true)
 {
@@ -418,51 +430,70 @@ $("#ed").click(function(){
     //---------------SHEEEEEESH------------------
 
     function getVer(){
-      
       try {
-        var dropboxToken = store.get('dropboxtoken');
-      }
-      catch(err) {
-        $('#con').text('Dropbox Token is wrong!');
-      }
-      dropboxToken = decrypt(dropboxToken);
-
-      var xhr = new XMLHttpRequest();
-      xhr.responseType = 'json';
-      xhr.upload.onprogress = function(evt) {
-        var percentComplete = parseInt(100.0 * evt.loaded / evt.total);
-        console.log(percentComplete);
-      };
-      
-      xhr.onload = function(e) {
-        if (xhr.status === 200) {
-          console.log("fertig gedownloaded")
-          pwlel = e.currentTarget.response;
-          console.log(pwlel);
-          hideload();
-          slt_change();
-          sicherung = false;
+        try {
+          var dropboxToken = store.get('dropboxtoken');
         }
-        else {
-          var errorMessage = xhr.response || 'Unable to download file';
-          console.log(errorMessage);
+        catch(err) {
+          $('#con').text('Dropbox Token is wrong!');
+        }
+        dropboxToken = decrypt(dropboxToken);
+        console.log(dropboxToken)
+        var xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+        xhr.upload.onprogress = function(evt) {
+          var percentComplete = parseInt(100.0 * evt.loaded / evt.total);
+          console.log(percentComplete);
+        };
+        
+        xhr.onload = function(e) {
+          if (xhr.status === 200) {
+            console.log("fertig gedownloaded")
+            pwlel = e.currentTarget.response;
+            console.log(pwlel);
+            hideload();
+            slt_change();
+            sicherung = false;
+          }
+          else {
+            var errorMessage = xhr.response || 'Unable to download file';
+            console.log(errorMessage);
+  
+            $('#con').text('No Connection to Cloud');
+            var element = document.getElementById("resetzwei");
+            element.classList.remove("hide");
+            var elementzwei = document.getElementById("haha");
+            elementzwei.classList.add("hide");
+            sicherung = false;
+          }
+        };
 
+        xhr.onerror = function() { 
           $('#con').text('No Connection to Cloud');
           var element = document.getElementById("resetzwei");
           element.classList.remove("hide");
           var elementzwei = document.getElementById("haha");
           elementzwei.classList.add("hide");
           sicherung = false;
-        }
-      };
-      
-      xhr.open('POST', 'https://content.dropboxapi.com/2/files/download');
-      xhr.setRequestHeader('Authorization', 'Bearer ' + dropboxToken);
-      xhr.setRequestHeader('Dropbox-API-Arg', JSON.stringify({
-        path: '/pw.json'
-      }));
-      
-      xhr.send();
+         }
+        
+        xhr.open('POST', 'https://content.dropboxapi.com/2/files/download');
+        xhr.setRequestHeader('Authorization', 'Bearer ' + dropboxToken);
+        xhr.setRequestHeader('Dropbox-API-Arg', JSON.stringify({
+          path: '/pw.json'
+        }));
+        
+        xhr.send();
+      } catch (error) {
+        console.log(error);
+  
+        $('#con').text('No Connection to Cloud');
+        var element = document.getElementById("resetzwei");
+        element.classList.remove("hide");
+        var elementzwei = document.getElementById("haha");
+        elementzwei.classList.add("hide");
+        sicherung = false;
+      }
 
     }
     getVer();
@@ -488,66 +519,213 @@ function pew(row_id, id, titel, username, password, url, note, fav){
   var us = decrypt(username);
   var ur = decrypt(url);
   var pw = "";
-      pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\')" onmouseleave="mleave(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\')">';
+      pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover(\''+"urlid"+id+'\', \''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\')" onmouseleave="mleave(\''+"urlid"+id+'\', \''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\')">';
       if(fav == "1"){
-      pw += '<td><input type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbutton" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /></td>';
+      pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbuttonanders" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /><i id="i' + id + '" class="fas fa-star"></i></button></td>';
       }
       else{
-        pw += '<td><input type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; border-radius: 50%;" class="buttonzwei effectbutton" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="☆" /></td>';
+        pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; border-radius: 50%;" class="buttonzwei effectbuttonanders" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="☆" /><i id="i' + id + '" class="far fa-star"></i></button></td>';
       }
       if(ur == ""){
         pw += '<td style="user-select: none;"></td>';
       }
       else{
-        pw += '<td style="user-select: none;"><img src="https://s2.googleusercontent.com/s2/favicons?domain=' + ur + '"></td>';
+        pw += '<td style="user-select: none;"><img style="max-width:16px; max-height:16px;" src="https://www.google.com/s2/favicons?domain=' + ur + '"></td>';
       }
-      pw += '<td><div class="labelzwei" edit_type="click" col_name="tit">' + decrypt(titel) + '</div></td>';
+      pw += '<td><div class="labelzwei" onclick="midbtn(this)" oncontextmenu="contextMenubar(\''+"table-row"+row_id+'\', \''+id+'\')" edit_type="click" col_name="tit">' + decrypt(titel) + '</div></td>';
       pw += '<td><div class="labelzwei" edit_type="click" col_name="user" oncontextmenu="copy(\'' + us + '\')">' + kurz(us) + '</div></td>';
-      pw += '<td><input type="button" class="buttonzwei effectbuttonanders nada" id="username' + id + '" style="outline: 0;" onmouseover="copyus()" onmouseout="leave()" onclick="copy(\'' + us + '\')" value="🗐" />' +'</td>';
+      pw += '<td><button class="buttonzwei effectbuttonanders nada" id="username' + id + '" style="outline: 0;" onmouseover="copyus()" onmouseout="leave()" onclick="copy(\'' + us + '\')" value="🗐" /><i class="fas fa-copy"></i></button>' +'</td>';
       pw += '<td><div class="labelzwei" edit_type="click" col_name="psw" oncontextmenu="copy(\'' + dec + '\')">' + kurzst(stern(dec)) + '</div></td>'
-      pw += '<td><input type="button" class="buttonzwei effectbuttonanders" id="auge' + id + '" onfocusout="mouseUp()" onmouseover="showbot()" onmouseout="leave()" onmousedown="mouseDown(\'' + dec + "\', \'auge" + id + '\')" onmouseup="mouseUp()" value="👁" />' +'</td>';
-      pw += '<td><input type="button" class="buttonzwei effectbuttonanders nada" id="password' + id + '" style="outline: 0;" onmouseover="copypw()" onmouseout="leave()" onclick="copy(\'' + dec + '\')" value="🗐" />' +'</td>';
+      pw += '<td><button type="button" class="buttonzwei effectbuttonanders" id="auge' + id + '" onfocusout="mouseUp()" onmouseover="showbot()" onmouseout="leave()" onmousedown="mouseDown(\'' + dec + "\', \'auge" + id + '\')" onmouseup="mouseUp()" value="👁" /><i class="far fa-eye"></i></button>' +'</td>';
+      pw += '<td><button class="buttonzwei effectbuttonanders nada" id="password' + id + '" style="outline: 0;" onmouseover="copypw()" onmouseout="leave()" onclick="copy(\'' + dec + '\')" value="🗐" /><i class="fas fa-copy"></i></button>' +'</td>';
       if(ur == ""){
         pw += '<td style="user-select: none;"></td>';
       }
       else{
-        pw += '<td><input style="outline: 0;" type="button" class="buttonzwei effectbuttonanders" id="url' + kurz(id) + '" onmouseover="run()" onmouseout="leave()"  onclick="ope(\'' + ur + '\')" value="ᐅ" />' +'</td>';
+        pw += '<td><button style="outline: 0;" type="button" class="buttonzwei effectbuttonanders gray" id="urlid' + id + '" onmouseover="run()" onmouseout="leave()"  onclick="ope(\'' + ur + '\')" value="ᐅ" /><i class="fas fa-play"></i></button>' +'</td>';
       }
-      pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<input data-modal-target="#modallel" type="button" style="outline: 0;" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editme()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\')" value="✎" /></td>';
-      pw += '<td><input type="button" onmouseover="entfern()" onmouseout="leave()" class="buttonzwei btn_row_delete rot gray" id="delete' + id + '" value="✖" onclick="del(' + id +')">' + '</td>';
+      pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<button data-modal-target="#modallel" type="button" style="outline: 0;" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editme()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\')" value="✎" /><i class="far fa-edit"></i></button></td>';
+      pw += '<td><button type="button" onmouseover="entfern()" onmouseout="leave()" class="buttonzwei btn_row_delete rot gray" id="delete' + id + '" value="✖" onclick="del(' + id +')"><i class="fas fa-times"></i></button>' + '</td>';
       pw += '</tr>';
       return pw;
 
 }
 
-function mover(delid, edid, usid, passid)
+function midbtn() {
+  /*if( e.which == 2 ) {
+    e.preventDefault();
+    console.log("YEEEEEE");
+  }*/
+  console.log(window.event.target);
+}
+
+  function contextMenubar(id, ID)
+  {
+    if(slt.value == "Passwort"){
+      document.getElementById('KeyPassword').innerText = "Convert to Key";
+    }
+    else{
+      document.getElementById('KeyPassword').innerText = "Convert to Password";
+    }
+    //document.getElementById('KeyPassword').onclick = function(){changePasswortKey(ID)};
+    //document.getElementById('overlay').onclick = function(){overlayfunc(ID)};
+    document.getElementById('KeyPassword2').onclick = function(){changePasswortKey(ID)};
+    document.getElementById('overlay2').onclick = function(){overlayfunc(ID)};
+    event.preventDefault();
+    var contextElement = document.getElementById("context-menuvier");
+    var y = event.clientY;
+    var x = event.clientX;
+    //var y = window.scrollY + document.querySelector('#'+id+'').getBoundingClientRect().top -70// Y
+    //var x = window.scrollX + document.querySelector('#'+id+'').getBoundingClientRect().left - 145 - extr// X
+    contextElement.style.top = y + "px";
+    contextElement.style.left = x + "px";
+    contextElement.classList.add("active");
+  }
+
+  function overlayfunc(id)
+  {
+    for(i=1;i<pwlel.length;i++)
+    {
+      var currid = parseInt(pwlel[i].id)
+      if(currid == id)
+      {
+        console.log("bin drin");
+        const BrowserWindow = require('electron').remote.BrowserWindow;
+        let winoverlay = new BrowserWindow({
+          width: 350,
+          height: 160,
+          minWidth: 350,
+          minHeight: 160,
+          alwaysOnTop: true,
+          show:false,
+          frame: false,
+          backgroundColor: "red",
+          icon: 'pictures/icon.ico',
+          contextIsolation: true,
+          
+          webPreferences: {
+            nodeIntegration: true,
+            preload: path.join(__dirname, 'JSfiles/preload.js')
+          }
+        }) 
+      
+        winoverlay.loadURL(url.format( {
+          pathname: path.join(__dirname, 'overlay.html'),
+          protocol: 'file',
+          slashes: true
+      
+        }))
+
+        //winoverlay.webContents.openDevTools();
+
+        winoverlay.webContents.on('did-finish-load', () => {
+          winoverlay.webContents.send ('perm', {titel: decrypt(pwlel[i].titel), username: decrypt(pwlel[i].username), password: decrypt(pwlel[i].password)})
+          winoverlay.show()
+          remote.getCurrentWindow().minimize();
+        })
+
+        winoverlay.webContents.on('close', () => {
+          remote.getCurrentWindow().restore();
+        })
+        return;
+      }
+    }
+  }
+
+  function changePasswortKey(id)
+  {
+    const slt = document.getElementById('slt');
+    var i = 1;
+    var count = 1;
+    var objPWKEY;
+    if(slt.value == "Passwort"){
+      for(i=1;i<pwlel.length;i++)
+      {
+        var currid = parseInt(pwlel[i].id)
+        if(currid > 0)
+        {
+          count++;
+        }
+        if(currid == id)
+        {
+          objPWKEY = i;
+        }
+      }
+      pwlel[objPWKEY].id = 0-(count+pwlel.length);
+      console.log(0-(count+pwlel.length));
+    }
+    else{
+      for(i=1;i<pwlel.length;i++)
+      {
+        var currid = parseInt(pwlel[i].id)
+        if(currid < 0)
+        {
+          count++;
+        }
+        if(currid == id)
+        {
+          objPWKEY = i;
+        }
+      }
+      console.log((count+pwlel.length))
+      pwlel[objPWKEY].id = (count+pwlel.length);
+    }
+    var element = document.getElementById("rlsave");
+    element.classList.remove("hide");
+      var element = document.getElementById("reset");
+    element.classList.remove("hide");
+    slt_change();
+  }
+
+
+function mover(playidd, delid, edid, usid, passid)
 {
   document.getElementById(delid).classList.remove("gray");
   document.getElementById(edid).classList.remove("gray");
   document.getElementById(usid).classList.remove("nada");
   document.getElementById(passid).classList.remove("nada");
+  try {
+    document.getElementById(playidd).classList.remove("gray");
+  } catch (error) {
+    
+  }
 }
 
-function mleave(delid, edid, usid, passid)
+function mleave(playidd, delid, edid, usid, passid)
 {
   document.getElementById(delid).classList.add("gray");
   document.getElementById(edid).classList.add("gray");
   document.getElementById(usid).classList.add("nada");
   document.getElementById(passid).classList.add("nada");
+  try {
+    document.getElementById(playidd).classList.add("gray");
+  } catch (error) {
+    
+  }
 }
 
-function mover2(delid, edid, passid)
+function mover2(delid, edid, passid, playidd)
 {
   document.getElementById(delid).classList.remove("gray");
   document.getElementById(edid).classList.remove("gray");
   document.getElementById(passid).classList.remove("nada");
+  try {
+    document.getElementById(playidd).classList.remove("gray");
+  } catch (error) {
+    
+  }
 }
 
-function mleave2(delid, edid, passid)
+function mleave2(delid, edid, passid, playidd)
 {
   document.getElementById(delid).classList.add("gray");
   document.getElementById(edid).classList.add("gray");
   document.getElementById(passid).classList.add("nada");
+  try {
+    document.getElementById(playidd).classList.add("gray");
+  } catch (error) {
+    
+  }
 }
 
 var rever = false;
@@ -612,29 +790,29 @@ function editme(){
 function keky(row_id, id, titel, username, password, url, note, fav){
   var pw = "";
   var ur = decrypt(url);
-  pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\')" onmouseleave="mleave2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \'' + decrypt(password) + '\', \'' + decrypt(url) + '\', \'' + decrypt(note) +'\', \'' + fav + '\')">';
+  pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\', \''+"urlid"+id+'\')" onmouseleave="mleave2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\', \''+"urlid"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \'' + decrypt(password) + '\', \'' + decrypt(url) + '\', \'' + decrypt(note) +'\', \'' + fav + '\')">';
   if(fav == "1"){
-    pw += '<td><input type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbutton" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /></td>';
+    pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbuttonanders" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /><i id="i' + id + '" class="fas fa-star"></i></button></td>';
     }
     else{
-      pw += '<td><input type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; border-radius: 50%;" class="buttonzwei effectbutton" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="☆" /></td>';
+      pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; border-radius: 50%;" class="buttonzwei effectbuttonanders" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="☆" /><i id="i' + id + '" class="far fa-star"></i></button></td>';
     }
   if(ur == ""){
     pw += '<td style="user-select: none;"></td>';
   }
   else{
-    pw += '<td style="user-select: none;"><img src="https://s2.googleusercontent.com/s2/favicons?domain=' + ur + '"></td>';
+    pw += '<td style="user-select: none;"><img style="max-width:16px; max-height:16px;" src="https://s2.googleusercontent.com/s2/favicons?domain=' + ur + '"></td>';
   }
-  pw += '<td><div class="labelzwei" edit_type="click" col_name="tit">' + decrypt(titel) + '</div></td>';
+  pw += '<td><div class="labelzwei" edit_type="click" oncontextmenu="contextMenubar(\''+"table-row"+row_id+'\', \''+id+'\')" col_name="tit">' + decrypt(titel) + '</div></td>';
   pw += '<td><div class="labelzwei" edit_type="click" col_name="psw" oncontextmenu="copy(\'' + decrypt(password) + '\')">' + decrypt(password) + '</div></td>';
-  pw += '<td><input type="button" class="buttonzwei effectbuttonanders nada" id="password' + id + '" onmouseover="copykey()" onmouseout="leave()" onclick="copy(\'' + decrypt(password) + '\')" value="🗐" />' +'</td>';
+  pw += '<td><button class="buttonzwei effectbuttonanders nada" id="password' + id + '" onmouseover="copykey()" onmouseout="leave()" onclick="copy(\'' + decrypt(password) + '\')" value="🗐" /><i class="fas fa-copy"></i></button>' +'</td>';
   if(ur == ""){
     pw += '<td style="user-select: none;"></td>';
   }
   else{
-    pw += '<td><input type="button" class="buttonzwei effectbuttonanders" id="url' + kurz(id) + '" onmouseover="run()" onmouseout="leave()" onclick="ope(\'' + ur + '\')" value="ᐅ" />' +'</td>';
+    pw += '<td><button type="button" class="buttonzwei effectbuttonanders gray" id="urlid' + id + '" onmouseover="run()" onmouseout="leave()" onclick="ope(\'' + ur + '\')" value="ᐅ" /><i class="fas fa-play"></i></button>' +'</td>';
   }
-  pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<input data-modal-target="#modallel" type="button" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editmekey()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \'' + decrypt(password) + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\')" value="✎" /></td>';
+  pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<button data-modal-target="#modallel" type="button" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editmekey()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \'' + decrypt(password) + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\')" value="✎" /><i class="far fa-edit"></i></button></td>';
   pw += '<td><input type="button" class="buttonzwei btn_row_delete rot gray" id="delete' + id + '" value="✖" onmouseover="entfernkey()" onmouseout="leave()" onclick="del('+ id +')">' + '</td>';
   pw += '</tr>';
       return pw;
@@ -732,9 +910,11 @@ function decrypt(text){
 }
 
 function ope(link){
-  var links = "https://" + link + "/" 
-  shell.openExternal(links); 
-  console.log(links);
+  if(link.charAt(0) == "w" && link.charAt(1) == "w" && link.charAt(2) == "w" && link.charAt(3) == ".")
+  {
+    link = "https://" + link;
+  }
+  shell.openExternal(link);
 }
 
 function stern(lel){
@@ -762,16 +942,71 @@ function del(idsheesh){
   vorhersaven = true;
 }
 
-function copy(text){
-  var dummy = document.createElement("textarea");
-    document.body.appendChild(dummy);
-    dummy.value = text;
-    dummy.select();
-    document.execCommand("copy");
-    document.body.removeChild(dummy);
+function TimerFunc(time) 
+{
+    this.time = time;
+    this.stop = false;
+    this.setstop = function() 
+    {
+      this.stop = true;
+    };
+    this.start = function(time) 
+    {
+      console.log(this.stop)
+      if(this.stop == true)return;
+      if(time !=0)
+      {
+        $('#con').text('Copied for '+ time +' seconds..');
+        setTimeout(() => { 
+          if(this.stop == true)return;
+          this.start(time-1);
+        }, 1000);
+      }
+      else{
+        $('#con').text(bot); 
+        /*if(store.get('ontop') == false)
+        {
+          ontop();
+        }*/
+        clipboard.writeText('');
+      }
+    };
+}
 
-    $('#con').text('Copied..');
-    setTimeout(() => {  $('#con').text(bot); }, 2000);
+let timerfunc = null;
+const { clipboard } = require('electron');
+function copy(text){
+  console.log(store.get('copyrightclick'))
+  if(store.get('copyrightclick') == true)
+  {
+    clipboard.writeText(text);
+    if(timerfunc != null)
+    {
+      timerfunc.setstop();
+    }
+    /*else{
+      if(store.get('copystayontop') == true && store.get('ontop') == false)
+      {
+        ontop();
+      }
+    }*/
+    timerfunc = new TimerFunc(store.get('copyseconds'), false);
+    timerfunc.start(store.get('copyseconds'));
+  }
+}
+
+function countdown(countvar){
+    if(countvar !=0)
+    {
+      $('#con').text('Copied for '+ countvar +' seconds..');
+      setTimeout(() => { 
+        countdown(countvar-1);
+      }, 1000);
+    }
+    else{
+      $('#con').text(bot); 
+      clipboard.writeText('');
+    }
 }
 
 function check(id, titel, username, password, url, note, fav){
@@ -793,12 +1028,16 @@ function check(id, titel, username, password, url, note, fav){
     document.getElementById("txtpassword").placeholder = "Password";
     var element = document.getElementById("txtusername");
     document.getElementById("txtpassword").type = "password";
+    document.getElementById("shsh").classList.remove("fa-eye-slash");
+    document.getElementById("shsh").classList.add("fa-eye");
     element.classList.remove("hide");
   }
   else{
     document.getElementById("txtpassword").placeholder = "Key";
     var element = document.getElementById("txtusername");
     document.getElementById("txtpassword").type = "text";
+    document.getElementById("shsh").classList.remove("fa-eye");
+    document.getElementById("shsh").classList.add("fa-eye-slash");
       element.classList.add("hide");
   }
     
@@ -810,11 +1049,15 @@ function check(id, titel, username, password, url, note, fav){
   if(fav == "1")
   {
     document.getElementById("favoritebtn").value = "★";
+    document.getElementById("favoritebtni").classList.add("fas")
+    document.getElementById("favoritebtni").classList.remove("far")
     var element = document.getElementById("favoritebtn");
     element.classList.add("blau");
   }
   else{
     document.getElementById("favoritebtn").value = "☆";
+    document.getElementById("favoritebtni").classList.remove("fas")
+    document.getElementById("favoritebtni").classList.add("far")
     var element = document.getElementById("favoritebtn");
     element.classList.remove("blau");
   }
@@ -829,7 +1072,7 @@ function openrly(i)
 {
   document.getElementById("cancel2").setAttribute('onclick','cancel2('+i+')');
   document.getElementById("saverly2").setAttribute('onclick','allesSaven(1, '+i+')');
-  $('#bg-modal2').css("z-index", "9997");
+  $('#bg-modal2').css("z-index", "9998");
   $('#bg-modal2').animate({
     opacity: 1
 }, 'swing');
@@ -870,12 +1113,13 @@ setTimeout(() => {  $('#bg-modal').css("z-index", "0"); }, 350);
 
   $("#lel").attr('disabled', false);
 
-  document.getElementById("save").style.visibility = "visible";
+  //document.getElementById("save").style.visibility = "visible";
   indexsheesh = "";
   currentfav = "";
 
   document.getElementById("context-menuzwei").classList.remove("active");
     document.getElementById("context-menudrei").classList.remove("active");
+    document.getElementById("context-menuvier").classList.remove("active");
     var contextElementzwei = document.getElementById("txtpassword");
     contextElementzwei.classList.remove("bordercolor");
     var contextElementzwei = document.getElementById("txturl");
@@ -930,6 +1174,7 @@ function kurz(str){
   else{
     return str;
   }
+  //return str;
 }
 
 function kurzst(str){
@@ -945,7 +1190,7 @@ function kurzst(str){
 function add(){
   edit = false;
   
-  document.getElementById("save").style.visibility = "hidden";
+  //document.getElementById("save").style.visibility = "hidden";
   $("#lel").attr('disabled', true);
   document.getElementById("saverly").value = "🞤Add";
 
@@ -953,11 +1198,15 @@ function add(){
   {
     document.getElementById("favoritebtn").value = "☆";
     var element = document.getElementById("favoritebtn");
+    document.getElementById("favoritebtni").classList.add("far")
+    document.getElementById("favoritebtni").classList.remove("fas")
     element.classList.remove("blau");
   }
   else{
     document.getElementById("favoritebtn").value = "★";
     var element = document.getElementById("favoritebtn");
+    document.getElementById("favoritebtni").classList.remove("far")
+    document.getElementById("favoritebtni").classList.add("fas")
     element.classList.add("blau");
   }
 
@@ -970,6 +1219,8 @@ function add(){
     var elementzwei = document.getElementById("tools");
     elementzwei.classList.remove("hide");
     document.getElementById("txtpassword").type = "password";
+    document.getElementById("shsh").classList.remove("fa-eye-slash");
+    document.getElementById("shsh").classList.add("fa-eye");
     $("#strich").css("height","100px");
   }
   else{
@@ -988,6 +1239,11 @@ function negative(num)
   return -Math.abs(num);
 }
 
+function isValidURL(string) {
+  var res = string.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+  return (res !== null)
+};
+
 
 function save(){
   edit = false;
@@ -1000,33 +1256,41 @@ function save(){
   password = encrypt(password);
   var url = document.getElementById("txturl").value;
 
-
-  if(url != "")
+  /*if(url != "")
   {
-    var kekkk = url.charAt(0);
-    kekkk += url.charAt(1);
-    kekkk += url.charAt(2);
-    kekkk += url.charAt(3);
-    kekkk += url.charAt(4);
-    kekkk += url.charAt(5);
-    kekkk += url.charAt(6);
-    if(kekkk == "http://")
+    if(!isValidURL(url))
     {
-      url = url.substr(7, url.length);
-    }
+      console.log("URL ist falsch")
+      var kekkk = url.charAt(0);
+      kekkk += url.charAt(1);
+      kekkk += url.charAt(2);
+      kekkk += url.charAt(3);
+      kekkk += url.charAt(4);
+      kekkk += url.charAt(5);
+      kekkk += url.charAt(6);
+      if(kekkk == "http://")
+      {
+        url = url.substr(7, url.length);
+      }
+      var kekkk = url.charAt(0);
+      kekkk += url.charAt(1);
+      kekkk += url.charAt(2);
+      kekkk += url.charAt(3);
+      kekkk += url.charAt(4);
+      kekkk += url.charAt(5);
+      kekkk += url.charAt(6);
+      kekkk += url.charAt(7);
+      if(kekkk == "https://")
+      {
+        url = url.substr(8, url.length);
+      }
+      if(!isValidURL(url))
+      {
 
-    var kekkk = url.charAt(0);
-    kekkk += url.charAt(1);
-    kekkk += url.charAt(2);
-    kekkk += url.charAt(3);
-    kekkk += url.charAt(4);
-    kekkk += url.charAt(5);
-    kekkk += url.charAt(6);
-    kekkk += url.charAt(7);
-    if(kekkk == "https://")
-    {
-      url = url.substr(8, url.length);
-    }
+      }
+    }*/
+
+    /*
 
     var charpos = url.charAt(0);
     charpos += url.charAt(1);
@@ -1040,8 +1304,8 @@ function save(){
     if(end == "/")
     {
       url = url.substr(0, url.length-1);
-    }
-  }
+    }*/
+  //}
 
 
   //url = url.replace("http://","");
@@ -1066,18 +1330,20 @@ function save(){
   {
     if(indexsheesh == "")
     {
-      count += 1;
+      var count2 = pwlel.length;
       var row_id = random_id();
 
       const slt = document.getElementById('slt');
       if(slt.value == "Passwort"){
-        const idk = {"id":count.toString(), "fav":favinform, "titel":titel, "username":username, "password":password, "url":url, "note":note};
+        const idk = {"id":count2.toString(), "fav":favinform, "titel":titel, "username":username, "password":password, "url":url, "note":note};
         pwlel.push(idk);
+        console.log(idk)
       }
       else{
-        var sek = "-" + count.toString();
+        var sek = "-" + count2.toString();
         const idk = {"id":sek, "fav":favinform, "titel":titel, "username":username, "password":password, "url":url, "note":note};
         pwlel.push(idk);
+        console.log(idk)
       }
       cancel();
     }
@@ -1087,13 +1353,14 @@ function save(){
         {
           if(pwlel[i].id == indexsheesh)
           {
+            console.log(pwlel[i].id + " "+ indexsheesh)
             pwlel[i].titel = titel;
             pwlel[i].username = username;
             pwlel[i].password = password;
             pwlel[i].url = url;
             pwlel[i].note = note;
             pwlel[i].fav = favinform;
-            editfunc(indexsheesh, titel, username, password, url, note, favinform);
+            //editfunc(indexsheesh, titel, username, password, url, note, favinform);
             cancel();
             break;
           }
@@ -1118,7 +1385,7 @@ function save(){
 }
 
 function editfunc(id, titel, username, password, url, note, fav){
-  $('#passwort tbody').empty();
+  //$('#passwort tbody').empty();
   var pw;
   var len = pwlel.length;
   var i;
@@ -1139,9 +1406,9 @@ function editfunc(id, titel, username, password, url, note, fav){
 
           if(pwlel[i].id > 0)
           {
-            if(pwlel[i].id == indexsheesh)
+            if(pwlel[i].id == id)
             {
-              pw += pew(row_id, indexsheesh, titel, username, password, url, note, fav);
+              pw += pew(row_id, id, titel, username, password, url, note, fav);
             }
             else{
               pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
@@ -1165,9 +1432,9 @@ function editfunc(id, titel, username, password, url, note, fav){
 
           if(pwlel[i].id < 0)
           {
-            if(pwlel[i].id == indexsheesh)
+            if(pwlel[i].id == id)
             {
-              pw += keky(row_id, indexsheesh, titel, username, password, url, note, fav);
+              pw += keky(row_id, id, titel, username, password, url, note, fav);
             }
             else{
               pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
@@ -1175,7 +1442,7 @@ function editfunc(id, titel, username, password, url, note, fav){
           }
         }
   }
-  $('#passwort').append(pw);
+  //$('#passwort').append(pw);
 
 }
 
@@ -1282,9 +1549,92 @@ s.addEventListener('keypress', (e) => {
 
 });
 
+function erzeugeKachel(name)
+{
+
+  let i = document.createElement("i");
+  i.classList.add("fas");
+  i.classList.add("fa-lock");
+
+    let div = document.createElement("div");
+    div.classList.add("kacheldiv");
+    div.append(i);
+
+    let a = document.createElement("a");
+    a.classList.add("adiv");
+    a.append(document.createTextNode(name));
+
+    let divItem = document.createElement("div");
+    divItem.classList.add("kacheldiv2");
+    divItem.append(div);
+    divItem.append(a);
+
+    return divItem;
+}
+
+function getVersuch(){
+  try {
+    try {
+      var dropboxToken = store.get('dropboxtoken');
+    }
+    catch(err) {
+      $('#con').text('Dropbox Token is wrong!');
+    }
+    dropboxToken = decrypt(dropboxToken);
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = 'json';
+    xhr.upload.onprogress = function(evt) {
+      var percentComplete = parseInt(100.0 * evt.loaded / evt.total);
+      console.log(percentComplete);
+    };
+    
+    xhr.onload = function(e) {
+      if (xhr.status === 200) {
+        console.log("fertig gedownloaded")
+        console.log(e.currentTarget.response);
+        let div = document.createElement("div");
+        div.id = "containeritems";
+        for(var i = 0; i<e.currentTarget.response.entries.length;i++)
+        {
+          div.append(erzeugeKachel(e.currentTarget.response.entries[i].name.slice(0, -5)));
+        }
+        document.getElementById("blur").after(div);
+        document.getElementById("blur").classList.add("hide");
+
+      }
+      else {
+        var errorMessage = xhr.response || 'Unable to download file';
+        console.log(errorMessage);
+      }
+    };
+    
+    xhr.open('POST', 'https://api.dropboxapi.com/2/files/list_folder');
+    xhr.setRequestHeader('Authorization', 'Bearer ' + dropboxToken);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    
+    xhr.send(JSON.stringify({
+      "path": "/test",
+      "recursive": false,
+      "include_media_info": false,
+      "include_deleted": false,
+      "include_has_explicit_shared_members": false,
+      "include_mounted_folders": true,
+      "include_non_downloadable_files": true
+    }));
+  } catch (error) {
+    console.log(error);
+  }
+
+}
+
 function slt_change(){
   const slt = document.getElementById('slt');
   $('#passwort tbody').empty();
+  try {
+    document.getElementById("containeritems").remove();
+  } catch (error) {
+    
+  }
   count = 0;
   var pw;
   var len = pwlel.length;
@@ -1328,7 +1678,7 @@ function slt_change(){
         document.getElementById('txtpassword').style.borderBottomRightRadius = "0px";
         dropdown = 0;
   }
-  else{
+  else if(slt.value == "Key"){
     store.set('dropdown', 1);
     pw = anfangzwei();
     for(i=0; i < len; i++)
@@ -1365,6 +1715,9 @@ function slt_change(){
       document.getElementById('txtpassword').style.borderBottomRightRadius = "10px";
       dropdown = 1;
   }
+  else{
+    getVersuch();
+  }
   $('#passwort').append(pw);
 }
 
@@ -1374,8 +1727,8 @@ function ex(){
     openrly(2)
     return;
   }
-  if(sicherung == false)
-  {
+  //if(sicherung == false)
+  //{
     store.set("eventhome", false);
   store.set("eventanalytics", false);
   store.set("eventindex", false);
@@ -1400,16 +1753,16 @@ function ex(){
     store.set("delcache", true);
     store.set('download',false);
     store.set('down',false);
-    ipcRenderer.send('restart_app');
+    ipcRenderer.send('close_app');
   }
   else{
     window.close();
   }
-}
-else{
-  $('#con').text('Working.. Please wait');
-  setTimeout(() => {  $('#con').text(bot); }, 2000);
-}
+//}
+//else{
+  //$('#con').text('Working.. Please wait');
+  //setTimeout(() => {  $('#con').text(bot); }, 2000);
+//}
 }
 
 function mini(){
@@ -1579,7 +1932,9 @@ function favbtnclick(){
   {
     favbtn = 1;
     store.set('favbtn',1);
-    document.getElementById("favbutton").value = "★";
+    //document.getElementById("favbutton").value = "★";
+    document.getElementById("favbuttoni").classList.add("fas")
+    document.getElementById("favbuttoni").classList.remove("far")
     var element = document.getElementById("favbutton");
     element.classList.add("blau");
     slt_change();
@@ -1587,7 +1942,9 @@ function favbtnclick(){
   else{
     favbtn = 0;
     store.set('favbtn',0);
-    document.getElementById("favbutton").value = "☆";
+    //document.getElementById("favbutton").value = "☆";
+    document.getElementById("favbuttoni").classList.remove("fas")
+    document.getElementById("favbuttoni").classList.add("far")
     var element = document.getElementById("favbutton");
     element.classList.remove("blau");
     slt_change();
@@ -1601,10 +1958,14 @@ function favbtnclickzwei(){
     document.getElementById("favoritebtn").value = "★";
     var element = document.getElementById("favoritebtn");
     element.classList.add("blau");
+    document.getElementById("favoritebtni").classList.add("fas")
+    document.getElementById("favoritebtni").classList.remove("far")
   }
   else{
     document.getElementById("favoritebtn").value = "☆";
     var element = document.getElementById("favoritebtn");
+    document.getElementById("favoritebtni").classList.add("far")
+    document.getElementById("favoritebtni").classList.remove("fas")
     element.classList.remove("blau");
   }
 }
@@ -1623,7 +1984,7 @@ function canc(){
     openrly(0)
     return;
   }
-  if(sicherung == false){
+  //if(sicherung == false){
   cancel();
   store.set('pwtemp',pwtemp);
   var element = document.getElementById("containerid");
@@ -1643,6 +2004,10 @@ function canc(){
     parentWindow.removeAllListeners('blur');
     parentWindow.removeAllListeners('unmaximize');
     parentWindow.removeAllListeners('maximize');
+    /*ipcRenderer.removeListener('restart_app');
+    ipcRenderer.removeListener('exit');
+    ipcRenderer.removeListener('download');*/
+    ipcRenderer.removeAllListeners();
         
         const winSettings = remote.getCurrentWindow();
         winSettings.loadURL(url.format( {
@@ -1651,11 +2016,11 @@ function canc(){
           slashes: true
 
         }))
-      }
-      else{
-        $('#con').text('Working.. Please wait');
-        setTimeout(() => {  $('#con').text(bot); }, 2000);
-      }
+      //}
+      //else{
+        //$('#con').text('Working.. Please wait');
+        //setTimeout(() => {  $('#con').text(bot); }, 2000);
+      //}
 }
 
 function uploadFile(fil, i, wer){
@@ -1679,6 +2044,13 @@ xhr.upload.onprogress = function(evt) {
   var percentComplete = parseInt(100.0 * evt.loaded / evt.total);
   console.log(percentComplete);
 };
+
+xhr.onerror = function () {
+  sicherung = false;
+  var element = document.getElementById("hahaha");
+  element.classList.add("hide");
+  $('#con').text("Something went wrong..");
+}
  
 xhr.onload = function() {
   if (xhr.status === 200) {
@@ -1710,9 +2082,8 @@ xhr.onload = function() {
   }
   else {
     var errorMessage = xhr.response || 'Unable to upload file';
-    sicherung = false;
     console.log(errorMessage);
-
+    sicherung = false;
     var element = document.getElementById("hahaha");
     element.classList.add("hide");
     $('#con').text("Something went wrong..");
@@ -1814,7 +2185,7 @@ function mouseDown(text, id){
   var contextElement = document.getElementById("context-menu");
   //var y = event.clientY - 20;
   //var x = event.clientX - 170 - extr;
-  var y = window.scrollY + document.querySelector('#'+id+'').getBoundingClientRect().top -6// Y
+  var y = window.scrollY + document.querySelector('#'+id+'').getBoundingClientRect().top -7// Y
   var x = window.scrollX + document.querySelector('#'+id+'').getBoundingClientRect().left - 145 - extr// X
   var sh = 150 + extr;
   var kek = "";
@@ -1827,7 +2198,14 @@ function mouseDown(text, id){
 
 window.addEventListener("click",function(){
   document.getElementById("context-menu").classList.remove("active");
+  document.getElementById("context-menuvier").classList.remove("active");
 });
+
+function removeContextMenu()
+{
+  console.log("blur")
+  document.getElementById("context-menuvier").classList.remove("active");
+}
 
 function analy(){
   if(vorhersaven == true)
@@ -1835,7 +2213,7 @@ function analy(){
     openrly(1)
     return;
   }
-  if(sicherung == false){
+  //if(sicherung == false){
   store.set('pwtemp',pwtemp);
   store.set('list',pwlel);
   const { shell } = window.require('electron');
@@ -1852,17 +2230,21 @@ function analy(){
     parentWindow.removeAllListeners('blur');
     parentWindow.removeAllListeners('unmaximize');
     parentWindow.removeAllListeners('maximize');
+    ipcRenderer.removeAllListeners('restart_app');
+    ipcRenderer.removeAllListeners('exit');
+    ipcRenderer.removeAllListeners('download');
+    ipcRenderer.removeAllListeners('downloaded');
   winAnalytics.loadURL(url.format( {
     pathname: path.join(__dirname, 'analytics.html'),
     protocol: 'file',
     slashes: true
 
   }))
-  }
-  else{
-    $('#con').text('Working.. Please wait');
-    setTimeout(() => {  $('#con').text(bot); }, 2000);
-  }
+  //}
+  //else{
+    //$('#con').text('Working.. Please wait');
+    //setTimeout(() => {  $('#con').text(bot); }, 2000);
+  //}
 }
 
 function rez(){
@@ -1899,10 +2281,14 @@ function showpw(){
   var ch = document.getElementById("txtpassword").type;
   if(ch == "password")
   {
+    document.getElementById("shsh").classList.remove("fa-eye");
+    document.getElementById("shsh").classList.add("fa-eye-slash");
     document.getElementById("txtpassword").type = "text";
     $('#con').text("Hide Password");
   }
   else{
+    document.getElementById("shsh").classList.remove("fa-eye-slash");
+    document.getElementById("shsh").classList.add("fa-eye");
     document.getElementById("txtpassword").type = "password";
     $('#con').text("Show Password");
   }
@@ -1916,6 +2302,8 @@ function ontop(){
     document.getElementById("topkek").value = "●";
     remote.getCurrentWindow().setAlwaysOnTop(true, 'screen');
     var element = document.getElementById("topkek");
+    document.getElementById("topkeki").classList.add("fas");
+    document.getElementById("topkeki").classList.remove("far");
     element.classList.add("blau");
     store.set('ontop', true);
     ontopvar = true;
@@ -1924,6 +2312,8 @@ function ontop(){
     document.getElementById("topkek").value = "○";
     remote.getCurrentWindow().setAlwaysOnTop(false, 'screen');
     var element = document.getElementById("topkek");
+    document.getElementById("topkeki").classList.remove("fas");
+    document.getElementById("topkeki").classList.add("far");
     element.classList.remove("blau");
     store.set('ontop', false);
     ontopvar = false;
@@ -2276,26 +2666,25 @@ function closesec(){
   }
 }
 
-const powerMonitor = electron.remote.powerMonitor; 
-
-powerMonitor.on('lock-screen', () => { 
+ipcRenderer.on('lock-Screen', (event, arg) => {
   if(lockvar == true){
     lock();
   }
-}); 
+});
 
 const { remote } = require('electron');
 let parentWindow = remote.getCurrentWindow();
 
 function once(){
   const bounds = parentWindow.getSize();
-  document.getElementById("scrollbar-custom").style.height = bounds[1]-150 +"px";
+  document.getElementById("scrollbar-custom").style.height = bounds[1]-155 +"px";
 }
 once();
 
 parentWindow.on('resize', function() {
   const bounds = parentWindow.getSize();
-  document.getElementById("scrollbar-custom").style.height = bounds[1]-150 +"px";
+  document.getElementById("scrollbar-custom").style.height = bounds[1]-155 +"px";
+  //document.getElementById("passwort").style.width = bounds[1]-150 +"px";
 });
 
 
@@ -2307,6 +2696,9 @@ ipcRenderer.on('downloaded', (event, arg) => {
   store.set('down',true);
 });
 
+ipcRenderer.on('exit', (event, arg) => {
+  ex();
+});
 
 
 

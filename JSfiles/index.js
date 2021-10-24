@@ -43,7 +43,10 @@ const store = new Store({
     eventanalytics:false,
     download:false,
     down:false,
-    delcache:false
+    delcache:false,
+    copyrightclick:true,
+    copystayontop:true,
+    copyseconds:10
   }
 });
 
@@ -105,11 +108,11 @@ var password = "";
 const weiterbtn = document.getElementById('weiter');
 const text = document.getElementById('pw');
 
-if(store.get("eventindex") == false)
+/*if(store.get("eventindex") == false)
 {
   ipcRenderer.send('eventindex');
   store.set("eventindex", true);
-}
+}*/
 
 document.getElementById("pw").addEventListener('keydown', (event)=>{
   if(event.getModifierState("CapsLock"))
@@ -144,7 +147,7 @@ document.getElementById("pwneuzwei").addEventListener('keydown', (event)=>{
     }
 })
 
-const contextMenu = require('electron-context-menu');
+/*const contextMenu = require('electron-context-menu');
 
             contextMenu({
                 prepend: (params, browserWindow) => [
@@ -154,7 +157,7 @@ const contextMenu = require('electron-context-menu');
                     },
                 ],
                 showInspectElement:false
-            });
+            });*/
 
 $(document).ready(function(){
 
@@ -196,9 +199,10 @@ $(document).ready(function(){
 $('#rp').hover(function(){document.getElementById("rp").style.cursor = "pointer";},
       function() {document.getElementById("rp").style.cursor = "initial";});
 
-weiterbtn.addEventListener('click', (e) => {
-    input();
-});
+    const weiterbtnClick = (e) => {
+        input();
+    }
+weiterbtn.addEventListener('click', weiterbtnClick);
 
 text.addEventListener('keypress', (e) => {
 
@@ -222,88 +226,131 @@ document.getElementById('pwneuzwei').addEventListener('keypress', (e) => {
 
 function input(){
   pwtemp = document.getElementById("pw").value;
+  if(document.getElementById("pw").value == "")
+  {
+    renduhaha();
+    return;
+  }
   try {
     var le = decrypt(store.get('pw'));
   }
   catch(err) {
-    document.getElementById("pw").value = "";
-
-    var element = document.getElementById("pw");
-    element.classList.remove("anfanglog");
-    element.classList.add("rotborder2");
-    setTimeout(() => { 
-    element.classList.remove("rotborder2");
-    element.classList.add("anfanglog");
-    }, 1000);
-    console.log("LELE");
+    renduhaha();
+    return;
   }
 
-if(pwtemp == le)
-{
-  var tokenle = decrypt(store.get('dropboxtoken'));
-  if(tokenle != 0)
+  if(pwtemp == le)
   {
-  store.set('pwtemp', pwtemp);
-  winHome = new BrowserWindow({
-    width: widthvar,
-    height: heightvar,
-    minWidth:700,
-    minHeight:500,
-    show: false,
-    x: xpos,
-    y: ypos,
-    icon: 'pictures/icon.ico',
-    backgroundColor: col,
-    contextIsolation: true,
-    frame: false,
-    webPreferences: {
-      nodeIntegration: true,
-      preload: path.join(__dirname, 'JSfiles/preload.js')
+    var tokenle = decrypt(store.get('dropboxtoken'));
+    if(tokenle != 0)
+    {
+      store.set('pwtemp', pwtemp);
+      winHome = new BrowserWindow({
+        width: widthvar,
+        height: heightvar,
+        minWidth:700,
+        minHeight:500,
+        show: false,
+        x: xpos,
+        y: ypos,
+        icon: 'pictures/icon.ico',
+        backgroundColor: col,
+        contextIsolation: true,
+        frame: false,
+        webPreferences: {
+          nodeIntegration: true,
+          webViewTag: true,
+          preload: path.join(__dirname, 'JSfiles/preload.js')
+        }
+        
+      })
+
+      require('electron').remote.getCurrentWindow().removeListener('blur', focusListener);
+      require('electron').remote.getCurrentWindow().removeListener('focus', blurListener);
+      ipcRenderer.removeAllListeners("download");
+      ipcRenderer.removeAllListeners("downloaded");
+      ipcRenderer.removeAllListeners("exit");
+
+      weiterbtn.removeEventListener('click', weiterbtnClick);
+      document.getElementById('weiterneu').removeAttribute("onclick");
+      document.getElementById('okaydrop').removeAttribute("onclick");
+      document.getElementById('tokenuse').removeAttribute("onclick");
+      document.getElementById('btncloud').removeAttribute("onclick");
+      document.getElementById('impid').removeAttribute("onclick");
+      document.getElementById('rp').removeAttribute("onclick");
+      document.getElementById('min-btn').removeAttribute("onclick");
+      document.getElementById('close-btn').removeAttribute("onclick");
+      document.getElementById('bodyid').removeAttribute("onerror");
+
+      winHome.webContents.openDevTools()
+
+      const listeners = (function listAllEventListeners() {
+        let elements = [];
+        const allElements = document.querySelectorAll('*');
+        const types = [];
+        for (let ev in window) {
+          if (/^on/.test(ev)) types[types.length] = ev;
+        }
+      
+        for (let i = 0; i < allElements.length; i++) {
+          const currentElement = allElements[i];
+          for (let j = 0; j < types.length; j++) {
+            if (typeof currentElement[types[j]] === 'function') {
+              elements.push({
+                "node": currentElement,
+                "listeners": [ {
+                  "type": types[j],
+                  "func": currentElement[types[j]].toString(),
+                }]
+              });
+            }
+          }
+        }
+      
+        return elements.filter(element => element.listeners.length)
+      })();
+      
+      console.log(listeners);
+
+
+      winHome.loadURL(url.format( {
+        pathname: path.join(__dirname, 'home.html'),
+        protocol: 'file',
+        slashes: true
+
+      }))
+
+      winHome.once('ready-to-show', () => {
+        winHome.show()
+        window.close()
+        return;
+      })
     }
-    
-  })
-
-  winHome.loadURL(url.format( {
-    pathname: path.join(__dirname, 'home.html'),
-    protocol: 'file',
-    slashes: true
-
-  }))
-
-  winHome.once('ready-to-show', () => {
-    winHome.show()
-    window.close()
-
-  })
-
-  //winHome.webContents.openDevTools()
+    else if(pwtemp == ""){
+      renduhaha();
+    }
+    else{
+      document.getElementById("eins").classList.add("hide");
+      document.getElementById("drei").classList.remove("hide");
+      document.getElementById("pw").value = "";
+    }
 
   }
-  else if(pwtemp == ""){
-    renduhaha();
+  else
+  {
+      renduhaha();
   }
-  else{
-    document.getElementById("eins").classList.add("hide");
-    document.getElementById("drei").classList.remove("hide");
-    document.getElementById("pw").value = "";
-  }
-
-}
-else
-{
-    renduhaha();
-}
 }
 
 function renduhaha(){
   document.getElementById("pw").value = "";
 
-  var element = document.getElementById("pw");
+  var element = document.getElementById("pwdivid");
   element.classList.add("rotborder2");
-  element.classList.remove("anfanglog");
+  //element.classList.remove("anfanglogDiv");
   setTimeout(() => { 
   element.classList.remove("rotborder2");
-  element.classList.add("anfanglog");
+  //element.classList.add("anfanglogDiv");
   }, 1000);
   console.log("LELE");
 }
@@ -413,6 +460,7 @@ function okaysk(){
     frame: false,
     webPreferences: {
       nodeIntegration: true,
+      webViewTag: true,
       preload: path.join(__dirname, 'JSfiles/preload.js')
     }
     
@@ -444,15 +492,19 @@ function okaysk(){
 
 }
 
-require('electron').remote.getCurrentWindow().on('focus', () => {
+const focusListener = () => {
   var contextElement = document.getElementById("sklel");
   contextElement.classList.remove("navbaroffle");
-})
+}
 
-require('electron').remote.getCurrentWindow().on('blur', () => {
+require('electron').remote.getCurrentWindow().on('focus', focusListener)
+
+const blurListener = () => {
   var contextElement = document.getElementById("sklel");
   contextElement.classList.add("navbaroffle");
-})
+}
+
+require('electron').remote.getCurrentWindow().on('blur', blurListener)
 
 let winCloud;
 
@@ -463,19 +515,20 @@ function erstmal(){
   store.set('indexclose', true);
   
   let winSettings = new BrowserWindow({
-    //width: 1000,
-    //height: 630,
-    width: 300,
-    height: 350,
+    width: 1000,
+    height: 630,
+    //width: 300,
+    //height: 350,
     minWidth: 300,
     minHeight: 350,
-    alwaysOnTop: true,
+    //alwaysOnTop: true,
     frame: false,
     icon: 'pictures/icon.ico',
     contextIsolation: true,
     
     webPreferences: {
       nodeIntegration: true,
+      webViewTag: true,
       preload: path.join(__dirname, 'JSfiles/preload.js')
     }
   }) 
@@ -505,7 +558,7 @@ function closefunc()
     store.set("delcache", true);
     store.set('download',false);
     store.set('down',false);
-    ipcRenderer.send('restart_app');
+    ipcRenderer.send('close_app');
   }
   else{
     window.close();
@@ -553,15 +606,30 @@ function imp()
   window.location.reload();
 }
 
-ipcRenderer.on('download', (event, arg) => {
+const IPCdownload = (event, arg) => {
   store.set('download',true);
-});
+}
+ipcRenderer.on('download', IPCdownload);
 
-ipcRenderer.on('downloaded', (event, arg) => {
+const IPCdownloaded = (event, arg) => {
   store.set('down',true);
+}
+ipcRenderer.on('downloaded', IPCdownloaded);
+
+ipcRenderer.on('exit', (event, arg) => {
+  closefunc();
 });
 
+function showfunc()
+{
+  document.getElementById("pw").type = "text";
+}
 
+function hidefunc()
+{
+  document.getElementById("pw").type = "password";
+  document.getElementById("pw").focus();
+}
 
   
   

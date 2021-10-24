@@ -43,7 +43,10 @@ const store = new Store({
     eventanalytics:false,
     download:false,
     down:false,
-    delcache:false
+    delcache:false,
+    copyrightclick:true,
+    copystayontop:true,
+    copyseconds:10
   }
 });
 
@@ -95,12 +98,14 @@ let datzero= [];
         if(ontopvar == true){
           let remote = require('electron').remote;
           document.getElementById("topkek").value = "●";
+          document.getElementById("topkeki").classList.add("fas");
+          document.getElementById("topkeki").classList.remove("far");
           remote.getCurrentWindow().setAlwaysOnTop(true, 'screen');
           var element = document.getElementById("topkek");
           element.classList.add("blau");
         }
       
-        app.on('will-quit', () => {
+        ipcRenderer.on('will-Quit', (event, arg) => {
           //globalShortcut.unregister('CommandOrControl+X')
           globalShortcut.unregisterAll()
 
@@ -120,11 +125,11 @@ let datzero= [];
           }
         })
 
-        if(store.get("eventanalytics") == false)
+        /*if(store.get("eventanalytics") == false)
         {
           ipcRenderer.send('eventanalytics');
           store.set("eventanalytics", true);
-        }
+        }*/
 
     function anf(){
       var pw = anfang();
@@ -250,16 +255,16 @@ function pew(row_id, id, titel, username, password, url, note, count){
       pw += '<td><div class="labelzwei" edit_type="click" col_name="tit">' + decrypt(titel) + '</div></td>';
       pw += '<td><div class="labelzwei" edit_type="click" col_name="user">' + decrypt(username) + '</div></td>';
       pw += '<td><div class="labelzwei" edit_type="click" col_name="psw">' + stern(decrypt(password)) + '</div></td>'
-      pw += '<td><input type="button" class="buttonzwei effectbuttonanders" id="auge' + id + '" onfocusout="mouseUp()" onmousedown="mouseDown(\'' + decrypt(password) + '\', \'auge' + id + '\')" onmouseup="mouseUp()" value="👁" />' +'</td>';
+      pw += '<td><button type="button" class="buttonzwei effectbuttonanders" id="auge' + id + '" onfocusout="mouseUp()" onmousedown="mouseDown(\'' + decrypt(password) + '\', \'auge' + id + '\')" onmouseup="mouseUp()" value="👁"><i class="far fa-eye"></i></button>' +'</td>';
       var ch = pwcheckAnfang(decrypt(password));
       if(ch < 10){
-        pw += '<td><div class="labelzwei" style="color:rgba(234, 0, 0, 1);" edit_type="click" col_name="kak">●</div></td>';
+        pw += '<td><div class="labelzwei" style="color:rgba(234, 0, 0, 1);" edit_type="click" col_name="kak"><i class="fas fa-circle"></i></div></td>';
       }
       if(ch >= 10 && ch < 13){
-        pw += '<td><div class="labelzwei" style="color:rgba(255, 238, 0, 1);" edit_type="click" col_name="kak">●</div></td>';
+        pw += '<td><div class="labelzwei" style="color:rgba(255, 238, 0, 1);" edit_type="click" col_name="kak"><i class="fas fa-circle"></i></div></td>';
       }
       if(ch >= 13){
-        pw += '<td><div class="labelzwei" style="color:rgba(71, 218, 71, 1);" edit_type="click" col_name="kak">✔</div></td>';
+        pw += '<td><div class="labelzwei" style="color:rgba(71, 218, 71, 1);" edit_type="click" col_name="kak"><i class="fas fa-check-circle"></i></div></td>';
       }
       
       pw += '</tr>';
@@ -314,7 +319,7 @@ function ex(){
     store.set("delcache", true);
     store.set('download',false);
     store.set('down',false);
-    ipcRenderer.send('restart_app');
+    ipcRenderer.send('close_app');
   }
   else{
     window.close();
@@ -392,7 +397,7 @@ myChart = new Chart(ctx, {
             yAxes: [{
               scaleLabel: {
                 display: true,
-                labelString: 'bad                                                              good'
+                labelString: 'weak                                                              strong'
               },
                 ticks: {
                     beginAtZero: false,
@@ -415,7 +420,8 @@ function runter(index)
   index++;
   var elmnt = document.getElementById('tr'+index+'');
   elmnt.scrollIntoView({
-    behavior: 'smooth'
+    behavior: 'smooth',
+    block: 'center'
   });
   //elmnt.addC
   elmnt.classList.add("trshclick");
@@ -680,6 +686,11 @@ function canc(){
     parentWindow.removeAllListeners('blur');
     parentWindow.removeAllListeners('unmaximize');
     parentWindow.removeAllListeners('maximize');
+    /*ipcRenderer.removeAllListeners('restart_app');
+    ipcRenderer.removeAllListeners('exit');
+    ipcRenderer.removeAllListeners('download');
+    ipcRenderer.removeAllListeners('downloaded');*/
+    ipcRenderer.removeAllListeners();
   winAnalytics.loadURL(url.format( {
     pathname: path.join(__dirname, 'home.html'),
     protocol: 'file',
@@ -760,7 +771,7 @@ function mouseDown(text, id){
   document.getElementById('cont').innerHTML = text;
   event.preventDefault();
   var contextElement = document.getElementById("context-menu");
-  var y = window.scrollY + document.querySelector('#'+id+'').getBoundingClientRect().top -6// Y
+  var y = window.scrollY + document.querySelector('#'+id+'').getBoundingClientRect().top -7// Y
   var x = window.scrollX + document.querySelector('#'+id+'').getBoundingClientRect().left - 145 - extr// X
   var sh = 150 + extr;
   var kek = "";
@@ -783,15 +794,21 @@ function ontop(){
     document.getElementById("topkek").value = "●";
     remote.getCurrentWindow().setAlwaysOnTop(true, 'screen');
     var element = document.getElementById("topkek");
+    document.getElementById("topkeki").classList.add("fas");
+    document.getElementById("topkeki").classList.remove("far");
     element.classList.add("blau");
     store.set('ontop', true);
+    ontopvar = true;
   }
   else{
     document.getElementById("topkek").value = "○";
     remote.getCurrentWindow().setAlwaysOnTop(false, 'screen');
     var element = document.getElementById("topkek");
+    document.getElementById("topkeki").classList.remove("fas");
+    document.getElementById("topkeki").classList.add("far");
     element.classList.remove("blau");
     store.set('ontop', false);
+    ontopvar = false;
   }
 
 }
@@ -881,13 +898,11 @@ require('electron').remote.getCurrentWindow().on('blur', () => {
   contextElement.classList.add("navbaroffle");
 })
 
-const powerMonitor = electron.remote.powerMonitor; 
-
-powerMonitor.on('lock-screen', () => { 
+ipcRenderer.on('lock-Screen', (event, arg) => {
   if(lockvar == true){
     lock();
   }
-}); 
+});
 
 const { remote } = require('electron');
   let parentWindow = remote.getCurrentWindow();
@@ -909,4 +924,8 @@ const { remote } = require('electron');
 
   ipcRenderer.on('downloaded', (event, arg) => {
     store.set('down',true);
+  });
+
+  ipcRenderer.on('exit', (event, arg) => {
+    ex();
   });
