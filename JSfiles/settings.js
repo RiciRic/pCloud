@@ -1987,7 +1987,6 @@ function decryptTest() {
       a.download = filename;
       a.click();
       window.URL.revokeObjectURL(url);
-    
 }
 
 function showContextMenuText()

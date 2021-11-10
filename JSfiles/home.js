@@ -532,7 +532,7 @@ function pew(row_id, id, titel, username, password, url, note, fav){
       else{
         pw += '<td style="user-select: none;"><img style="max-width:16px; max-height:16px;" src="https://www.google.com/s2/favicons?domain=' + ur + '"></td>';
       }
-      pw += '<td><div class="labelzwei" oncontextmenu="contextMenubar(\''+"table-row"+row_id+'\', \''+id+'\')" edit_type="click" col_name="tit">' + decrypt(titel) + '</div></td>';
+      pw += '<td><div class="labelzwei" onclick="midbtn(this)" oncontextmenu="contextMenubar(\''+"table-row"+row_id+'\', \''+id+'\')" edit_type="click" col_name="tit">' + decrypt(titel) + '</div></td>';
       pw += '<td><div class="labelzwei" edit_type="click" col_name="user" oncontextmenu="copy(\'' + us + '\')">' + kurz(us) + '</div></td>';
       pw += '<td><button class="buttonzwei effectbuttonanders nada" id="username' + id + '" style="outline: 0;" onmouseover="copyus()" onmouseout="leave()" onclick="copy(\'' + us + '\')" value="🗐" /><i class="fas fa-copy"></i></button>' +'</td>';
       pw += '<td><div class="labelzwei" edit_type="click" col_name="psw" oncontextmenu="copy(\'' + dec + '\')">' + kurzst(stern(dec)) + '</div></td>'
@@ -1112,6 +1112,7 @@ setTimeout(() => {  $('#bg-modal').css("z-index", "0"); }, 350);
 
   document.getElementById("context-menuzwei").classList.remove("active");
     document.getElementById("context-menudrei").classList.remove("active");
+    document.getElementById("context-menuvier").classList.remove("active");
     var contextElementzwei = document.getElementById("txtpassword");
     contextElementzwei.classList.remove("bordercolor");
     var contextElementzwei = document.getElementById("txturl");

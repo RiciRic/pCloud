@@ -147,7 +147,7 @@ document.getElementById("pwneuzwei").addEventListener('keydown', (event)=>{
     }
 })
 
-const contextMenu = require('electron-context-menu');
+/*const contextMenu = require('electron-context-menu');
 
             contextMenu({
                 prepend: (params, browserWindow) => [
@@ -157,7 +157,7 @@ const contextMenu = require('electron-context-menu');
                     },
                 ],
                 showInspectElement:false
-            });
+            });*/
 
 $(document).ready(function(){
 
@@ -282,7 +282,7 @@ function input(){
       document.getElementById('close-btn').removeAttribute("onclick");
       document.getElementById('bodyid').removeAttribute("onerror");
 
-      winHome.webContents.openDevTools()
+      //winHome.webContents.openDevTools()
 
       const listeners = (function listAllEventListeners() {
         let elements = [];
