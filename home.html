@@ -9,7 +9,8 @@
     <!--<link rel="stylesheet" type="text/css" href="css/master.css">!-->
     <link rel="stylesheet" type="text/css" href="css/master.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" type="text/css" href="css/table.css">
+
+    <link href="css/all.min.css" type="text/css" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
 
@@ -33,8 +34,25 @@
   <body>
     <header class="header"></header>
     <div class="centerdivzwei" onclick=''>
-    <center>
-      <div id="context-menuzwei">
+
+      <div id="context-menuText" tabindex="0" onblur="yee()">
+        <div class="item centered">
+          <i class="item" id="copyItem"><a style="width: 100%;" id="copyItema"> Copy</a></i>
+          <i class="item" id="pasteItem"><a style="width: 100%;" id="pasteItema"> Paste</a></i>
+          <!--<i class="item"><a>Yee</a></i>-->
+        </div>
+      </div>
+
+      <div id="context-menuvier" tabindex="0" onblur="removeContextMenu()">
+        <div class="item centered">
+          <i class="item" id="overlay2"><a style="width: 100%;" id="overlay">Overlay</a></i>
+          <i class="item" id="KeyPassword2"><a style="width: 100%;" id="KeyPassword">Change to</a></i>
+          <!--<i class="item"><a>Yee</a></i>-->
+            
+        </div>
+      </div>
+    
+      <div id="context-menuzwei" class="centered">
         <div class="item">
             <form id="passwordGeneratorForm" class="form">
             <div class="character-amount-container">
@@ -63,14 +81,14 @@
             </form>
           </div>
       </div>
-    </center>
+    
 
-    <center>
+    
       <div id="context-menudrei">
-        <div class="item">
+        <div class="item centered">
 
           <div id="lel2" style="outline: 0; float: left; width: 63px;" class="select-wrapper">
-            <select id="sltzwei" style="outline: 0; -moz-border-radius: 6px 0px 0px 6px; border-radius: 6px 0px 0px 6px;" onchange="urlwifi()">
+            <select id="sltzwei" style="outline: 0; -moz-border-radius: 6px 0px 0px 6px; border-radius: 50px 0px 0px 50px;" onchange="urlwifi()">
               <option style="outline: 0;" value="URL">URL</option>
               <option style="outline: 0;" value="Wifi">Wifi</option>
             </select>
@@ -90,15 +108,15 @@
             
           </div>
       </div>
-    </center>
+    
   </div>
 
   <div id="bg-modal2" onclick="cancelmodal()">
     <div id="modal-contents2" onmousedown="setcanc()">
-      <label style="font-size:15px; margin-top:30px; font-weight: 500; color:#e6e6e6" class='labelzwei'>Do you want to save the changes?</label>
+      <label style="font-size:15px; margin-top:30px; font-weight: 500; color:#e6e6e6;" class='labelzwei'>Do you want to save the changes?</label>
       <div style="position:absolute; margin-top:52px;">
-        <input type="button" style="float: left; margin-right:119px;" class="button effectbutton" id="cancel2" value="Don't Save" onclick="cancel()">
-        <input type="button" style="float:right;" class="effectbuttonle" id="saverly2" value="🖫Save" onclick="">
+        <input type="button" style="float: left; margin-right:100px;" class="button effectbutton" id="cancel2" value="Don't Save" onclick="cancel()">
+        <button type="button" style="float:right;" class="effectbuttonle" id="saverly2" value="🖫Save" onclick=""><i class="fas fa-save"></i> Save</button>
       </div>
   
     </div>
@@ -108,24 +126,24 @@
       <div id="modal-contents" onmousedown="setcanc()">
 
         <div style="float: left;">
-      <input class="loginzwei effectkreis" type="text" placeholder="Titel" value="" id="txttitel"/></br>
-      <div><input class="loginzwei effectkreislel" type="text" placeholder="Username/E-Mail" value="" id="txtusername"/></div>
-      <input class="loginzwei effectkreisanders" type="password" style="width: 164px; border-radius: 0px; -moz-border-radius: 10px 0px 0px 10px; border-radius: 10px 0px 0px 10px;" placeholder="Password" value="" id="txtpassword"/><input type="button" style="padding: 4px 10px 6px 10px; margin-top: 0px; border: 1px solid rgba(83, 83, 83, 0.66); height: 16px; margin-right: 2px; border-radius: 0px; -moz-border-radius: 0px 10px 10px 0px; border-radius: 0px 10px 10px 0px;" class="buttonzwei effectbutton" id="sh" onclick="showpw()" value="👁"></br>
+      <input class="loginzwei effectkreis" type="text" placeholder="Titel" value="" id="txttitel"/><br/>
+      <div><input class="loginzwei effectkreis" type="text" placeholder="Username/E-Mail" value="" id="txtusername"/></div>
+      <div class="loginzweiDiv effectkreis"><input type="password" placeholder="Password" class="loginzweiInnen" value="" id="txtpassword"/><button type="button" style="float:right; margin:0px; top:1px" class="buttonzwei effectbuttonanders colorLikePlaceholder" id="sh" onclick="showpw()" value="👁"><i id="shsh" class="far fa-eye"></i></button></div><br/>
       <input class="loginzwei effectkreis" type="text" placeholder="URL" value="" id="txturl"/>
-    </br>
+    <br/>
     </div>
     <div id="strich" style="margin-top: 13px; margin-left: 6px; float:left; width:2px; height: 100px; background-color:rgb(94, 94, 94);"></div>
     <div style="float: right;">
-      <textarea class="notelel effectkreis" style="resize: none;" placeholder="Note" id="txtnote"></textarea></br>
+      <textarea class="notelel effectkreis" style="resize: none;" placeholder="Note" id="txtnote"></textarea><br/>
       <div id="tools">
-        <input type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); height: 16px; margin-right: 4px;" class="buttonzwei effectbutton" id="favoritebtn" onclick="favbtnclickzwei()" value="☆">
-        <input type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); height: 16px; margin-right: 4px;" class="buttonzwei effectbutton" id="gen" onclick="showpwgen()" value="Generate">
-        <input type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); height: 16px;" class="buttonzwei effectbutton" id="qr" onclick="showqr()" value="▣">
+        <button type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); height: 16px; margin-right: 4px;" class="buttonzwei effectbutton" id="favoritebtn" onclick="favbtnclickzwei()" value="☆"><i id="favoritebtni" class="far fa-star"></i></button>
+        <button type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); height: 16px; margin-right: 4px;" class="buttonzwei effectbutton" id="gen" onclick="showpwgen()" value="Generate"><i class="fas fa-key"></i></button>
+        <button type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); height: 16px;" class="buttonzwei effectbutton" id="qr" onclick="showqr()" value="▣"><i class="fas fa-qrcode"></i></button>
       </div>
-    </br>
+    <br/>
     </div>
       <div style="position:absolute; margin-top:132px;">
-        <input type="button" style="float: left; margin-right:292px;" class="button effectbutton" id="cancel" value="‹ Cancel" onclick="cancel()">
+        <button type="button" style="float: left; margin-right:264px;" class="button effectbutton" id="cancel" value="‹ Cancel" onclick="cancel()"><i class="fas fa-chevron-left"></i> Cancel</button>
         <input type="button" style="float: right;" class="effectbuttonle" id="saverly" value="🞤Add" onclick="save()">
       </div>
     
@@ -148,48 +166,51 @@
       <input type="button" class="button effectnavbutton navlabel exit leexit" id="close-btn" value="✖" onclick="ex()">
       <input type="button" class="button effectnavbutton navlabel navbtn" id="max-btn" value="🗖" onclick="maxi()">
       <input type="button" class="button effectnavbutton navlabel navbtn" id="min-btn" value="🗕" onclick="mini()">
-      <input type="button" style="padding-top:4px; padding-bottom:3px; float: right; color: rgb(160, 160, 160); -webkit-app-region: no-drag;" class="button effectnavsettbutton navbtnzw" id="btnEd" value="⚙ Settings" onclick="canc()">
+      <div id="strich2" style="margin-top: 6px; float:right; width:1px; height: 20px; background-color:rgb(94, 94, 94); margin-right:4px; margin-left:4px;"></div>
+      <button style="padding-top:5px; padding-bottom:2px; float: right; color: rgb(160, 160, 160); -webkit-app-region: no-drag; align-items: center;" class="button effectnavsettbutton navbtnzw" id="btnEd" onclick="canc()"><i class="fas fa-cog"></i></button>
     
     </div>
-  </br>
-</br>
+  <br/>
+<br/>
 
 <div onclick="closesec()" class="svglel hide" style="z-index: 99999;" id="sec">
-  <center>
-    <span id="secspan" class='labeldrei'>─────────▄──────────────▄</span></br><span class='labeldrei'>────────▌▒█───────────▄▀▒▌</span></br><span class='labeldrei'>────────▌▒▒▀▄───────▄▀▒▒▒▐</span></br><span class='labeldrei'>───────▐▄▀▒▒▀▀▀▀▄▄▄▀▒▒▒▒▒▐</span></br><span class='labeldrei'>─────▄▄▀▒▒▒▒▒▒▒▒▒▒▒█▒▒▄█▒▐</span></br><span class='labeldrei'>───▄▀▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▀██▀▒▌</span></br><span class='labeldrei'>──▐▒▒▒▄▄▄▒▒▒▒▒▒▒▒▒▒▒▒▒▀▄▒▒▌</span></br><span class='labeldrei'>──▌▒▒▐▄█▀▒▒▒▒▄▀█▄▒▒▒▒▒▒▒█▒▐</span></br><span class='labeldrei'>─▐▒▒▒▒▒▒▒▒▒▒▒▌██▀▒▒▒▒▒▒▒▒▀▄▌</span></br><span class='labeldrei'>─▌▒▀▄██▄▒▒▒▒▒▒▒▒▒▒▒░░░░▒▒▒▒▌</span></br><span class='labeldrei'>─▌▀▐▄█▄█▌▄▒▀▒▒▒▒▒▒░░░░░░▒▒▒▐</span></br><span class='labeldrei'>▐▒▀▐▀▐▀▒▒▄▄▒▄▒▒▒▒▒░░░░░░▒▒▒▒▌</span></br><span class='labeldrei'>▐▒▒▒▀▀▄▄▒▒▒▄▒▒▒▒▒▒░░░░░░▒▒▒▐</span></br><span class='labeldrei'>─▌▒▒▒▒▒▒▀▀▀▒▒▒▒▒▒▒▒░░░░▒▒▒▒▌</span></br><span class='labeldrei'>─▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▐</span></br><span class='labeldrei'>──▀▄▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▄▒▒▒▒▌</span></br><span class='labeldrei'>────▀▄▒▒▒▒▒▒▒▒▒▒▄▄▄▀▒▒▒▒▄▀</span></br><span class='labeldrei'>───▐▀▒▀▄▄▄▄▄▄▀▀▀▒▒▒▒▒▄▄▀</span></br><span class='labeldrei'>──▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▀▀</span></br><span class='labelzwei'>Hello ಠ_ಠ</span>
-</center>
+  <div>
+  <div class="centered">
+    <span id="secspan" class='labeldrei newLine'>─────────▄──────────────▄</span><br/><span class='labeldrei'>────────▌▒█───────────▄▀▒▌</span><br/><span class='labeldrei'>────────▌▒▒▀▄───────▄▀▒▒▒▐</span><br/><span class='labeldrei'>───────▐▄▀▒▒▀▀▀▀▄▄▄▀▒▒▒▒▒▐</span><br/><span class='labeldrei'>─────▄▄▀▒▒▒▒▒▒▒▒▒▒▒█▒▒▄█▒▐</span><br/><span class='labeldrei'>───▄▀▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▀██▀▒▌</span><br/><span class='labeldrei'>──▐▒▒▒▄▄▄▒▒▒▒▒▒▒▒▒▒▒▒▒▀▄▒▒▌</span><br/><span class='labeldrei'>──▌▒▒▐▄█▀▒▒▒▒▄▀█▄▒▒▒▒▒▒▒█▒▐</span><br/><span class='labeldrei'>─▐▒▒▒▒▒▒▒▒▒▒▒▌██▀▒▒▒▒▒▒▒▒▀▄▌</span><br/><span class='labeldrei'>─▌▒▀▄██▄▒▒▒▒▒▒▒▒▒▒▒░░░░▒▒▒▒▌</span><br/><span class='labeldrei'>─▌▀▐▄█▄█▌▄▒▀▒▒▒▒▒▒░░░░░░▒▒▒▐</span><br/><span class='labeldrei'>▐▒▀▐▀▐▀▒▒▄▄▒▄▒▒▒▒▒░░░░░░▒▒▒▒▌</span><br/><span class='labeldrei'>▐▒▒▒▀▀▄▄▒▒▒▄▒▒▒▒▒▒░░░░░░▒▒▒▐</span><br/><span class='labeldrei'>─▌▒▒▒▒▒▒▀▀▀▒▒▒▒▒▒▒▒░░░░▒▒▒▒▌</span><br/><span class='labeldrei'>─▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▐</span><br/><span class='labeldrei'>──▀▄▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▄▒▒▒▒▌</span><br/><span class='labeldrei'>────▀▄▒▒▒▒▒▒▒▒▒▒▄▄▄▀▒▒▒▒▄▀</span><br/><span class='labeldrei'>───▐▀▒▀▄▄▄▄▄▄▀▀▀▒▒▒▒▒▄▄▀</span><br/><span class='labeldrei'>──▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▀▀</span><br/><span class='labelzwei'>Hello ಠ_ಠ</span>
+  </div>
+</div>
+</div>
+
+<div class="svglel" id="svglelid" style="width: 100%; height: 100%; z-index: 99;">
+  <div class="centered">
+  <div id="haha" class="loading-spinner"></div>
+  <button type="button" class="button effectbutton hide" id="resetzwei" value="↺Retry" onclick="relo()"><i class="fas fa-undo-alt"></i> Retry</button>
+</div>
 </div>
 
   <div class= "container" id="containerid">
-
-
     
       <div class='body '></div>
       
-    </br>
+    <br/>
     
       
-      <input type="button" style="outline-color: #1e1e1e;" class="button effectbutton" id="save" value="🞤" onclick="add()">
+      <button type="button" style="outline-color: #1e1e1e;" class="buttonround2 effectbutton" id="save" value="🞤" onclick="add()"><i class="fas fa-plus"></i></button>
       
-      <input class="login effectkreis" style="padding: 10px 170px 10px 21px;" type="text" placeholder="⌕ Search" onkeydown="srch()" value="" id="search"/>
+      <!--<div onclick="document.getElementById('pw').focus()" class="login inputDiv effectkreis"><input class="inputNormal" style="padding: 10px 170px 10px 21px;" type="text" placeholder="Search" onkeyup="srch()" value="" id="search"/><button class="buttonzwei effectbuttonanders" onmousedown="showfunc()" onmouseup="hidefunc()"><i class="far fa-eye"></i></button></div>-->
+      <div onclick="document.getElementById('search').focus()" onblur='console.log("ye")' oncontextmenu="showContextMenuText()" class="login inputDiv effectkreis"><input class="inputNormal" type="text" style="padding-left:0px; padding-right:0px; margin-bottom: 6px; color:white; width:250px; background: none;" placeholder="Search" id="search" value="" onkeyup="srch()"/><button style="right:5px; bottom:1px;" onclick="clearsrch()" class="buttonzwei effectbuttonanders colorLikePlaceholder"><i class="fas fa-times"></i></button></div>
       
       <div id="lel" style="outline: 0;" class="select-wrapper">
         <select id="slt" style="outline: 0;" onchange="slt_change()">
           <option style="outline: 0;" value="Passwort">Password</option>
           <option style="outline: 0;" value="Key">Key</option>
+          <!--<option style="outline: 0;" value="Files">Files</option>-->
         </select>
       </div>
 
       
 
-      <input type="button" style="float:right;" class="button effectbutton navbtnzw" id="favbutton" value="." onclick="favbtnclick()">
-
-      <div class="svglel" id="svglelid" style="width: 100%; height: 100%;">
-        <center>
-        <div id="haha" class="loading-spinner"></div>
-        <input type="button" class="button effectbutton hide" id="resetzwei" value="↺Retry" onclick="relo()">
-      </center>
-      </div>
+      <button type="button" style="float:right;" class="button effectbutton navbtnzw" id="favbutton" value="." onclick="favbtnclick()"><i id="favbuttoni" class="far fa-star"></i></button>
 
       
       
@@ -204,7 +225,7 @@
       </div>
 
       <div id="blur">
-      <table style="text-align: left; position: relative; border-collapse: collapse; overflow:scroll" class="content-table" id="passwort">
+      <table style="text-align: left; position: relative; border-collapse: collapse; overflow:scroll; width: 100%;" class="content-table" id="passwort">
         <tbody></tbody>
       </table>
     </div>
@@ -213,18 +234,18 @@
   </div>
 
   <div class="navcancel">
-    <input type="button" class="button effectbutton hide" id="reset" value="↺Reset" onclick="relo()">
-    <input type="button" class="effectbuttonle hide" id="rlsave" value="🖫Save" onclick="allesSaven(0,0)">
+    <button type="button" class="button effectbutton hide" id="reset" value="↺Reset" onclick="relo()"><i class="fas fa-undo-alt"></i> Reset</button>
+    <button type="button" class="effectbuttonle hide" id="rlsave" value="🖫Save" onclick="allesSaven(0,0)"><i class="fas fa-save"></i> Save</button>
     <div id="hahaha" class="loading-spinnerzwei hide"></div>
-    <input type="button" class="button effectbutton containerle" style="float: right;" id="ana" value="🗠 Analytics" onclick="analy()">
+    <button type="button" class="button effectbutton containerle" style="float: right;" id="ana" value="🗠 Analytics" onclick="analy()"><i class="fas fa-chart-line"></i> Analytics</button>
     
   </div>
 
     <div class="navbartwo" id="sk">
-      <input type="button" id="topkek" style="border-top-left-radius: 10px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px; border-top-right-radius: 0px; padding-top: 4px; height:12px; margin-right: 0px; margin-top:0px; margin-top:0px;" class='buttonzwei effectbutton' onclick="ontop()" value="○">
-      <input type="button" id="topkekle" style="padding-top: 2px; height:12px; border-bottom-left-radius: 0px; border-top-left-radius: 0px; padding-bottom:7px;" class='buttonzwei effectbutton' onclick="lock()" value="⚿">
+      <button type="button" id="topkek" style="border-top-left-radius: 10px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px; border-top-right-radius: 0px; padding-top: 4px; height:12px; margin-right: 0px; margin-top:0px;" class='buttonzwei effectbutton' onclick="ontop()" value="○"><i id="topkeki" class="far fa-dot-circle"></i></button>
+      <button type="button" id="topkekle" style="padding-top: 4px; height:12px; border-bottom-left-radius: 0px; border-top-left-radius: 0px; padding-bottom:5px; margin-top: 0;" class='buttonzwei effectbutton' onclick="lock()" value="⚿"><i class="fas fa-lock"></i></button>
       <span id="con" style="margin-left: 0.3em" class='labelzwei'></span>
-      <input type="button" id="relobut" style="float: right; border-bottom-right-radius: 0px; border-top-right-radius: 10px; height:12px; padding-top: 2px; padding-bottom:7px;" class='buttonzwei effectbutton' onclick="relo()" value="↺">
+      <button type="button" id="relobut" style="float: right; border-bottom-right-radius: 0px; border-top-right-radius: 10px; padding-top: 4px; padding-bottom:3px;" class='buttonzwei effectbutton' onclick="relo()" value="↺"><i class="fas fa-sync-alt"></i></button>
       <span onclick="idk()" id="coun" style="float: right; margin-right: 0.5em" class='labelzwei'></span>
       <a id="da" class="labelzwei hide" style="color: rgb(1, 138, 230); float:right; margin-right: 0.5em" onclick="canc()">Update Available!</a>
       <!--<input type="button" style="float: right; outline-color: #272727;" class="buttonzwei effectbutton" id="btnEd" value="Analytics" onclick="window.location.href='analytics.html'">-->

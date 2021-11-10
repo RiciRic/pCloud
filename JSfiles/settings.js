@@ -57,7 +57,10 @@ const store = new Store({
     eventanalytics:false,
     download:false,
     down:false,
-    delcache:false
+    delcache:false,
+    copyrightclick:true,
+    copystayontop:true,
+    copyseconds:10
   }
 });
 
@@ -72,6 +75,8 @@ var ontopvar = store.get('ontop');
 var blurvar = store.get('blur');
 var navico = store.get('navbaricon')
 var lockvar = store.get('lock');
+var copyrightclickvar = store.get('copyrightclick');
+var copystayontopvar = store.get('copystayontop');
 
 var sicherung = false;
 var pwlel = [];
@@ -90,8 +95,9 @@ let winCloud;
 const { app, globalShortcut } = require('electron').remote;
 
 app.whenReady().then(() => {
-  const ret = globalShortcut.register('Shift+X', () => {
-    console.log('CommandOrControl+X is pressed')
+  const ret = globalShortcut.register('CommandOrControl+X', () => {
+
+    globalShortcut.unregister('CommandOrControl+C')
   })
 
   if (!ret) {
@@ -101,7 +107,7 @@ app.whenReady().then(() => {
   console.log(globalShortcut.isRegistered('Shift+X'))
 })
 
-app.on('will-quit', () => {
+ipcRenderer.on('will-Quit', (event, arg) => {
   //globalShortcut.unregister('CommandOrControl+X')
   globalShortcut.unregisterAll()
 
@@ -151,6 +157,8 @@ $('#ver').text("Version: "+ver);
       if(ontopvar == true){
         let remote = require('electron').remote;
         document.getElementById("topkek").value = "●";
+        document.getElementById("topkeki").classList.add("fas");
+        document.getElementById("topkeki").classList.remove("far");
         remote.getCurrentWindow().setAlwaysOnTop(true, 'screen');
         var element = document.getElementById("topkek");
         element.classList.add("blau");
@@ -172,6 +180,19 @@ $('#ver').text("Version: "+ver);
         var checkbox = document.getElementById('toggleswitchdrei');
         checkbox.checked = !checkbox.checked;
     }
+
+    if(copyrightclickvar == true){
+      document.getElementById("copyinput").value = store.get('copyseconds');
+      var checkbox = document.getElementById('toggleswitchvier');
+      checkbox.checked = !checkbox.checked;
+      $("#copContainer").slideDown("slow", function(){});
+    }
+
+    if(copystayontopvar == true)
+      {
+        var checkbox = document.getElementById('toggleswitchfuenf');
+        checkbox.checked = !checkbox.checked;
+      }
 
     if(store.get('down')==true)
     {
@@ -507,7 +528,7 @@ function ex(){
     store.set("delcache", true);
     store.set('download',false);
     store.set('down',false);
-    ipcRenderer.send('restart_app');
+    ipcRenderer.send('close_app');
   }
   else{
     window.close();
@@ -565,7 +586,15 @@ function canc(){
     parentWindow.removeAllListeners('blur');
     parentWindow.removeAllListeners('unmaximize');
     parentWindow.removeAllListeners('maximize');
-  
+    /*ipcRenderer.removeAllListeners('exit');
+    ipcRenderer.removeAllListeners('download');
+    ipcRenderer.removeAllListeners('downloaded');
+    ipcRenderer.removeAllListeners('infopz');
+    ipcRenderer.removeAllListeners('update');
+    ipcRenderer.removeAllListeners('fertig');
+    ipcRenderer.removeAllListeners('restart_app');*/
+    ipcRenderer.removeAllListeners();
+
         const winSettings = remote.getCurrentWindow();
           winSettings.loadURL(url.format( {
           pathname: path.join(__dirname, 'home.html'),
@@ -627,10 +656,16 @@ function qrcodevor(){
 
 }
 
+function qrcodeLink(os){
+  $("#qr2").slideDown("slow", function(){
+    qrcodefunc2(os);
+  });
+}
+
 function hideqrfunc()
 {
-  $("#qr").slideUp("slow", function(){
-  });
+  $("#qr").slideUp("slow", function(){});
+  $("#qr2").slideUp("slow", function(){});
 }
 
 function dropdropfunc(){
@@ -645,12 +680,33 @@ function dropdropfunc(){
   }
 }
 
+
+
 function qrcodefunc(){
-  var encrypted = CryptoJS.AES.encrypt(store.get("pw"), "o");
+  var encrypted = decrypt(store.get("pw"))
   //textqr = encrypted.toString();
   var textqr = ''+ encrypted.toString() +';'+ decrypt(store.get("dropboxtoken"));
+  textqr = CryptoJS.AES.encrypt(textqr, "o").toString();
   var QRCode = require('qrcode')
   var canvas = document.getElementById('canvas')
+ 
+  QRCode.toCanvas(canvas, textqr, function (error) {
+    if (error) console.error(error)
+    console.log('success!');
+  })
+}
+
+function qrcodefunc2(os){
+  var textqr = "";
+  if(os == "Android")
+  {
+    textqr = "https://www.dropbox.com/s/b52zgi6jnnjm7rq/pCloud.apk?dl=1";
+  }
+  else{
+    textqr = "";
+  }
+  var QRCode = require('qrcode')
+  var canvas = document.getElementById('canvas2')
  
   QRCode.toCanvas(canvas, textqr, function (error) {
     if (error) console.error(error)
@@ -667,11 +723,11 @@ function erstmal(){
   let winSettings = new BrowserWindow({
     //width: 1000,
     //height: 630,
-    width: 300,
-    height: 350,
+    width: 1000,
+    height: 630,
     minWidth: 300,
     minHeight: 350,
-    alwaysOnTop: true,
+    //alwaysOnTop: true,
     frame: false,
     icon: 'pictures/icon.ico',
     contextIsolation: true,
@@ -683,7 +739,7 @@ function erstmal(){
   }) 
 
   winSettings.loadURL(url.format( {
-    pathname: path.join(__dirname, 'DropbCloud-Short.html'),
+    pathname: path.join(__dirname, 'DropbCloud.html'),
     //pathname: path.join(__dirname, 'sesses.html'),
     protocol: 'file',
     slashes: true
@@ -741,15 +797,21 @@ function ontop(){
     document.getElementById("topkek").value = "●";
     remote.getCurrentWindow().setAlwaysOnTop(true, 'screen');
     var element = document.getElementById("topkek");
+    document.getElementById("topkeki").classList.add("fas");
+    document.getElementById("topkeki").classList.remove("far");
     element.classList.add("blau");
     store.set('ontop', true);
+    ontopvar = true;
   }
   else{
     document.getElementById("topkek").value = "○";
     remote.getCurrentWindow().setAlwaysOnTop(false, 'screen');
     var element = document.getElementById("topkek");
+    document.getElementById("topkeki").classList.remove("fas");
+    document.getElementById("topkeki").classList.add("far");
     element.classList.remove("blau");
     store.set('ontop', false);
+    ontopvar = false;
   }
 
 }
@@ -771,6 +833,16 @@ inputzwei.addEventListener('change',function(){
       store.set('lock',true);
     } else {
       store.set('lock',false);
+    }
+});
+
+document.getElementById('toggleswitchvier').addEventListener('change',function(){
+    if(this.checked) {
+      //store.set('blur',true);
+      $("#copContainer").slideDown("slow", function(){});
+    } else {
+      //store.set('blur',false);
+      $("#copContainer").slideUp("slow", function(){});
     }
 });
 
@@ -803,7 +875,7 @@ function versuchle(){
 }
 
 function versuchlele(){
-  var elmnt = document.getElementById("versuchlelediv");
+  var elmnt = document.getElementById("updatediv");
   elmnt.scrollIntoView({
     behavior: 'smooth'
   }); // false
@@ -950,6 +1022,7 @@ function uploadFilezwei(fil){
     return
   }
   dropboxToken = decrypt(dropboxToken);
+  console.log(dropboxToken)
   var savedrop = dropboxToken;
 
 var contents = fil;
@@ -1209,6 +1282,29 @@ function openbackup(){
   var app = require('electron').remote; 
   var dialog = app.dialog;
 
+  var lelelele;
+  if(document.getElementById("radio1").checked)
+  {
+    lelelele = pwtemp;
+    console.log("1")
+  }
+  if(document.getElementById("radio2").checked)
+  {
+    lelelele = "pCloud";
+    console.log("2")
+  }
+  if(document.getElementById("radio3").checked)
+  {
+    console.log("3")
+    lelelele = document.getElementById("encryptionkey").value;
+    if(lelelele == "")
+    {
+      $('#con').text("You need to enter a Key");
+      setTimeout(() => {  $('#con').text(bot); }, 2000);
+      return;
+    }
+  }
+
   const files = dialog.showOpenDialogSync(null, {
     title: "Load Backup File",
     buttonLabel: "Load Backup",
@@ -1222,25 +1318,15 @@ function openbackup(){
   const fileContent = fs.readFileSync(file).toString();
   const obj = JSON.parse(fileContent);
 
-  var lelelele = document.getElementById("encryptionkey").value;
-  if(lelelele == "")
-  {
-    lelelele = decrypt(store.get('backupkey'));
-    if(lelelele == "")
-    {
-      lelelele = createenKey();
-      store.set('backupkey',encrypt(lelelele));
-    }
-  }
 
-  var objrdy="[\n";
-  objrdy='{"id":"0", "fav":"0", "titel":"","username":"","password":"","url":"","note":""},\n';
+
+  var objrdy='[\n{"id":"0", "fav":"0", "titel":"","username":"","password":"","url":"","note":""},\n';
   try {
     if(obj[0].backup == "backup")
     var i = 1;
-    for(i=1;i< obj.length;i++)
+    for(i=2;i< obj.length;i++)
       {
-        objrdy += '{"id":"'+i.toString()+'", "fav":"'+obj[i].fav+'", "titel":"'+encrypt(decryptkey(obj[i].titel, lelelele))+'","username":"'+encrypt(decryptkey(obj[i].username, lelelele))+'","password":"'+encrypt(decryptkey(obj[i].password, lelelele))+'","url":"'+encrypt(decryptkey(obj[i].url, lelelele))+'","note":"'+encrypt(decryptkey(obj[i].note, lelelele))+'"}';
+        objrdy += '{"id":"'+obj[i].id+'", "fav":"'+obj[i].fav+'", "titel":"'+encrypt(decryptkey(obj[i].titel, lelelele))+'","username":"'+encrypt(decryptkey(obj[i].username, lelelele))+'","password":"'+encrypt(decryptkey(obj[i].password, lelelele))+'","url":"'+encrypt(decryptkey(obj[i].url, lelelele))+'","note":"'+encrypt(decryptkey(obj[i].note, lelelele))+'"}';
         if(obj.length-1 == i)
         {
           objrdy += "\n";
@@ -1318,6 +1404,27 @@ function savebackup(){
   var app = require('electron').remote; 
   var dialog = app.dialog;
 
+  var lelelele;
+  if(document.getElementById("radio1").checked)
+  {
+    lelelele = pwtemp;
+  }
+  if(document.getElementById("radio2").checked)
+  {
+    lelelele = "pCloud";
+  }
+  if(document.getElementById("radio3").checked)
+  {
+    lelelele = document.getElementById("encryptionkey").value;
+    if(lelelele == "")
+    {
+      $('#con').text("You need to enter a Key");
+      setTimeout(() => {  $('#con').text(bot); }, 2000);
+      return;
+    }
+  }
+
+
   const files = dialog.showSaveDialogSync(null, {
     title: "Save Backup File",
     buttonLabel: "Save Backup",
@@ -1327,17 +1434,6 @@ function savebackup(){
   });
 
   if(!files) return;
-
-  var lelelele = document.getElementById("encryptionkey").value;
-  if(lelelele == "")
-  {
-    lelelele = decrypt(store.get('backupkey'));
-    if(lelelele == "")
-    {
-      lelelele = createenKey();
-      store.set('backupkey',encrypt(lelelele));
-    }
-  }
 
   
   var amk = "[\n";
@@ -1458,13 +1554,11 @@ require('electron').remote.getCurrentWindow().on('blur', () => {
   contextElement.classList.add("navbaroffle");
 })
 
-const powerMonitor = electron.remote.powerMonitor; 
-
-powerMonitor.on('lock-screen', () => { 
+ipcRenderer.on('lock-Screen', (event, arg) => {
   if(lockvar == true){
     lock();
   }
-}); 
+});
 
 function credits(){
   var dt = new Date();
@@ -1477,15 +1571,16 @@ function credits(){
 }
 
 function closecredits(){
-  document.getElementById("cred").classList.remove("containerlezwei");
-  document.getElementById("cred").classList.add("containerremove");
-  setTimeout(() => {  document.getElementById("cred").classList.add("hide"); }, 600);
-  //$("#cred").fadeOut(1000);
-  //$("#cred").fadeOut("slow");
+  if(!$("#licid:hover").length != 0){
+    document.getElementById("cred").classList.remove("containerlezwei");
+    document.getElementById("cred").classList.add("containerremove");
+    setTimeout(() => {  document.getElementById("cred").classList.add("hide"); }, 600);
+  }
+
 }
 
 function infofunc(){
-  document.getElementById("txtlicense").value = 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
+  licensestuff();
   document.getElementById("infoscre").classList.remove("hide");
   document.getElementById("infoscre").classList.add("containerlezwei");
   document.getElementById("infoscre").classList.remove("containerremove");
@@ -1494,9 +1589,17 @@ function infofunc(){
 }
 
 function closeinfo(){
+  //credits()
   document.getElementById("infoscre").classList.remove("containerlezwei");
   document.getElementById("infoscre").classList.add("containerremove");
   setTimeout(() => {  document.getElementById("infoscre").classList.add("hide"); }, 600);
+}
+
+function licensestuff()
+{
+  fetch('license.txt')
+  .then(response => response.text())
+  .then(text => document.getElementById("txtlicense").innerHTML = text)
 }
 
 function getenkey(){
@@ -1752,3 +1855,162 @@ function loop(){
         $('#capslockzwei').fadeOut('fast');
       }
   })
+
+  ipcRenderer.on('exit', (event, arg) => {
+    ex();
+  });
+
+function closePaypal()
+{
+  ipcRenderer.send('close-paypal');
+}
+
+
+
+function fnGetExtension(file) {
+
+  var fileName = file.name;
+
+  var patternFileExtension = /\.([0-9a-z]+)(?:[\?#]|$)/i;
+
+  var fileExtension = (fileName).match(patternFileExtension);
+  const chars = fileExtension.toString().split(',');
+  return chars[0];
+ }
+
+
+function encryptTest() {
+  const { remote } = require('electron');
+  var dialog = require('electron').remote.dialog;
+  var app = require('electron').remote; 
+  var dialog = app.dialog;
+
+  /*const files = dialog.showOpenDialogSync(null, {
+    title: "Import Settings",
+    buttonLabel: "Load Settings",
+    properties: ['openFile'],
+    //filters: [{name:'JSON', extensions: ['json'] }]
+  });
+
+  if(!files) return;*/
+
+  const filevar = document.getElementById('enfile').files[0];
+  const reader2 = new FileReader();
+
+  reader2.addEventListener("load", function () {
+    console.log(filevar.size);
+    /*if(filevar.size >= 15000000)
+    {
+      console.log("zu groß!");
+      return;
+    }*/
+    
+    var file = new Blob([filevar]);
+
+    var reader = new FileReader();
+    reader.onload = () => {
+      var key = pwtemp;
+
+      var str = bufferToString(reader.result);
+      var encrypted = CryptoJS.AES.encrypt(str, key).toString(); 
+
+      const files = dialog.showSaveDialogSync(null, {
+        title: "Save Encrypted File",
+        buttonLabel: "Save",
+        defaultPath : "encrypted-file",
+        properties: ['openFile'],
+        filters: [{name:'JSON', extensions: ['json'] },]
+      });
+      
+      if(!files) return;
+      
+      
+      var objrdy='[\n{\n"type":"'+ fnGetExtension(filevar) +'",\n"content":"'+encrypted+'"\n}\n]';
+      
+      fs.writeFileSync(files, objrdy, 'utf-8');
+      document.getElementById('enfile').value = "";
+    };
+    reader.readAsArrayBuffer(file);
+
+  }, false);
+
+  if (filevar) {
+    reader2.readAsDataURL(filevar);
+  }
+
+
+}
+
+function bufferToString( buf ) {
+  var view = new Uint8Array( buf );
+  return Array.prototype.join.call(view, ",");
+}
+
+function stringToBuffer( str ) {
+  var arr = str.split(",")
+    , view = new Uint8Array( arr );
+  return view.buffer;
+}
+
+function decryptTest() {
+  const { remote } = require('electron');
+  var dialog = require('electron').remote.dialog;
+  var fs = require('fs');
+  var app = require('electron').remote; 
+  var dialog = app.dialog;
+
+
+  const files = dialog.showOpenDialogSync(null, {
+    title: "Decrypt File",
+    buttonLabel: "decrypt",
+    properties: ['openFile'],
+    filters: [{name:'JSON', extensions: ['json'] }]
+  });
+
+  if(!files) return;
+
+  const file = files[0];
+  const fileContent = fs.readFileSync(file).toString();
+  const obj = JSON.parse(fileContent);
+
+      var key = pwtemp;
+
+      var decrypted = CryptoJS.AES.decrypt(obj[0].content, key).toString(CryptoJS.enc.Utf8);
+      var data = stringToBuffer(decrypted);
+      var array = new Uint8Array(data);
+      var fileDec = new Blob([array]);
+
+      var a = document.createElement("a");
+      var url = window.URL.createObjectURL(fileDec);
+      var filename = "file" + "."+ obj[0].type;
+      a.href = url;
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    
+}
+
+function showContextMenuText()
+{
+  /*document.getElementById('copyItem').onclick = function(){
+    document.execCommand('copy');
+    document.getElementById("context-menuText").classList.remove("active");
+  };
+  document.getElementById('pasteItem').onclick = function(){
+    document.execCommand('paste');
+    document.getElementById("context-menuText").classList.remove("active");
+  };
+  event.preventDefault();
+  var contextElement = document.getElementById("context-menuText");
+  var y = event.clientY;
+  var x = event.clientX;
+  contextElement.style.top = y + "px";
+  contextElement.style.left = x + "px";
+  contextElement.classList.add("active");
+  document.getElementById("context-menuText").focus();*/
+}
+
+function yee(){
+  console.log("weg");
+  //document.getElementById("context-menuText").classList.remove("active");
+}

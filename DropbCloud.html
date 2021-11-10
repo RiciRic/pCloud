@@ -38,21 +38,21 @@
       <input type="button" class="button effectnavbutton navlabel exit leexit" id="close-btn" value="✖" onclick="winclose()">
       <input type="button" class="button effectnavbutton navlabel navbtnzw" id="min-btn" value="🗕" onclick="mini()">
       </div>
-    </br>
-  </br>
+    <br/>
+  <br/>
   
     <div id="damnsheesh" class= "containerle" style="width:240px; height:600px; position:relative; left: 760px">
-    </br>
+    <br/>
       <div id="diveins">
         <div class="fuchs containerle">
-          <center>
+          <div class="centered">
       <div style="font-weight: bolder;" class='labelzwei'>1. Step:</div>
-      <div class='labelzwei'>Login</div></br></br>
-      <div class='labelzwei blau'>If already logged in click Next</div></br>
-      </center>
+      <div class='labelzwei'>Login</div><br/><br/>
+      <!--<div class='labelzwei blau'>If already logged in click Next</div><br/>-->
+          </div>
       </div>
       <div id="huihui" class="navcloud">
-        <input type="button" class="button effectbutton" style="float:right" id="res" value="Next" onclick="showzwei()">
+        <input type="button" style="float: right;" class="button nextExtra effectbutton" id="res" value="Next" onclick="showzwei()">
         </div>
       </div>
 
@@ -60,38 +60,38 @@
       
       <div id="divzwei" class="hide">
         <div class="fuchs containerle">
-        <center>
+          <div class="centered">
       <div style="font-weight: bolder;" class='labelzwei'>2. Step:</div>
-      <div class='labelzwei'>2.1 Select Scoped access</div></br>
-      <div class='labelzwei'>2.2 Select App folder</div></br>
-      <div class='labelzwei'>2.3 Choose a Name</div></br>
-      <div class='labelzwei'>(Make something up or use this Generator)</div></br>
+      <!--<div class='labelzwei'>2.1 Select Scoped access</div><br/>
+      <div class='labelzwei'>2.2 Select App folder</div><br/>-->
+      <div class='labelzwei'>2.3 Choose a Name</div><br/>
+      <div class='labelzwei'>(Make something up or use this Generator)</div><br/>
       <input class="loginzwei effectkreis blauborder" type="text" placeholder="App Name" value="" id="txtname"/>
-      <a class="labelzwei" style="color: #5f5f5f" id="genname" onclick="namefunc()">Generate new Name</a></br>
-      <a class="labelzwei" style="color: #5f5f5f" onclick="openC()">Webpage</a>
-      </center>
+      <a class="labelzwei" style="color: #5f5f5f" id="genname" onclick="namefunc()">Generate new Name</a><br/>
+      <!--<a class="labelzwei" style="color: #5f5f5f" onclick="openC()">Webpage</a>-->
+          </div>
       </div>
       <div class="navcloud">
         <input type="button" class="button effectbutton containerle" id="btncancel" value="Back" onclick="back()">
-        <input type="button" class="button effectbutton" style="float: right;" id="res" value="Next" onclick="showdrei()">
+        <input type="button" class="button nextExtra effectbutton" style="float: right;" id="res2" value="Next" onclick="showdrei()">
         </div>
       </div>
 
       <!--LELELELEL-->
       <div id="divdrei" class="hide">
         <div class="fuchs containerle">
-      <center>
+          <div class="centered">
       <div style="font-weight: bolder;" class='labelzwei'>4. Step:</div>
-      <div class='labelzwei'>Generate Access token and paste it here:</div></br>
+      <div class='labelzwei'>Generate Access token and paste it here:</div><br/>
       <input class="loginzwei effectkreis blauborder" type="text" placeholder="Access Token" value="" id="txtaccess"/>
       <div class='labelzwei'>and set the Access token expiration to:</div><div style="font-weight: bolder;" class='labelzwei blau'>No expiration</div>
       <a class="labelzwei" style="color: #5f5f5f" onclick="permission()">permission</a>
       <a class="labelzwei" style="color: #5f5f5f" onclick="getToken()">getToken</a>
-    </center>
+          </div>
     </div>
       <div class="navcloud">
-        <input type="button" class="button effectbutton" id="btncancel" value="Back" onclick="backzwei()">
-        <input type="button" class="button effectbutton" style="float: right;" id="res" value="Next" onclick="showvier()">
+        <input type="button" class="button effectbutton" id="btncancel2" value="Back" onclick="backzwei()">
+        <input type="button" class="button nextExtra effectbutton" style="float: right;" id="res3" value="Next" onclick="showvier()">
         </div>
       </div>
 
@@ -136,7 +136,10 @@
           eventanalytics:false,
           download:false,
           down:false,
-          delcache:false
+          delcache:false,
+          copyrightclick:true,
+          copystayontop:true,
+          copyseconds:10
         }
       });
 
@@ -185,7 +188,8 @@
       });
 
       //mainWindow.setIgnoreMouseEvents(true);
-      mainWindow.loadURL("https://dropbox.com/developers/apps/create");
+      //mainWindow.loadURL("https://dropbox.com/developers/apps/create");
+      mainWindow.loadURL("https://www.dropbox.com/logout");
       //mainWindow.webContents.openDevTools()
 
     parentWindow.on('move', function() {
@@ -193,14 +197,25 @@
       mainWindow.setPosition(position[0], position[1]+30);
     });
 
+    parentWindow.webContents.on('will-navigate', function() {
+        showzwei();
+        console.log("Test");
+    })
+
+
     parentWindow.on('resize', function() {
+      resizefunc();
+    });
+
+    function resizefunc(){
       mainWindow.resizable = true;
       const bounds = parentWindow.getSize();
       mainWindow.setSize(bounds[0]-240, bounds[1]-30);
       document.getElementById("damnsheesh").style.left = bounds[0]-240 +"px";
       document.getElementById("damnsheesh").style.height = bounds[1]-30 +"px";
       mainWindow.resizable = false;
-    });
+    }
+    resizefunc();
 
 
       var pwtemp = store.get('pwtemp');
@@ -258,20 +273,22 @@
     }
 
       function showzwei(){
+        mainWindow.loadURL("https://dropbox.com/developers/apps/create");
         var element = document.getElementById("divzwei");
         element.classList.remove("hide");
         var element = document.getElementById("diveins");
         element.classList.add("hide");
-        var namelel = rndmnumber();
-        document.getElementById("txtname").value = namelel;
-        mainWindow.webContents.send("scope", { text: namelel});
+        //var namelel = rndmnumber();
+        //document.getElementById("txtname").value = namelel;
+        //mainWindow.webContents.send("scope", { text: namelel});
+        
         //mainWindow.loadURL("https://dropbox.com/home/Apps");
       }
 
       function namefunc(){
         var namelel = rndmnumber();
         document.getElementById("txtname").value = namelel;
-        mainWindow.webContents.send("scope", { text: namelel});
+        mainWindow.webContents.send("pcloudinhalt", { text: namelel});
       }
 
       function rndmnumber(){
@@ -286,12 +303,15 @@
       });
 
       function showdrei(){
-        mainWindow.webContents.send("ausf");
-        var element = document.getElementById("divdrei");
-        element.classList.remove("hide");
-        var element = document.getElementById("divzwei");
-        element.classList.add("hide");
-        document.getElementById('txtaccess').value = "";
+        if(document.getElementById("txtname").value != "")
+        {
+          mainWindow.webContents.send("ausf");
+          var element = document.getElementById("divdrei");
+          element.classList.remove("hide");
+          var element = document.getElementById("divzwei");
+          element.classList.add("hide");
+          document.getElementById('txtaccess').value = "";
+        }
       }
 
       function showvier(){

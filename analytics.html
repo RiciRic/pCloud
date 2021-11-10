@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/master.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" type="text/css" href="css/table.css">
+
+    <link href="css/all.min.css" type="text/css" rel="stylesheet">
+    
     <script src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
@@ -33,16 +35,17 @@
         <span></span>
       </div>
 
-      <div style="padding-left:20px; padding-top:2px; position: absolute;">
-      <div id="tit" class='label containerle'>🗠Analytics</div>
+      <div style="padding-left:20px; padding-top:6px; position: absolute;">
+      <div id="tit" class='label containerle'><i class="fas fa-chart-line"></i> Analytics</div>
       </div>
       <input type="button" class="button effectnavbutton navlabel exit leexit" id="close-btn" value="✖" onclick="window.close()">
       <input type="button" class="button effectnavbutton navlabel navbtn" id="max-btn" value="🗖" onclick="maxi()">
       <input type="button" class="button effectnavbutton navlabel navbtn" id="min-btn" value="🗕" onclick="mini()">
-      <input type="button" style="padding-top:4px; padding-bottom:3px; float: right; color: rgb(160, 160, 160); -webkit-app-region: no-drag;" class="button effectnavsettbutton navbtnzw" id="btnEd" value="⚙ Settings" onclick="sett()">
+      <div id="strich2" style="margin-top: 6px; float:right; width:1px; height: 20px; background-color:rgb(94, 94, 94); margin-right:4px; margin-left:4px;"></div>
+      <button style="padding-top:5px; padding-bottom:2px; float: right; color: rgb(160, 160, 160); -webkit-app-region: no-drag;" class="button effectnavsettbutton navbtnzw" id="btnEd" onclick="sett()"><i class="fas fa-cog"></i></button>
       </div>
-    </br>
-  </br>
+    <br/>
+  <br/>
 
   
     <div class="scrollbar containerle" id="scrollbar-customdrei">
@@ -58,15 +61,15 @@
       </div>
     
       <div class='body'></div>
-      </br></br>
+      <br/><br/>
       
 
       <div id="bambam" class="labelzwei containersettings">
         <canvas id="myChart" width="400" height="200"></canvas>
       </div>
-    </br>
+    <br/>
   
-    <div class="labelzwei full-height containersettings"></br>
+    <div class="labelzwei full-height containersettings" style="padding-bottom: 15px;"><br/>
         <table class="content-table" id="passwort">
           
         </table>
@@ -79,12 +82,12 @@
     </div>
   </div>
 <div class="navcancel">
-<input type="button" class="button effectbutton containerle" id="btncancel" value="‹ Cancel" onclick="canc()">
+<button type="button" class="button effectbutton containerle" id="btncancel" value="‹ Cancel" onclick="canc()"><i class="fas fa-chevron-left"></i> Cancel</button>
 </div>
 
   <div class="navbartwo" id="sk">
-    <input type="button" id="topkek" style="border-top-left-radius: 10px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px; border-top-right-radius: 0px; padding-top: 4px; height:12px; margin-right: 0px; margin-top:0px;" class='buttonzwei effectbutton' onclick="ontop()" value="○">
-      <input type="button" id="topkekle" style="padding-top: 2px; height:12px; border-bottom-left-radius: 0px; border-top-left-radius: 0px; padding-bottom:7px;" class='buttonzwei effectbutton' onclick="lock()" value="⚿">
+    <button type="button" id="topkek" style="border-top-left-radius: 10px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px; border-top-right-radius: 0px; padding-top: 4px; height:12px; margin-right: 0px; margin-top:0px;" class='buttonzwei effectbutton' onclick="ontop()" value="○"><i id="topkeki" class="far fa-dot-circle"></i></button>
+    <button type="button" id="topkekle" style="padding-top: 4px; height:12px; border-bottom-left-radius: 0px; border-top-left-radius: 0px; padding-bottom:5px; margin-top: 0;" class='buttonzwei effectbutton' onclick="lock()" value="⚿"><i class="fas fa-lock"></i></button>
       <span id="con" style="margin-left: 0.3em" class='labelzwei'></span>
     <span id="coun" style="float: right; margin-right: 1.5em" class='labelzwei'></span>
     <a id="da" class="labelzwei hide" style="color: rgb(1, 138, 230); float:right; margin-right: 0.5em" onclick="sett()">Update Available!</a>

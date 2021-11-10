@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content ="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content ="ie=edge">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/master.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link href="css/all.min.css" type="text/css" rel="stylesheet">
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js'></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+    <title>pCloud</title>
+
+    <style>
+
+
+    </style>
+
+
+  </head>
+  <body>
+    <header class="header"></header>
+
+    <div id="sklel" class="navbarlel">
+
+      <div style="margin-top: 2px; margin-right: 2px; margin-left: 2px;" class="loader">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div style="padding-left:20px; padding-top:5px; position: absolute;">
+      <div id="titleid" class='label'></div>
+      </div>
+      <input type="button" class="button effectnavbutton navlabel exit leexit" id="close-btn" value="✖" onclick="winclose()">
+      <input type="button" class="button effectnavbutton navlabel navbtnzw" id="min-btn" value="🗕" onclick="mini()">
+      </div>
+    <br/>
+  <br/>
+  
+
+    <br/>
+      <div id="diveins">
+        <div class="fuchs containerle">
+          <div class="centered">
+            <div onclick="document.getElementById('search').focus()" class="login inputDiv effectkreis"><input readonly class="inputNormal" type="text" style="user-select:none; padding-left:0px; padding-right:0px; margin-bottom: 6px; color:white; width:260px; background: none;" placeholder="Username" id="txtusername" value=""/><button style="right:5px; bottom:1px;" id="txtusernamebtn" class="buttonzwei effectbuttonanders colorLikePlaceholder"><i class="fas fa-copy"></i></button></div>
+            <div onclick="document.getElementById('search').focus()" class="login inputDiv effectkreis"><input readonly class="inputNormal" type="password" style="user-select:none; padding-left:0px; padding-right:0px; margin-bottom: 6px; color:white; width:224px; background: none;" placeholder="Password" id="txtpassword" value=""/><button style="right:5px; bottom:1px;" onclick="showpw()" class="buttonzwei effectbuttonanders colorLikePlaceholder"><i id="shshs" style="width:15px" class="far fa-eye"></i></button><button id="txtpasswordbtn" style="right:5px; bottom:1px;" class="buttonzwei effectbuttonanders colorLikePlaceholder"><i class="fas fa-copy"></i></button></div>
+          </div>
+        </div>
+      </div>
+
+
+      
+      
+
+
+  
+
+    <script>
+      const axios = require('axios');
+      const Store = require('./JSfiles/store.js');
+      const electron = require('electron');
+      const BrowserWindow = require('electron').remote.BrowserWindow;
+      const { remote } = require('electron');
+      const path = require('path');
+      const { ipcRenderer } = require('electron');
+      const {ipcMain } = require('electron')
+      const url = require('url');
+      const app = electron.app;
+
+      const store = new Store({
+      configName: 'user-preferences',
+      defaults: {
+        theme:"0",
+        pw:"",
+        pwtemp:"",
+        list:[],
+        x:455,
+        y:269,
+        width:700,
+        height:500,
+        dropdown:0,
+        favbtn:0,
+        max:false,
+        indexclose:false,
+        dropboxtoken:"",
+        ontop:false,
+        blur:true,
+        navbaricon:false,
+        lock:true,
+        lastsett:false,
+        backupkey:"",
+        eventhome:false,
+        eventindex:false,
+        eventanalytics:false,
+        download:false,
+        down:false,
+        delcache:false,
+        copyrightclick:true,
+        copystayontop:true,
+        copyseconds:10
+      }
+    });
+
+
+
+    ipcRenderer.on("perm", (event, arg) => {
+      document.getElementById("titleid").innerText = arg.titel;
+      document.getElementById('txtusernamebtn').onclick = function(){copy(arg.username)};
+      document.getElementById('txtpasswordbtn').onclick = function(){copy(arg.password)};
+      document.getElementById("txtusername").value = arg.username;
+      document.getElementById("txtpassword").value = arg.password;
+    });
+
+    remote.getCurrentWindow().webContents.on('close', () => {
+      copy("");
+    })
+
+    function showpw(){
+      var ch = document.getElementById("txtpassword").type;
+      if(ch == "password")
+      {
+        document.getElementById("shshs").classList.remove("fa-eye");
+        document.getElementById("shshs").classList.add("fa-eye-slash");
+        document.getElementById("txtpassword").type = "text";
+      }
+      else{
+        document.getElementById("shshs").classList.remove("fa-eye-slash");
+        document.getElementById("shshs").classList.add("fa-eye");
+        document.getElementById("txtpassword").type = "password";
+      }
+    }
+
+    const { clipboard } = require('electron');
+    function copy(text){
+      clipboard.writeText(text);
+    }
+
+    const nativeTheme = electron.remote.nativeTheme;
+    var theme = store.get('theme');
+    if (theme == '1'){
+      col = "#ffffff";
+      document.body.classList.add('hell');
+      nativeTheme.themeSource = "light"; 
+
+    }
+    else if(theme == '0'){
+      col = "#1e1e1e";
+      document.body.classList.remove('hell');
+      nativeTheme.themeSource = "dark"; 
+    }
+    else{
+      if(nativeTheme.shouldUseDarkColors == true)
+      {
+        col = "#1e1e1e";
+        document.body.classList.remove('hell');
+        nativeTheme.themeSource = "dark"; 
+      }
+      else{
+        col = "#ffffff";
+        document.body.classList.add('hell');
+        nativeTheme.themeSource = "light"; 
+      }
+    }
+
+
+
+      
+
+
+
+function encrypt(text){
+  var message = text;
+  var key= pwtemp;
+  var encrypted = CryptoJS.AES.encrypt(message, key); 
+  return encrypted.toString();
+}
+
+function winclose()
+{
+  window.close();
+}
+
+function mini(){
+  const { remote } = require('electron');
+  remote.BrowserWindow.getFocusedWindow().minimize();
+}
+      
+    </script>
+  </body>
+
+
+</html>
