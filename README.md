@@ -1,3 +1,3 @@
 # pCloud
 
-Copyright © 2020 pCloud
+Copyright © 2022 pCloud
