@@ -37,62 +37,37 @@
       </div>
       <input type="button" class="button effectnavbutton navlabel exit leexit" id="close-btn" value="✖" onclick="winclose()">
       <input type="button" class="button effectnavbutton navlabel navbtnzw" id="min-btn" value="🗕" onclick="mini()">
+      <input type="button" class="button effectnavbutton navlabel navbtnzw" id="hideshow-btn" value="show" onclick="hideshow()">
       </div>
     <br/>
   <br/>
   
-    <div id="damnsheesh" class= "containerle" style="width:240px; height:600px; position:relative; left: 760px">
+    <div id="damnsheesh" class= "containerle" style="width:100%; height:100%; align-items: center; justify-content: center;">
     <br/>
       <div id="diveins">
-        <div class="fuchs containerle">
-          <div class="centered">
-      <div style="font-weight: bolder;" class='labelzwei'>1. Step:</div>
-      <div class='labelzwei'>Login</div><br/><br/>
-      <!--<div class='labelzwei blau'>If already logged in click Next</div><br/>-->
-          </div>
-      </div>
-      <div id="huihui" class="navcloud">
-        <input type="button" style="float: right;" class="button nextExtra effectbutton" id="res" value="Next" onclick="showzwei()">
+        <div class="centered">
+          <div id="haha" class="loading-spinner"></div>
         </div>
       </div>
 
 
       
       <div id="divzwei" class="hide">
-        <div class="fuchs containerle">
-          <div class="centered">
-      <div style="font-weight: bolder;" class='labelzwei'>2. Step:</div>
-      <!--<div class='labelzwei'>2.1 Select Scoped access</div><br/>
-      <div class='labelzwei'>2.2 Select App folder</div><br/>-->
-      <div class='labelzwei'>2.3 Choose a Name</div><br/>
-      <div class='labelzwei'>(Make something up or use this Generator)</div><br/>
-      <input class="loginzwei effectkreis blauborder" type="text" placeholder="App Name" value="" id="txtname"/>
-      <a class="labelzwei" style="color: #5f5f5f" id="genname" onclick="namefunc()">Generate new Name</a><br/>
-      <!--<a class="labelzwei" style="color: #5f5f5f" onclick="openC()">Webpage</a>-->
-          </div>
-      </div>
-      <div class="navcloud">
-        <input type="button" class="button effectbutton containerle" id="btncancel" value="Back" onclick="back()">
-        <input type="button" class="button nextExtra effectbutton" style="float: right;" id="res2" value="Next" onclick="showdrei()">
+        <div class="centered">
+            <div class='labelzwei'>Choose a Name</div><br/>
+            <input class="loginzwei effectkreis blauborder" type="text" placeholder="App Name" value="" id="txtname"/><br/>
+            <a class="labelzwei" style="color: #5f5f5f" id="genname" onclick="namefunc()">Generate new Name</a><br/>
+            <input type="button" class="button nextExtra effectbutton" id="res2" value="Next" onclick="showdrei()">
         </div>
       </div>
 
       <!--LELELELEL-->
       <div id="divdrei" class="hide">
-        <div class="fuchs containerle">
-          <div class="centered">
-      <div style="font-weight: bolder;" class='labelzwei'>4. Step:</div>
-      <div class='labelzwei'>Generate Access token and paste it here:</div><br/>
-      <input class="loginzwei effectkreis blauborder" type="text" placeholder="Access Token" value="" id="txtaccess"/>
-      <div class='labelzwei'>and set the Access token expiration to:</div><div style="font-weight: bolder;" class='labelzwei blau'>No expiration</div>
-      <a class="labelzwei" style="color: #5f5f5f" onclick="permission()">permission</a>
-      <a class="labelzwei" style="color: #5f5f5f" onclick="getToken()">getToken</a>
+        <div class="centered">
+            <div class='labelzwei'>Get the access token...</div><br/>
+            <input class="loginzwei effectkreis blauborder" type="text" placeholder="Access Token" value="" id="txtaccess" readonly/><br/>
+            <input type="button" class="button nextExtra effectbutton" id="getTokenId" value="Get Token" onclick="getToken()">
           </div>
-    </div>
-      <div class="navcloud">
-        <input type="button" class="button effectbutton" id="btncancel2" value="Back" onclick="backzwei()">
-        <input type="button" class="button nextExtra effectbutton" style="float: right;" id="res3" value="Next" onclick="showvier()">
-        </div>
       </div>
 
     </div>
@@ -152,6 +127,10 @@
       $('#genname').hover(function(){document.getElementById("genname").style.cursor = "pointer";},
       function() {document.getElementById("genname").style.cursor = "initial";});
 
+      ipcRenderer.on("pwsend", (event, arg) => {
+        console.log(arg.pw);
+      });
+
       /*window.addEventListener('contextmenu', (e) => {
       e.preventDefault()
       const { clipboard } = require('electron');
@@ -170,6 +149,7 @@
       var TokenDropbox = "";
 
       let parentWindow = remote.getCurrentWindow();
+      parentWindow.webContents.openDevTools();
       let position = parentWindow.getPosition();
       mainWindow = new BrowserWindow({
         width: 760,
@@ -190,18 +170,67 @@
       //mainWindow.setIgnoreMouseEvents(true);
       //mainWindow.loadURL("https://dropbox.com/developers/apps/create");
       mainWindow.loadURL("https://www.dropbox.com/logout");
-      //mainWindow.webContents.openDevTools()
+      mainWindow.webContents.openDevTools();
+
+
+      mainWindow.webContents.on('did-finish-load',()=>{
+        console.log('fertig geladen!!!!!!!!!!!!');
+        if(mainWindow.webContents.getURL() == "https://www.dropbox.com/login?src=logout")
+        {
+          back();
+          mainWindow.webContents.send("clearLogout");
+        }
+        else if(mainWindow.webContents.getURL() == "https://www.dropbox.com/home")
+        {
+          mainWindow.loadURL("https://dropbox.com/developers/apps/create");
+        }
+        else if(mainWindow.webContents.getURL() == "https://www.dropbox.com/developers/apps/create")
+        {
+          showzwei();
+          namefunc();
+        }
+        else if(mainWindow.webContents.getURL().indexOf("https://www.dropbox.com/developers/apps/info/") != -1)
+        {
+          showdreiextra();
+          permission();
+        }
+        else{
+          console.log(mainWindow.webContents.getURL());
+        }
+      });
+
+      mainWindow.webContents.on('did-start-navigation',()=>{
+        if(mainWindow.webContents.getURL() == "https://www.dropbox.com/home")
+        {
+          mainWindow.hide();
+        }
+        else{
+          console.log(mainWindow.webContents.getURL());
+        }
+      });
+
+      function hideshow(){
+        if(document.getElementById("hideshow-btn").value == "hide")
+        {
+          document.getElementById("hideshow-btn").value = "show";
+          mainWindow.hide();
+        }
+        else{
+          document.getElementById("hideshow-btn").value = "hide";
+          mainWindow.show();
+        }
+      }
 
     parentWindow.on('move', function() {
-      position = parentWindow.getPosition();
-      mainWindow.setPosition(position[0], position[1]+30);
+      movefunc()
     });
 
-    parentWindow.webContents.on('will-navigate', function() {
-        showzwei();
-        console.log("Test");
-    })
-
+    function movefunc()
+    {
+      position = parentWindow.getPosition();
+      mainWindow.setPosition(position[0]+2, position[1]+30);
+    }
+    movefunc();
 
     parentWindow.on('resize', function() {
       resizefunc();
@@ -210,7 +239,7 @@
     function resizefunc(){
       mainWindow.resizable = true;
       const bounds = parentWindow.getSize();
-      mainWindow.setSize(bounds[0]-240, bounds[1]-30);
+      mainWindow.setSize(bounds[0]-4, bounds[1]-32);
       document.getElementById("damnsheesh").style.left = bounds[0]-240 +"px";
       document.getElementById("damnsheesh").style.height = bounds[1]-30 +"px";
       mainWindow.resizable = false;
@@ -241,8 +270,15 @@
       }
 
     ipcRenderer.on("Tokendropbox", (event, arg) => {
-      console.log("ja")
-      document.getElementById("txtaccess").value = arg.token;
+      console.log("ja");
+      if(arg.token != "")
+      {
+        document.getElementById("txtaccess").value = arg.token;
+        document.getElementById("getTokenId").classList.add("hide");
+        TokenDropbox = arg.token;
+        getVersuch('[{"id":"0", "fav":"0", "titel":"","username":"","password":"","url":"","note":""}]', "pw");
+        
+      }
     });
 
     const nativeTheme = electron.remote.nativeTheme;
@@ -273,7 +309,6 @@
     }
 
       function showzwei(){
-        mainWindow.loadURL("https://dropbox.com/developers/apps/create");
         var element = document.getElementById("divzwei");
         element.classList.remove("hide");
         var element = document.getElementById("diveins");
@@ -305,20 +340,24 @@
       function showdrei(){
         if(document.getElementById("txtname").value != "")
         {
+          back();
           mainWindow.webContents.send("ausf");
+        }
+      }
+
+      function showdreiextra(){
           var element = document.getElementById("divdrei");
           element.classList.remove("hide");
-          var element = document.getElementById("divzwei");
+          var element = document.getElementById("diveins");
           element.classList.add("hide");
           document.getElementById('txtaccess').value = "";
-        }
       }
 
       function showvier(){
         var element = document.getElementById("txtaccess");
         element.classList.remove("rotborder");
         TokenDropbox = document.getElementById("txtaccess").value;
-        uploadFile('[{"id":"0", "fav":"0", "titel":"","username":"","password":"","url":"","note":""}]')
+        //uploadFile('[{"id":"0", "fav":"0", "titel":"","username":"","password":"","url":"","note":""}]', "pw");
         
       }
 
@@ -341,12 +380,12 @@
 
       //UPLOAD
 
-function uploadFile(fil){
+function uploadFile(fil, filename){
   var dropboxToken = TokenDropbox;
 
-var contents = fil;
- var blob = new Blob([contents], { type: 'text/plain' });
- var file = new File([blob], "pw.json", {type: "text/plain"});
+  var contents = fil;
+  var blob = new Blob([contents], { type: 'text/plain' });
+  var file = new File([blob], filename+".json", {type: "text/plain"});
 
  
   
@@ -362,19 +401,16 @@ xhr.onload = function() {
     var fileInfo = JSON.parse(xhr.response);
     sicherung = false;
     console.log(fileInfo);
-    tokenpos = false;
+    /*tokenpos = false;
 
     store.set('dropboxtoken', encrypt(TokenDropbox));
-
-          console.log(store.get('indexclose'));
-
-          if(store.get('indexclose') == true)
-          {
-            indexclosefunc();
-          }
-          else{
-            window.close();
-          }
+    if(store.get('indexclose') == true)
+    {
+      indexclosefunc();
+    }
+    else{
+      window.close();
+    }*/
     
   }
   else {
@@ -383,7 +419,8 @@ xhr.onload = function() {
     console.log(errorMessage);
     var element = document.getElementById("txtaccess");
     element.classList.add("rotborder");
-    document.getElementById("txtaccess").value = "";
+    setTimeout(() => { element.classList.remove("rotborder"); }, 2000);
+    document.getElementById("getTokenId").classList.remove("hide");
 
     
   }
@@ -400,6 +437,50 @@ xhr.setRequestHeader('Dropbox-API-Arg', JSON.stringify({
  
 xhr.send(file);
 }
+
+
+
+//-------------------
+
+
+function getVersuch(fil, filename){
+  var dropboxToken = TokenDropbox;
+        var xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+        xhr.upload.onprogress = function(evt) {
+          var percentComplete = parseInt(100.0 * evt.loaded / evt.total);
+          console.log(percentComplete);
+        };
+        
+        xhr.onload = function(e) {
+          if (xhr.status === 200) {
+            console.log("falsch");
+            sicherung = false;
+            console.log(xhr.response);
+            document.getElementById("getTokenId").classList.remove("hide");
+          }
+          else {
+            var errorMessage = xhr.response || 'Unable to download file';
+            console.log(errorMessage);
+            sicherung = false;
+            uploadFile(fil, filename);
+          }
+        };
+
+        xhr.onerror = function() { 
+          sicherung = false;
+        }
+        
+        xhr.open('POST', 'https://content.dropboxapi.com/2/files/download');
+        xhr.setRequestHeader('Authorization', 'Bearer ' + dropboxToken);
+        xhr.setRequestHeader('Dropbox-API-Arg', JSON.stringify({
+          path: '/'+filename+'.json'
+        }));
+        
+        xhr.send();
+}
+
+//-----------------------------------------
 
 function encrypt(text){
   var message = text;

@@ -13,7 +13,7 @@ const axios = require('axios');
 const electron = require('electron');
 const nativeTheme = electron.remote.nativeTheme;
 
-var request = require('request');
+//var request = require('request');
 const fs = require('fs');
 
 const contextMenu = require('electron-context-menu');
@@ -301,6 +301,13 @@ $(document).ready(function(){
       $('#genkeybut').hover(function(){$('#con').text('Generate new Key');},
       function() {$('#con').text(bot);});
 
+      $('#enfile').hover(function(){$('#con').text('Encrypt FIle');},
+      function() {$('#con').text(bot);});
+      $('#btntest2').hover(function(){$('#con').text('Decrypt File');},
+      function() {$('#con').text(bot);});
+      $('#installExt').hover(function(){$('#con').text('Install pCloud Chrome Extension');},
+      function() {$('#con').text(bot);});
+
   $('#max-btn').hover(function(){
     if(maxim == false)
     {
@@ -581,11 +588,11 @@ function canc(){
   
   let remote = require('electron').remote;
 
-  parentWindow.removeAllListeners('resize');
-  parentWindow.removeAllListeners('focus');
-    parentWindow.removeAllListeners('blur');
-    parentWindow.removeAllListeners('unmaximize');
-    parentWindow.removeAllListeners('maximize');
+  remote.getCurrentWindow().removeAllListeners('resize');
+  remote.getCurrentWindow().removeAllListeners('focus');
+  remote.getCurrentWindow().removeAllListeners('blur');
+  remote.getCurrentWindow().removeAllListeners('unmaximize');
+  remote.getCurrentWindow().removeAllListeners('maximize');
     /*ipcRenderer.removeAllListeners('exit');
     ipcRenderer.removeAllListeners('download');
     ipcRenderer.removeAllListeners('downloaded');
@@ -723,7 +730,7 @@ function erstmal(){
   let winSettings = new BrowserWindow({
     //width: 1000,
     //height: 630,
-    width: 1000,
+    width: 500,
     height: 630,
     minWidth: 300,
     minHeight: 350,
@@ -745,6 +752,8 @@ function erstmal(){
     slashes: true
 
   }))
+
+  mainWindow.webContents.send("pwsend", {pw:pwtemp});
   //winSettings.webContents.openDevTools()
   //const {shell} = require('electron');
   //shell.openItem('https://dropbox.com/developers/apps');
@@ -1239,7 +1248,18 @@ function changepwfunc(){
       note = encryptzwei(note);
       var fav = pwlel[i].fav;
 
-      amk += '{"id":"'+id+'", "fav":"'+fav+'", "titel":"'+titel+'","username":"'+username+'","password":"'+password+'","url":"'+url+'","note":"'+note+'"}';
+      var created = new Date().toLocaleDateString();
+      if(pwlel[i].created != null)
+      {
+        created = pwlel[i].created;
+      }
+      var updated = new Date().toLocaleDateString();
+      if(pwlel[i].updated != null)
+      {
+        updated = pwlel[i].updated;
+      }
+
+      amk += '{"id":"'+id+'", "fav":"'+fav+'", "titel":"'+titel+'","username":"'+username+'","password":"'+password+'","url":"'+url+'","note":"'+note+', "created":"'+created+'", "updated":"'+updated+'"}';
       if(i < len2){
         amk += ",\n";
       }
@@ -1461,7 +1481,18 @@ function savebackup(){
       note = encryptkey(note, lelelele);
       var fav = pwlel[i].fav;
 
-      amk += '{"id":"'+id+'", "fav":"'+fav+'", "titel":"'+titel+'","username":"'+username+'","password":"'+password+'","url":"'+url+'","note":"'+note+'"}';
+      var created = new Date().toLocaleDateString();
+      if(pwlel[i].created != null)
+      {
+        created = pwlel[i].created;
+      }
+      var updated = new Date().toLocaleDateString();
+      if(pwlel[i].updated != null)
+      {
+        updated = pwlel[i].updated;
+      }
+
+      amk += '{"id":"'+id+'", "fav":"'+fav+'", "titel":"'+titel+'","username":"'+username+'","password":"'+password+'","url":"'+url+'","note":"'+note+', "created":"'+created+'", "updated":"'+updated+'"}';
       if(i < len2){
         amk += ",\n";
       }
@@ -1810,16 +1841,15 @@ function loop(){
   }
 
   const { remote } = require('electron');
-  let parentWindow = remote.getCurrentWindow();
   
   function once(){
-    const bounds = parentWindow.getSize();
+    const bounds = remote.getCurrentWindow().getSize();
     document.getElementById("scrollbar-customzwei").style.height = bounds[1]-135 +"px";
   }
   once();
   
-  parentWindow.on('resize', function() {
-    const bounds = parentWindow.getSize();
+  remote.getCurrentWindow().on('resize', function() {
+    const bounds = remote.getCurrentWindow().getSize();
     document.getElementById("scrollbar-customzwei").style.height = bounds[1]-135 +"px";
   });
 
@@ -1885,15 +1915,6 @@ function encryptTest() {
   var app = require('electron').remote; 
   var dialog = app.dialog;
 
-  /*const files = dialog.showOpenDialogSync(null, {
-    title: "Import Settings",
-    buttonLabel: "Load Settings",
-    properties: ['openFile'],
-    //filters: [{name:'JSON', extensions: ['json'] }]
-  });
-
-  if(!files) return;*/
-
   const filevar = document.getElementById('enfile').files[0];
   const reader2 = new FileReader();
 
@@ -1912,7 +1933,32 @@ function encryptTest() {
       var key = pwtemp;
 
       var str = bufferToString(reader.result);
-      var encrypted = CryptoJS.AES.encrypt(str, key).toString(); 
+      //console.log(str);
+      //var encrypted = CryptoJS.AES.encrypt(str, key).toString(); 
+
+
+      var arrString100 = "[";
+      var anzahl = Math.round(str.length/100+0.5);
+      for(var c = 0; c<anzahl; c++)
+      {
+        var string100 = "";
+        for(var b = 0; b<100; b++)
+        {
+          if(str.charAt(b+100*c) == null)
+          {
+            break;
+          }
+          string100 += str.charAt(b+100*c);
+        }
+        console.log(Math.round(c/anzahl*100)+"%");
+        arrString100 += '"'+CryptoJS.AES.encrypt(string100, key).toString()+'"';
+        if(c != anzahl-1)
+        {
+          arrString100 += ",";
+        }
+      }
+      arrString100 += "]";
+
 
       const files = dialog.showSaveDialogSync(null, {
         title: "Save Encrypted File",
@@ -1925,7 +1971,7 @@ function encryptTest() {
       if(!files) return;
       
       
-      var objrdy='[\n{\n"type":"'+ fnGetExtension(filevar) +'",\n"content":"'+encrypted+'"\n}\n]';
+      var objrdy='[\n{\n"type":"'+ fnGetExtension(filevar) +'",\n"content":'+arrString100+'\n}\n]';
       
       fs.writeFileSync(files, objrdy, 'utf-8');
       document.getElementById('enfile').value = "";
@@ -1974,8 +2020,14 @@ function decryptTest() {
   const obj = JSON.parse(fileContent);
 
       var key = pwtemp;
-
-      var decrypted = CryptoJS.AES.decrypt(obj[0].content, key).toString(CryptoJS.enc.Utf8);
+      var arrString100 = obj[0].content;
+      var decrypted = "";
+      for(var i = 0; i<arrString100.length;i++)
+      {
+        console.log(Math.round(i/arrString100.length*100)+"%");
+        decrypted += CryptoJS.AES.decrypt(arrString100[i], key).toString(CryptoJS.enc.Utf8);
+      }
+      //var decrypted = CryptoJS.AES.decrypt(obj[0].content, key).toString(CryptoJS.enc.Utf8);
       var data = stringToBuffer(decrypted);
       var array = new Uint8Array(data);
       var fileDec = new Blob([array]);
@@ -2012,4 +2064,36 @@ function showContextMenuText()
 function yee(){
   console.log("weg");
   //document.getElementById("context-menuText").classList.remove("active");
+}
+
+ipcRenderer.on('autostart', (event, arg) => {
+  console.log("BOOOOOOOOOOOOOOLEAN: "+arg.boolean);
+  var checkbox = document.getElementById('toggleswitchstartup');
+  checkbox.checked = arg.boolean;
+});
+ipcRenderer.send('autostart');
+
+var input = document.getElementById('toggleswitchstartup');
+
+input.addEventListener('change',function(){
+    if(this.checked) {
+      ipcRenderer.send('autostartOn');
+    } else {
+      ipcRenderer.send('autostartOff');
+    }
+});
+
+function activationfunc(){
+  if(document.getElementById("activationdrop").innerHTML == "▼")
+  {
+    $("#activationdropdrop").slideDown("slow", function(){});
+    $('#activationdrop').text("▲");
+    var dropboxToken = store.get('dropboxtoken');
+    //dropboxToken = decrypt(dropboxToken);
+    document.getElementById("actokid").value = dropboxToken;
+  }
+  else{
+    $("#activationdropdrop").slideUp("slow", function(){});
+    $('#activationdrop').text("▼");
+  }
 }

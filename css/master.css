@@ -174,11 +174,12 @@ body {
     box-sizing: content-box;
     margin: 0 2px 0 0;
     margin-bottom: 5px;
-    padding: 6px 10px 6px 10px;
-    border: 1px solid rgba(83, 83, 83, 0.66);
+    padding: 8px 10px 8px 10px;
+    border: 1px solid rgba(82, 82, 82, 0);
+    /*border: none;*/
     -webkit-border-radius: 3px;
-    border-radius: 10px;
-    font: normal 12px/normal "Arial", "Helvetica", sans-serif;
+    border-radius: 6px;
+    font: normal 14px/normal "Arial", "Helvetica", sans-serif;
     color: var(--clr-buttoncolor);
     -o-text-overflow: clip;
     text-overflow: clip;
@@ -189,13 +190,43 @@ body {
     -o-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
     transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
     outline:rgb(151, 45, 45);
-
+    background-color: rgb(58, 58, 58);
     transition: all 250ms ease;
     position: relative;
-    width: 198px;
+    width: 240px;
   }
 
   .loginzweiDiv {
+    position: center;
+
+    display: inline-block;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    margin: 0 2px 0 0;
+    margin-bottom: 0px;
+    border: 1px solid rgba(82, 82, 82, 0);
+    /*border: none;*/
+    -webkit-border-radius: 3px;
+    border-radius: 6px;
+    font: normal 14px/normal "Arial", "Helvetica", sans-serif;
+    color: var(--clr-buttoncolor);
+    -o-text-overflow: clip;
+    text-overflow: clip;
+    background: none;
+    text-shadow: 0px 0px 0 rgba(255,255,255,0.66);
+    -webkit-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
+    -moz-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
+    -o-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
+    transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
+    outline:rgb(151, 45, 45);
+    background-color: rgb(58, 58, 58);
+    transition: all 250ms ease;
+    position: relative;
+  }
+
+  .loginzweiInnen{
+    position: center;
     top:calc(50%-75px);
     left:calc(50%-75px);
 
@@ -203,12 +234,11 @@ body {
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
     box-sizing: content-box;
-    margin: 0 2px 0 0;
-    margin-bottom: 5px;
-    border: 1px solid rgba(83, 83, 83, 0.66);
+    padding: 8px 10px 8px 10px;
+    border: none;
     -webkit-border-radius: 3px;
-    border-radius: 10px;
-    font: normal 12px/normal "Arial", "Helvetica", sans-serif;
+    border-radius: 6px;
+    font: normal 14px/normal "Arial", "Helvetica", sans-serif;
     color: var(--clr-buttoncolor);
     -o-text-overflow: clip;
     text-overflow: clip;
@@ -219,23 +249,10 @@ body {
     -o-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
     transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
     outline:rgb(151, 45, 45);
-    padding:0;
+    background-color: transparent;
     transition: all 250ms ease;
     position: relative;
-    width: 218px;
-  }
-
-  .loginzweiInnen{
-    border:0px;
-    font: normal 12px/normal "Arial", "Helvetica", sans-serif;
-    color: var(--clr-buttoncolor);
-    -o-text-overflow: clip;
-    text-overflow: clip;
-    background: none;
-    text-shadow: 0px 0px 0 rgba(255,255,255,0.66);
-    padding: 6px 0px 6px 0px;
-    outline:none;
-    width:270px;
+    width: 206px;
   }
 
   .notelel {
@@ -247,14 +264,14 @@ body {
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
     box-sizing: content-box;
-    width: 150px;
-    height: 80px;
+    width: 220px;
+    height: 132px;
     margin: 0 0 0 0;
-    padding: 6px 48px 6px 21px;
-    border: 1px solid rgba(83, 83, 83, 0.66);
+    padding: 8px 20px 8px 20px;
+    border: 1px solid rgba(82, 82, 82, 0);
     -webkit-border-radius: 3px;
     border-radius: 10px;
-    font: normal 12px/normal "Arial", "Helvetica", sans-serif;
+    font: normal 14px/normal "Arial", "Helvetica", sans-serif;
     color: var(--clr-buttoncolor);
     -o-text-overflow: clip;
     text-overflow: clip;
@@ -266,7 +283,7 @@ body {
     transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
     outline:rgb(151, 45, 45);
     margin-bottom: 1px;
-
+    background-color: rgb(58, 58, 58);
     transition: all 250ms ease;
 	  position: relative;
   }
@@ -391,6 +408,23 @@ border: 1px solid #dedede;
   font: normal 15px/normal "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
 
+.favround {
+  display: block;
+  cursor: pointer;
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  border: 1px solid var(--clr-btnshadow);
+  transition: all 250ms ease;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  outline: 0;
+  background: none;
+  font: normal 20px/normal "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  color:gray;
+}
+
 .buttonround2 {
   color:white;
   display:inline-block;
@@ -426,6 +460,20 @@ border: 1px solid #dedede;
   transition: all 250ms ease;
   position: relative;
   outline: 0;
+}
+
+.canceleff {
+  border: 1px solid rgb(124, 53, 53);
+  color: rgb(143, 58, 58);
+  transition: all 0.2s;
+  
+}
+
+.canceleff:hover {
+  -webkit-border-radius: 6px;
+    border-radius: 6px;
+  background: var(--crl-buttonhover);
+  text-shadow: 0 0 10px rgb(124, 53, 53);
 }
 
 .buttonnav {
@@ -635,7 +683,7 @@ h2{
 }
 
 .effectkreis:hover{
-  border-radius: 0.5rem;
+  border-radius: 0.4rem;
   background: var(--clr-loginhover);
 }
 
@@ -894,14 +942,14 @@ h2{
     position:absolute;
     z-index:10000;
     width:200px;
-    background:#222222;
-    border-radius:5px;
+    background:var(--clr-bgmodal);
+    border-radius:15px;
     border: 1px solid var(--clr-label);
     transform:scale(0);
     transform-origin:top left;
     float: right;
-    top:8px;
-    left:0px;
+    top:-20px;
+    left:-6px;
   }
   #context-menuzwei.active {
     float: right;
@@ -930,14 +978,14 @@ h2{
     position:absolute;
     z-index:10000;
     width:200px;
-    background:#222222;
-    border-radius:5px;
+    background:var(--clr-bgmodal);
+    border-radius:15px;
     border: 1px solid var(--clr-label);
     transform:scale(0);
     transform-origin:top left;
     float: right;
-    top:8px;
-    left:0px;
+    top:-20px;
+    left:-6px;
   }
   #context-menudrei.active {
     float: right;
@@ -1375,15 +1423,21 @@ input:checked + .roundbutton:before  {
 }
 
 #modal-contents {
-	height: 210px;
-	width: 500px;
+	height: 280px;
+	width: 580px;
 	background-color: var(--clr-bgmodal);
 	text-align: center;
 	padding: 20px;
   position: relative;
   justify-content: center;
   align-items: center;
-  border-radius: 6px;
+  border-radius: 15px;
+
+  display: grid;
+  grid-template-areas:"textbox note"
+                        "txt txt"
+                        "btn btn";
+  grid-template-columns: 50% 50%;
 }
 
 #bg-modal2 {
@@ -1998,6 +2052,57 @@ progress[value]::-webkit-progress-value::after {
   background-color: white;
 }
 
+#progresshome
+{
+  position:absolute;
+  height: 1px;
+  margin:0px;
+  margin-left:8px;
+  bottom:0px;
+  left:0;
+  z-index: 9999999;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: transparent;
+}
+
+#progresshome::-webkit-progress-bar
+{
+  position:initial;
+  box-shadow:none;
+  top:0px;
+  margin:0px;
+  margin-bottom: 0px;
+  height: 1px;
+  background-color: transparent;
+  
+}
+
+#progresshome::-webkit-progress-value
+{
+  top: 0px;
+  margin:0px;
+  height: 1px;
+}
+
+#progresshome::-webkit-progress-value::before 
+{
+  top: 0px;
+  margin:0px;
+  height: 1px;
+  position: relative;
+}
+
+#progresshome::-webkit-progress-value::after 
+{
+  top: 0px;
+  right: 0px;
+  margin:0px;
+  height: 1px;
+  position: relative;
+}
+
 .labeltable{
   -webkit-user-select: none;
      -moz-user-select: -moz-none;
@@ -2130,6 +2235,8 @@ a{
   margin:5px;
   height: fit-content;
   align-items: center;
+  width:100px;
+  height:100px;
 }
 
 .kacheldiv2 i{
@@ -2138,11 +2245,11 @@ a{
 
 .primary{
   color:var(--clr-primary);
-  font-size:4ch;
+  font-size:2ch;
 }
 
 .primarySize{
-  font-size:12ch;
+  font-size:8ch;
   color: var(--clr-loginbg)
   
 }
@@ -2154,17 +2261,26 @@ a{
 .adiv{
   margin:0px;
   color: var(--clr-label);
+  width: 100px;
+  align-self: center;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #containeritems{
   margin:10px;
-  width:100%-20px;
-  height:100%;
   display:flex;
   flex-flow: row wrap;
+  justify-content:flex-start;
 }
 
 /*input[type="file"]::-webkit-file-upload-button {
   display: none;
   background-color: red;
 }*/
+
+.highl{
+  background-color: rgb(0, 153, 255, 0.8);
+}

@@ -22,10 +22,50 @@ autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
 
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    var myWindow = BrowserWindow.getAllWindows()[0];
+    if (myWindow) {
+      if (myWindow.isMinimized()) myWindow.restore()
+      myWindow.focus()
+    }
+  })
+
+  const AutoLaunch = require('auto-launch');
+
 const { Tray } = require('electron')
 
 let tray = null
 app.whenReady().then(() => {
+
+  let autoLaunch = new AutoLaunch({
+    name: 'pCloud',
+    path: app.getPath('exe'),
+  });
+
+  ipcMain.on('autostartOn', (event, args) => {
+    autoLaunch.enable();
+  });
+
+  ipcMain.on('autostartOff', (event, args) => {
+    autoLaunch.disable();
+  });
+
+  ipcMain.on('autostart', (event, args) => {
+    autoLaunch.isEnabled().then((isEnabled) => {
+      event.sender.send("autostart", {boolean:isEnabled});
+    });
+  });
+
+
+
+
+
   tray = new Tray(path.join(__dirname, 'pictures/icon.ico'));
   trayIcon();
 
@@ -296,7 +336,7 @@ function downloadfunc()
 }
 
 ipcMain.on('Tokensetzen', (event, args) => {
-  eventdropbox.sender.send("Tokendropbox", args)
+  eventdropbox.sender.send("Tokendropbox", args);
 });
 
 ipcMain.on('infopz', (event) => {
@@ -367,3 +407,5 @@ app.on('activate', function () {
 /*app.on('browser-window-created',function(e,window) {
   window.setMenu(null);
   })*/
+
+}

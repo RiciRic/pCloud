@@ -15,7 +15,7 @@ const { app, globalShortcut } = require('electron').remote;
 
 const { Menu } = require('electron');
 
-var request = require('request');
+//var request = require('request');
 
 const nativeTheme = electron.remote.nativeTheme; 
 
@@ -81,9 +81,7 @@ const store = new Store({
 
 
 var pwtemp = store.get('pwtemp');
-console.log("pwtemp: " + pwtemp);
 store.set('pwtemp','');
-console.log("pwtemp: " + store.get('pwtemp'));
 
 var maxim = store.get('max');
 var theme = store.get('theme');
@@ -140,6 +138,10 @@ var lastsettvar = store.get('lastsett');
 
     if (dropdown == 1){
       document.getElementById("slt").selectedIndex = "1";
+    }
+    else if(dropdown == 2)
+    {
+      document.getElementById("slt").selectedIndex = "2";
     }
         
         if (favbtn == '0'){
@@ -438,7 +440,6 @@ $("#ed").click(function(){
           $('#con').text('Dropbox Token is wrong!');
         }
         dropboxToken = decrypt(dropboxToken);
-        console.log(dropboxToken)
         var xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
         xhr.upload.onprogress = function(evt) {
@@ -514,17 +515,17 @@ function anfangzwei(){
   return '<tr style="cursor:pointer" onclick="sortieren()"><th></th><th></th><th class="labeltable">Titel</th><th class="labeltable">Key</th><th></th><th class="labeltable">URL</th><th class="labeltable"></th><th></th></tr>';
 }
 
-function pew(row_id, id, titel, username, password, url, note, fav){
+function pew(row_id, id, titel, username, password, url, note, fav, created, updated, a){
   var dec = decrypt(password);
   var us = decrypt(username);
   var ur = decrypt(url);
   var pw = "";
-      pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover(\''+"urlid"+id+'\', \''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\')" onmouseleave="mleave(\''+"urlid"+id+'\', \''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\')">';
+      pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover(\''+"urlid"+id+'\', \''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\', \''+"titel"+id+'\')" onmouseleave="mleave(\''+"urlid"+id+'\', \''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\', \''+"titel"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\', \'' + created + '\', \'' + updated + '\')">';
       if(fav == "1"){
-      pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbuttonanders" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /><i id="i' + id + '" class="fas fa-star"></i></button></td>';
+      pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbuttonanders gray" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /><i id="i' + id + '" class="fas fa-star"></i></button></td>';
       }
       else{
-        pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; border-radius: 50%;" class="buttonzwei effectbuttonanders" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="☆" /><i id="i' + id + '" class="far fa-star"></i></button></td>';
+        pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; border-radius: 50%;" class="buttonzwei effectbuttonanders gray" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="☆" /><i id="i' + id + '" class="far fa-star"></i></button></td>';
       }
       if(ur == ""){
         pw += '<td style="user-select: none;"></td>';
@@ -532,8 +533,22 @@ function pew(row_id, id, titel, username, password, url, note, fav){
       else{
         pw += '<td style="user-select: none;"><img style="max-width:16px; max-height:16px;" src="https://www.google.com/s2/favicons?domain=' + ur + '"></td>';
       }
-      pw += '<td><div class="labelzwei" onclick="midbtn(this)" oncontextmenu="contextMenubar(\''+"table-row"+row_id+'\', \''+id+'\')" edit_type="click" col_name="tit">' + decrypt(titel) + '</div></td>';
-      pw += '<td><div class="labelzwei" edit_type="click" col_name="user" oncontextmenu="copy(\'' + us + '\')">' + kurz(us) + '</div></td>';
+      var dectit = decrypt(titel);
+      if(a != null && dectit.toLowerCase().indexOf(a.toLowerCase()) > -1){
+        dectit = highl(dectit, a);
+        pw += '<td><div class="labelzwei" oncontextmenu="contextMenubar(\''+"table-row"+row_id+'\', \''+id+'\')" edit_type="click" col_name="tit">' + dectit + '</div></td>';
+      }
+      else{
+        pw += '<td><div class="labelzwei" oncontextmenu="contextMenubar(\''+"table-row"+row_id+'\', \''+id+'\')" edit_type="click" col_name="tit">' + dectit + '</div></td>';
+      }
+      var decus = kurz(us);
+      if(a != null && decus.toLowerCase().indexOf(a.toLowerCase()) > -1){
+        decus = highl(decus, a);
+        pw += '<td><div class="labelzwei" edit_type="click" col_name="user" oncontextmenu="copy(\'' + us + '\')">' + decus + '</div></td>';
+      }
+      else{
+        pw += '<td><div class="labelzwei" edit_type="click" col_name="user" oncontextmenu="copy(\'' + us + '\')">' + decus + '</div></td>';
+      }
       pw += '<td><button class="buttonzwei effectbuttonanders nada" id="username' + id + '" style="outline: 0;" onmouseover="copyus()" onmouseout="leave()" onclick="copy(\'' + us + '\')" value="🗐" /><i class="fas fa-copy"></i></button>' +'</td>';
       pw += '<td><div class="labelzwei" edit_type="click" col_name="psw" oncontextmenu="copy(\'' + dec + '\')">' + kurzst(stern(dec)) + '</div></td>'
       pw += '<td><button type="button" class="buttonzwei effectbuttonanders" id="auge' + id + '" onfocusout="mouseUp()" onmouseover="showbot()" onmouseout="leave()" onmousedown="mouseDown(\'' + dec + "\', \'auge" + id + '\')" onmouseup="mouseUp()" value="👁" /><i class="far fa-eye"></i></button>' +'</td>';
@@ -544,12 +559,43 @@ function pew(row_id, id, titel, username, password, url, note, fav){
       else{
         pw += '<td><button style="outline: 0;" type="button" class="buttonzwei effectbuttonanders gray" id="urlid' + id + '" onmouseover="run()" onmouseout="leave()"  onclick="ope(\'' + ur + '\')" value="ᐅ" /><i class="fas fa-play"></i></button>' +'</td>';
       }
-      pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<button data-modal-target="#modallel" type="button" style="outline: 0;" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editme()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\')" value="✎" /><i class="far fa-edit"></i></button></td>';
+      pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<button data-modal-target="#modallel" type="button" style="outline: 0;" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editme()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\', \'' + created + '\', \'' + updated + '\')" value="✎" /><i class="far fa-edit"></i></button></td>';
       pw += '<td><button type="button" onmouseover="entfern()" onmouseout="leave()" class="buttonzwei btn_row_delete rot gray" id="delete' + id + '" value="✖" onclick="del(' + id +')"><i class="fas fa-times"></i></button>' + '</td>';
       pw += '</tr>';
+      /*if(a != null && decrypt(titel).indexOf(a) != -1){
+        pw.replace(a, '<span class="highl">'+a+'</span>')
+      }*/
       return pw;
 
 }
+
+function highl(str, search){
+  for(var i = 0; i<str.length;i++)
+  {
+    if(str.toLowerCase().charAt(i) == search.toLowerCase().charAt(0))
+    {
+      for(var b = 0; b<search.length;b++)
+      {
+        var start = i;
+        var stop;
+        if(str.toLowerCase().charAt(i+b) == search.toLowerCase().charAt(b))
+        {
+          if(b==search.length-1)
+          {
+            stop = i+b;
+            var output = str.substring(0, start) + '<span class="highl">' + str.substring(start);
+            output = output.substring(0, stop+21) + '</span>' + output.substring(stop+21);
+            return output;
+          }
+        }
+        else{
+          break;
+        }
+      }
+    }
+  }
+}
+highl("Hallo", "a");
 
   function contextMenubar(id, ID)
   {
@@ -671,12 +717,13 @@ function pew(row_id, id, titel, username, password, url, note, fav){
   }
 
 
-function mover(playidd, delid, edid, usid, passid)
+function mover(playidd, delid, edid, usid, passid, favid)
 {
   document.getElementById(delid).classList.remove("gray");
   document.getElementById(edid).classList.remove("gray");
   document.getElementById(usid).classList.remove("nada");
   document.getElementById(passid).classList.remove("nada");
+  document.getElementById(favid).classList.remove("gray");
   try {
     document.getElementById(playidd).classList.remove("gray");
   } catch (error) {
@@ -684,12 +731,13 @@ function mover(playidd, delid, edid, usid, passid)
   }
 }
 
-function mleave(playidd, delid, edid, usid, passid)
+function mleave(playidd, delid, edid, usid, passid, favid)
 {
   document.getElementById(delid).classList.add("gray");
   document.getElementById(edid).classList.add("gray");
   document.getElementById(usid).classList.add("nada");
   document.getElementById(passid).classList.add("nada");
+  document.getElementById(favid).classList.add("gray");
   try {
     document.getElementById(playidd).classList.add("gray");
   } catch (error) {
@@ -697,11 +745,12 @@ function mleave(playidd, delid, edid, usid, passid)
   }
 }
 
-function mover2(delid, edid, passid, playidd)
+function mover2(delid, edid, passid, playidd, favid)
 {
   document.getElementById(delid).classList.remove("gray");
   document.getElementById(edid).classList.remove("gray");
   document.getElementById(passid).classList.remove("nada");
+  document.getElementById(favid).classList.remove("gray");
   try {
     document.getElementById(playidd).classList.remove("gray");
   } catch (error) {
@@ -709,11 +758,12 @@ function mover2(delid, edid, passid, playidd)
   }
 }
 
-function mleave2(delid, edid, passid, playidd)
+function mleave2(delid, edid, passid, playidd, favid)
 {
   document.getElementById(delid).classList.add("gray");
   document.getElementById(edid).classList.add("gray");
   document.getElementById(passid).classList.add("nada");
+  document.getElementById(favid).classList.add("gray");
   try {
     document.getElementById(playidd).classList.add("gray");
   } catch (error) {
@@ -780,15 +830,15 @@ function editme(){
   $('#con').text('Edit Password');
 }
 
-function keky(row_id, id, titel, username, password, url, note, fav){
+function keky(row_id, id, titel, username, password, url, note, fav, created, updated, a){
   var pw = "";
   var ur = decrypt(url);
-  pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\', \''+"urlid"+id+'\')" onmouseleave="mleave2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\', \''+"urlid"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \'' + decrypt(password) + '\', \'' + decrypt(url) + '\', \'' + decrypt(note) +'\', \'' + fav + '\')">';
+  pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\', \''+"urlid"+id+'\', \''+"titel"+id+'\')" onmouseleave="mleave2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\', \''+"urlid"+id+'\', \''+"titel"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \'' + decrypt(password) + '\', \'' + decrypt(url) + '\', \'' + decrypt(note) +'\', \'' + fav + '\', \'' + created + '\', \'' + updated + '\')">';
   if(fav == "1"){
-    pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbuttonanders" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /><i id="i' + id + '" class="fas fa-star"></i></button></td>';
+    pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbuttonanders gray" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /><i id="i' + id + '" class="fas fa-star"></i></button></td>';
     }
     else{
-      pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; border-radius: 50%;" class="buttonzwei effectbuttonanders" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="☆" /><i id="i' + id + '" class="far fa-star"></i></button></td>';
+      pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; border-radius: 50%;" class="buttonzwei effectbuttonanders gray" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="☆" /><i id="i' + id + '" class="far fa-star"></i></button></td>';
     }
   if(ur == ""){
     pw += '<td style="user-select: none;"></td>';
@@ -796,7 +846,14 @@ function keky(row_id, id, titel, username, password, url, note, fav){
   else{
     pw += '<td style="user-select: none;"><img style="max-width:16px; max-height:16px;" src="https://s2.googleusercontent.com/s2/favicons?domain=' + ur + '"></td>';
   }
-  pw += '<td><div class="labelzwei" edit_type="click" oncontextmenu="contextMenubar(\''+"table-row"+row_id+'\', \''+id+'\')" col_name="tit">' + decrypt(titel) + '</div></td>';
+  var dectit = decrypt(titel);
+  if(a != null && dectit.toLowerCase().indexOf(a.toLowerCase()) > -1){
+    dectit = highl(dectit, a);
+    pw += '<td><div class="labelzwei" edit_type="click" oncontextmenu="contextMenubar(\''+"table-row"+row_id+'\', \''+id+'\')" col_name="tit">' + dectit + '</div></td>';
+  }
+  else{
+    pw += '<td><div class="labelzwei" edit_type="click" oncontextmenu="contextMenubar(\''+"table-row"+row_id+'\', \''+id+'\')" col_name="tit">' + dectit + '</div></td>';
+  }
   pw += '<td><div class="labelzwei" edit_type="click" col_name="psw" oncontextmenu="copy(\'' + decrypt(password) + '\')">' + decrypt(password) + '</div></td>';
   pw += '<td><button class="buttonzwei effectbuttonanders nada" id="password' + id + '" onmouseover="copykey()" onmouseout="leave()" onclick="copy(\'' + decrypt(password) + '\')" value="🗐" /><i class="fas fa-copy"></i></button>' +'</td>';
   if(ur == ""){
@@ -805,10 +862,10 @@ function keky(row_id, id, titel, username, password, url, note, fav){
   else{
     pw += '<td><button type="button" class="buttonzwei effectbuttonanders gray" id="urlid' + id + '" onmouseover="run()" onmouseout="leave()" onclick="ope(\'' + ur + '\')" value="ᐅ" /><i class="fas fa-play"></i></button>' +'</td>';
   }
-  pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<button data-modal-target="#modallel" type="button" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editmekey()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \'' + decrypt(password) + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\')" value="✎" /><i class="far fa-edit"></i></button></td>';
-  pw += '<td><input type="button" class="buttonzwei btn_row_delete rot gray" id="delete' + id + '" value="✖" onmouseover="entfernkey()" onmouseout="leave()" onclick="del('+ id +')">' + '</td>';
+  pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<button data-modal-target="#modallel" type="button" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editmekey()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \'' + decrypt(password) + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\', \'' + created + '\', \'' + updated + '\')" value="✎" /><i class="far fa-edit"></i></button></td>';
+  pw += '<td><button type="button" class="buttonzwei btn_row_delete rot gray" id="delete' + id + '" value="✖" onmouseover="entfernkey()" onmouseout="leave()" onclick="del('+ id +')"><i class="fas fa-times"></i></button>' + '</td>';
   pw += '</tr>';
-      return pw;
+  return pw;
 
 }
 
@@ -1002,15 +1059,16 @@ function countdown(countvar){
     }
 }
 
-function check(id, titel, username, password, url, note, fav){
+function check(id, titel, username, password, url, note, fav, created, updated){
     edit = true;
     document.getElementById("saverly").value = "✎Edit";
-
     $('#bg-modal').animate({
       opacity: 1
   }, 'swing');
 
   $('#bg-modal').css("z-index", "9997");
+
+  $('#timeed').text('created: '+created+',     last updated: '+updated);
     
     indexsheesh = id;
     row_index = $(this).parent('table').index();
@@ -1054,6 +1112,7 @@ function check(id, titel, username, password, url, note, fav){
     var element = document.getElementById("favoritebtn");
     element.classList.remove("blau");
   }
+  pwCheck();
 }
 
 function testttt(i)
@@ -1102,7 +1161,7 @@ function cancel(){
     opacity: 0
 }, 'swing');
 
-setTimeout(() => {  $('#bg-modal').css("z-index", "0"); }, 350);
+setTimeout(() => {  $('#bg-modal').css("z-index", "0"); $('#timeed').text('');}, 350);
 
   $("#lel").attr('disabled', false);
 
@@ -1113,7 +1172,7 @@ setTimeout(() => {  $('#bg-modal').css("z-index", "0"); }, 350);
   document.getElementById("context-menuzwei").classList.remove("active");
     document.getElementById("context-menudrei").classList.remove("active");
     document.getElementById("context-menuvier").classList.remove("active");
-    var contextElementzwei = document.getElementById("txtpassword");
+    var contextElementzwei = document.getElementById("txtpasswordDiv");
     contextElementzwei.classList.remove("bordercolor");
     var contextElementzwei = document.getElementById("txturl");
     contextElementzwei.classList.remove("bordercolor");
@@ -1139,6 +1198,7 @@ function cancelmodal(){
     {
       cancel();
       cancelto();
+      pwCheck();
     }
   }
   modalcanc = false;
@@ -1328,16 +1388,17 @@ function save(){
 
       const slt = document.getElementById('slt');
       if(slt.value == "Passwort"){
-        const idk = {"id":count2.toString(), "fav":favinform, "titel":titel, "username":username, "password":password, "url":url, "note":note};
+        const idk = {"id":count2.toString(), "fav":favinform, "titel":titel, "username":username, "password":password, "url":url, "note":note, "created":new Date().toLocaleDateString(), "updated":new Date().toLocaleDateString()};
         pwlel.push(idk);
         console.log(idk)
       }
       else{
         var sek = "-" + count2.toString();
-        const idk = {"id":sek, "fav":favinform, "titel":titel, "username":username, "password":password, "url":url, "note":note};
+        const idk = {"id":sek, "fav":favinform, "titel":titel, "username":username, "password":password, "url":url, "note":note, "created":new Date().toLocaleDateString(), "updated":new Date().toLocaleDateString()};
         pwlel.push(idk);
         console.log(idk)
       }
+      console.log(pwlel);
       cancel();
     }
     else{
@@ -1353,6 +1414,7 @@ function save(){
             pwlel[i].url = url;
             pwlel[i].note = note;
             pwlel[i].fav = favinform;
+            pwlel[i].updated = new Date().toLocaleDateString();
             //editfunc(indexsheesh, titel, username, password, url, note, favinform);
             cancel();
             break;
@@ -1401,10 +1463,10 @@ function editfunc(id, titel, username, password, url, note, fav){
           {
             if(pwlel[i].id == id)
             {
-              pw += pew(row_id, id, titel, username, password, url, note, fav);
+              pw += pew(row_id, id, titel, username, password, url, note, fav,  pwlel[i].created,  pwlel[i].updated);
             }
             else{
-              pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+              pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated);
             }
           }
         }
@@ -1427,10 +1489,10 @@ function editfunc(id, titel, username, password, url, note, fav){
           {
             if(pwlel[i].id == id)
             {
-              pw += keky(row_id, id, titel, username, password, url, note, fav);
+              pw += keky(row_id, id, titel, username, password, url, note, fav, pwlel[i].created, pwlel[i].updated);
             }
             else{
-              pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+              pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated);
             }
           }
         }
@@ -1499,12 +1561,12 @@ function searchfunc()
                 {
                   if(favbtn == 0)
                   {
-                    pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+                    pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated, a);
                   }
                   else{
                     if(pwfav == "1")
                     {
-                      pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+                      pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated, a);
                     }
                   }
                 }
@@ -1514,12 +1576,12 @@ function searchfunc()
                 {
                   if(favbtn == 0)
                   {
-                    pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+                    pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated, pwlel[i].created, pwlel[i].updated, a);
                   }
                   else{
                     if(pwfav == "1")
                     {
-                      pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+                      pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated, pwlel[i].created, pwlel[i].updated, a);
                     }
                   }
                 }
@@ -1605,6 +1667,11 @@ function getVersuch(){
       else {
         var errorMessage = xhr.response || 'Unable to download file';
         console.log(errorMessage);
+        console.log("RICHTIGGGGGGGGGGGGGGG "+errorMessage.error_summary)
+        if(errorMessage.error_summary.indexOf("path/not_found/") > -1)
+        {
+          createFolder(dropboxToken);
+        }
       }
     };
     
@@ -1613,7 +1680,7 @@ function getVersuch(){
     xhr.setRequestHeader('Content-Type', 'application/json');
     
     xhr.send(JSON.stringify({
-      "path": "/test",
+      "path": "/files",
       "recursive": false,
       "include_media_info": false,
       "include_deleted": false,
@@ -1623,12 +1690,44 @@ function getVersuch(){
     }));
   } catch (error) {
     console.log(error);
+    console.log("FAAAAAAAAAAAAAAAAAAAAAALSCH")
   }
 
 }
 
+function createFolder(dropboxToken){
+  try {
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = 'json';
+    xhr.upload.onprogress = function(evt) {
+      var percentComplete = parseInt(100.0 * evt.loaded / evt.total);
+      console.log(percentComplete);
+    };
+    
+    xhr.onload = function(e) {
+      if (xhr.status === 200) {
+        console.log("Folder created")
+        console.log(e.currentTarget.response);
+      }
+      else {
+        var errorMessage = xhr.response || 'Unable to download file';
+        console.log(errorMessage);
+      }
+    };
+    
+    xhr.open('POST', 'https://api.dropboxapi.com/2/files/create_folder_v2');
+        xhr.setRequestHeader('Authorization', 'Bearer ' + dropboxToken);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        
+        xhr.send("{\"path\": \"/files\",\"autorename\": false}");
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 function slt_change(){
   const slt = document.getElementById('slt');
+  document.getElementById("blur").classList.remove("hide");
   $('#passwort tbody').empty();
   try {
     document.getElementById("containeritems").remove();
@@ -1658,7 +1757,7 @@ function slt_change(){
           {
             if(pwlel[i].id > 0)
             {
-              pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+              pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated);
               count += 1;
             }
           }
@@ -1666,14 +1765,15 @@ function slt_change(){
           {
             if(pwlel[i].id > 0 && pwlel[i].fav == "1")
             {
-              pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+              pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated);
               count += 1;
             }
           }
         }
         $('#coun').text(count + ' Passwords');
         document.getElementById('sh').style.display = "inline";
-        document.getElementById('txtpassword').style.width = "164px";
+        document.getElementById('progresshome').style.display = "inline";
+        document.getElementById('txtpassword').style.width = "206px";
         document.getElementById('txtpassword').style.borderTopRightRadius = "0px";
         document.getElementById('txtpassword').style.borderBottomRightRadius = "0px";
         dropdown = 0;
@@ -1696,26 +1796,28 @@ function slt_change(){
         {
           if(pwlel[i].id < 0)
           {
-              pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+              pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated);
               count += 1;
           }
         }
         else{
           if(pwlel[i].id < 0 && pwlel[i].fav == "1")
           {
-              pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+              pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated);
               count += 1;
           }
         }
       }
       $('#coun').text(count + ' Keys');
       document.getElementById('sh').style.display = "none";
-      document.getElementById('txtpassword').style.width = "198px";
+      document.getElementById('progresshome').style.display = "none";
+      document.getElementById('txtpassword').style.width = "240px";
       document.getElementById('txtpassword').style.borderTopRightRadius = "10px";
       document.getElementById('txtpassword').style.borderBottomRightRadius = "10px";
       dropdown = 1;
   }
   else{
+    store.set('dropdown', 2);
     getVersuch();
   }
   $('#passwort').append(pw);
@@ -1814,7 +1916,18 @@ function allesSaven(ind, wer){
     else{
       newid = 0;
     }
-    amk += '{"id":"'+newid+'", "fav":"'+fav+'", "titel":"'+titel+'","username":"'+username+'","password":"'+password+'","url":"'+url+'","note":"'+note+'"}';
+
+    var created = new Date().toLocaleDateString();
+    if(pwlel[i].created != null)
+    {
+      created = pwlel[i].created;
+    }
+    var updated = new Date().toLocaleDateString();
+    if(pwlel[i].updated != null)
+    {
+      updated = pwlel[i].updated;
+    }
+    amk += '{"id":"'+newid+'", "fav":"'+fav+'", "titel":"'+titel+'","username":"'+username+'","password":"'+password+'","url":"'+url+'","note":"'+note+'", "created":"'+created+'", "updated":"'+updated+'"}';
     if(i < len2){
       amk += ",\n";
     }
@@ -1881,14 +1994,14 @@ function changefunc(){
           {
             if(pwlel[i].id > 0)
             {
-              pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+              pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated);
             }
           }
           else
           {
             if(pwlel[i].id > 0 && pwlel[i].fav == "1")
             {
-              pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+              pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated);
             }
           }
         }
@@ -1911,13 +2024,13 @@ function changefunc(){
         {
           if(pwlel[i].id < 0)
           {
-              pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+              pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated);
           }
         }
         else{
           if(pwlel[i].id < 0 && pwlel[i].fav == "1")
           {
-              pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav);
+              pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated);
           }
         }
         }
@@ -1999,11 +2112,11 @@ function canc(){
 
     let remote = require('electron').remote;
 
-    parentWindow.removeAllListeners('resize');
-    parentWindow.removeAllListeners('focus');
-    parentWindow.removeAllListeners('blur');
-    parentWindow.removeAllListeners('unmaximize');
-    parentWindow.removeAllListeners('maximize');
+    remote.getCurrentWindow().removeAllListeners('resize');
+    remote.getCurrentWindow().removeAllListeners('focus');
+    remote.getCurrentWindow().removeAllListeners('blur');
+    remote.getCurrentWindow().removeAllListeners('unmaximize');
+    remote.getCurrentWindow().removeAllListeners('maximize');
     /*ipcRenderer.removeListener('restart_app');
     ipcRenderer.removeListener('exit');
     ipcRenderer.removeListener('download');*/
@@ -2217,7 +2330,6 @@ function showContextMenuText()
 }
 
 function yee(){
-  console.log("weg");
   document.getElementById("context-menuText").classList.remove("active");
 }
 
@@ -2238,7 +2350,6 @@ window.addEventListener("click",function(){
 
 function removeContextMenu()
 {
-  console.log("blur")
   document.getElementById("context-menuvier").classList.remove("active");
 }
 
@@ -2260,11 +2371,11 @@ function analy(){
   elementdrei.classList.add("animateLeft");
   let remote = require('electron').remote;
   const winAnalytics = remote.getCurrentWindow();
-  parentWindow.removeAllListeners('resize');
-  parentWindow.removeAllListeners('focus');
-    parentWindow.removeAllListeners('blur');
-    parentWindow.removeAllListeners('unmaximize');
-    parentWindow.removeAllListeners('maximize');
+  remote.getCurrentWindow().removeAllListeners('resize');
+  remote.getCurrentWindow().removeAllListeners('focus');
+  remote.getCurrentWindow().removeAllListeners('blur');
+  remote.getCurrentWindow().removeAllListeners('unmaximize');
+  remote.getCurrentWindow().removeAllListeners('maximize');
     ipcRenderer.removeAllListeners('restart_app');
     ipcRenderer.removeAllListeners('exit');
     ipcRenderer.removeAllListeners('download');
@@ -2362,7 +2473,7 @@ function showpwgen(){
   var contextElement = document.getElementById("context-menuzwei");
   contextElement.classList.add("active");
   onclvar = true;
-  var contextElementzwei = document.getElementById("txtpassword");
+  var contextElementzwei = document.getElementById("txtpasswordDiv");
   contextElementzwei.classList.add("bordercolor");
 
 }
@@ -2381,7 +2492,7 @@ function showqr(){
   else{
     var contextElementzwei = document.getElementById("txtusername");
     contextElementzwei.classList.add("bordercolor");
-    var contextElementzwei = document.getElementById("txtpassword");
+    var contextElementzwei = document.getElementById("txtpasswordDiv");
     contextElementzwei.classList.add("bordercolor");
   }
   qrcodefunc();
@@ -2394,7 +2505,7 @@ function urlwifi(){
     contextElementzwei.classList.add("bordercolor");
     var contextElementzwei = document.getElementById("txtusername");
     contextElementzwei.classList.remove("bordercolor");
-    var contextElementzwei = document.getElementById("txtpassword");
+    var contextElementzwei = document.getElementById("txtpasswordDiv");
     contextElementzwei.classList.remove("bordercolor");
 
     var contextElementzwei = document.getElementById("lelzwei");
@@ -2404,7 +2515,7 @@ function urlwifi(){
   else{
     var contextElementzwei = document.getElementById("txtusername");
     contextElementzwei.classList.add("bordercolor");
-    var contextElementzwei = document.getElementById("txtpassword");
+    var contextElementzwei = document.getElementById("txtpasswordDiv");
     contextElementzwei.classList.add("bordercolor");
     var contextElementzwei = document.getElementById("txturl");
     contextElementzwei.classList.remove("bordercolor");
@@ -2488,7 +2599,7 @@ function oncl(){
   {
     document.getElementById("context-menuzwei").classList.remove("active");
     document.getElementById("context-menudrei").classList.remove("active");
-    var contextElementzwei = document.getElementById("txtpassword");
+    var contextElementzwei = document.getElementById("txtpasswordDiv");
     contextElementzwei.classList.remove("bordercolor");
     var contextElementzwei = document.getElementById("txturl");
     contextElementzwei.classList.remove("bordercolor");
@@ -2681,18 +2792,11 @@ function idk(){
   }
 }
 
-var chill = true;
-
 function closesec(){
-  if(chill == true)
-  {
-    chill = false;
-  }
-  else{
-    document.getElementById("sec").classList.remove("containerlezwei");
-    document.getElementById("sec").classList.add("containerremove");
-    setTimeout(() => {  document.getElementById("sec").classList.add("hide"); }, 600);
-  }
+
+  document.getElementById("sec").classList.remove("containerlezwei");
+  document.getElementById("sec").classList.add("containerremove");
+  setTimeout(() => {  document.getElementById("sec").classList.add("hide"); }, 600);
 }
 
 ipcRenderer.on('lock-Screen', (event, arg) => {
@@ -2702,16 +2806,15 @@ ipcRenderer.on('lock-Screen', (event, arg) => {
 });
 
 const { remote } = require('electron');
-let parentWindow = remote.getCurrentWindow();
 
 function once(){
-  const bounds = parentWindow.getSize();
+  const bounds = remote.getCurrentWindow().getSize();
   document.getElementById("scrollbar-custom").style.height = bounds[1]-155 +"px";
 }
 once();
 
-parentWindow.on('resize', function() {
-  const bounds = parentWindow.getSize();
+remote.getCurrentWindow().on('resize', function() {
+  const bounds = remote.getCurrentWindow().getSize();
   document.getElementById("scrollbar-custom").style.height = bounds[1]-155 +"px";
   //document.getElementById("passwort").style.width = bounds[1]-150 +"px";
 });
@@ -2730,6 +2833,120 @@ ipcRenderer.on('exit', (event, arg) => {
 });
 
 
+function pwCheck(){
+  var wort = document.getElementById("txtpassword").value;
+  if(wort == "")
+  {
+    document.getElementById("progresshome").value = "";
+    return;
+  }
+  var lower=false;
+  var upper=false;
+  var number=false;
+  var symbol=false;
+  sheesh = 0;
+  for (var i = 0; i < wort.length; i++) {
+    if(lower == false)
+    {lower = getLower(wort.charAt(i));}
+    if(upper == false)
+    {upper = getUpper(wort.charAt(i));}
+    if(number == false)
+    {number = getNumber(wort.charAt(i));}
+    if(symbol == false)
+    {symbol = getSymbol(wort.charAt(i));}
+  }
+  if(lower == true)
+  {sheesh += 3;}
+  if(upper == true)
+  {sheesh += 3;}
+  if(number == true)
+  {sheesh += 4;}
+  if(symbol == true)
+  {sheesh += 4;}
+  if(wort.length > 8)
+  {sheesh += 3;}
+  if(wort.length > 13)
+  {sheesh += 3;}
+  if(wort.length == 1)
+  {sheesh = 0;}
+  if(wort.length == 2)
+  {sheesh = 1;}
+  if(wort.length > 25)
+  {if(sheesh <= 17){sheesh += 3;}}
+  if(wort.length > 35)
+  {if(sheesh <= 18){sheesh += 2;}}
+    
+    /*if(sheesh < 10){
+      
+    }
+    if(sheesh >= 10 && sheesh < 13){
+      
+    }
+    if(sheesh >= 13){
+      
+    }*/
+    console.log(sheesh);
+    document.getElementById("progresshome").value = ""+sheesh;
+}
+
+function getLower(wert) {
+  var lower = 97;
+  var i;
+  for (i = lower; i < 123; i++) {
+    if(String.fromCharCode(i) == wert)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+function getUpper(wert) {
+  var lower = 65;
+  var i;
+  for (i = lower; i < 91; i++) {
+    if(String.fromCharCode(i) == wert)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+function getNumber(wert) {
+  var lower = 48;
+  var i;
+  for (i = lower; i < 58; i++) {
+    if(String.fromCharCode(i) == wert)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+function getSymbol(wert) {
+  var symbol = ['!', '@','#', '$','%', '^','&', '*','(', ')','{', '}','[', ']','=', '<', '>', '/', ',', '', '.'];
+	for (i = 0; i < symbol.length; i++) {
+    if(symbol[i] == wert)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+function opconsfunc()
+{
+  let remote = require('electron').remote;
+  remote.getCurrentWindow().webContents.openDevTools();
+  closesec();
+}
+
+Mousetrap.bind(['command+f', 'ctrl+f'], function() {
+  document.getElementById('search').focus()
+  return false;
+});
 
 
 

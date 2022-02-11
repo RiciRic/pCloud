@@ -13,7 +13,7 @@ const electron = require('electron');
 const nativeTheme = electron.remote.nativeTheme;
 const { app, globalShortcut } = require('electron').remote;
 
-var request = require('request');
+//var request = require('request');
 const fs = require('fs');
 
 const store = new Store({

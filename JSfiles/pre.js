@@ -17,6 +17,14 @@ function scopefunc(){
   document.querySelector("#app-name").value = arg.text;
 }
 
+ipcRenderer.on("clearLogout", () => {
+  let x = document.getElementsByClassName("login-register-container-wrapper");
+  console.log(x[0]);
+  x[0].scrollIntoView({
+    behavior: 'auto'
+  });
+});
+
 ipcRenderer.on("app", () => {
   document.querySelector("#app_folder_permission").click();
 });
@@ -67,10 +75,11 @@ ipcRenderer.on("permission", (event, arg) => {
  }
 
   let z = document.body.querySelectorAll('button');
-  console.log(z[4]);
+  //console.log(z[4]);
   z[4].click();
 
   let x = document.body.querySelectorAll('option');
+  console.log(x[3]);
   x[3].selected = "selected"
 
 });
@@ -88,15 +97,14 @@ ipcRenderer.on("getToken", (event, arg) => {
       } else if (document.selection && document.selection.type != "Control") {
           text = document.selection.createRange().text;
       }
-
-      console.log(text);
+      console.log(event);
       event.sender.send("Tokensetzen", {token:text});
       console.log("bitte");
     }
  }
 });
 
-ipcRenderer.on("testen", (event, arg) => {
+/*ipcRenderer.on("testen", (event, arg) => {
   var xhr = new XMLHttpRequest();
       xhr.responseType = 'json';
       xhr.upload.onprogress = function(evt) {
@@ -131,4 +139,4 @@ ipcRenderer.on("testen", (event, arg) => {
       xhr.
       
       xhr.send();
-});
+});*/

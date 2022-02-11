@@ -20,6 +20,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+    <script src="scripts/mousetrap.min.js"></script>
+
     <!--<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>-->
     
@@ -102,7 +104,7 @@
               <option style="outline: 0;" value="WPA2-EAP">WPA2-EAP</option>
             </select>
           </div>
-          <canvas id="canvas" width="112" height="112" style="margin-top:8px; outline: rgba(83, 83, 83, 0.66) 3px solid;"></canvas>
+          <canvas id="canvas" width="112" height="112" style="margin-top:8px; background-color: white; border: 2px solid white; border-radius: 20px;"></canvas>
           <!--<input type="button" class="button effectbutton" id="btnqrcode" value="Show QR Code" onclick="qrcodevor()" >
           <input type="button" class="button effectbutton" id="cancelpw" value="‹ Cancel" onclick=" oncl()">-->
             
@@ -125,26 +127,26 @@
     <div id="bg-modal" onclick="cancelmodal()">
       <div id="modal-contents" onmousedown="setcanc()">
 
-        <div style="float: left;">
+        <div style="grid-area: textbox;">
       <input class="loginzwei effectkreis" type="text" placeholder="Titel" value="" id="txttitel"/><br/>
-      <div><input class="loginzwei effectkreis" type="text" placeholder="Username/E-Mail" value="" id="txtusername"/></div>
-      <div class="loginzweiDiv effectkreis"><input type="password" placeholder="Password" class="loginzweiInnen" value="" id="txtpassword"/><button type="button" style="float:right; margin:0px; top:1px" class="buttonzwei effectbuttonanders colorLikePlaceholder" id="sh" onclick="showpw()" value="👁"><i id="shsh" class="far fa-eye"></i></button></div><br/>
+      <input class="loginzwei effectkreis" type="text" placeholder="Username/E-Mail" value="" id="txtusername"/>
+      <div style="margin-bottom: 5px; position:relative"><div style="justify-content: center;" class="loginzweiDiv effectkreis" id="txtpasswordDiv"><input onkeydown='pwCheck()' type="password" placeholder="Password" class="loginzweiInnen" value="" id="txtpassword"/><button type="button" style="float:right; top:4px" class="buttonzwei effectbuttonanders colorLikePlaceholder" id="sh" onclick="showpw()" value="👁"><i id="shsh" class="far fa-eye"></i></button></div>
+      <progress id="progresshome" value="0" max="20"></progress></div>
       <input class="loginzwei effectkreis" type="text" placeholder="URL" value="" id="txturl"/>
-    <br/>
     </div>
-    <div id="strich" style="margin-top: 13px; margin-left: 6px; float:left; width:2px; height: 100px; background-color:rgb(94, 94, 94);"></div>
-    <div style="float: right;">
-      <textarea class="notelel effectkreis" style="resize: none;" placeholder="Note" id="txtnote"></textarea><br/>
-      <div id="tools">
-        <button type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); height: 16px; margin-right: 4px;" class="buttonzwei effectbutton" id="favoritebtn" onclick="favbtnclickzwei()" value="☆"><i id="favoritebtni" class="far fa-star"></i></button>
-        <button type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); height: 16px; margin-right: 4px;" class="buttonzwei effectbutton" id="gen" onclick="showpwgen()" value="Generate"><i class="fas fa-key"></i></button>
-        <button type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); height: 16px;" class="buttonzwei effectbutton" id="qr" onclick="showqr()" value="▣"><i class="fas fa-qrcode"></i></button>
-      </div>
-    <br/>
+    <!--<div id="strich" style="margin-top: 13px; margin-left: 6px; float:left; width:2px; height: 100px; background-color:rgb(94, 94, 94);"></div>-->
+    <div style="grid-area: note;">
+      <textarea class="notelel effectkreis" style="resize: none;" placeholder="Note" id="txtnote"></textarea>
     </div>
-      <div style="position:absolute; margin-top:132px;">
-        <button type="button" style="float: left; margin-right:264px;" class="button effectbutton" id="cancel" value="‹ Cancel" onclick="cancel()"><i class="fas fa-chevron-left"></i> Cancel</button>
-        <input type="button" style="float: right;" class="effectbuttonle" id="saverly" value="🞤Add" onclick="save()">
+    <div style="grid-area: txt; height: 20px;"><span id="timeed" style="color:#5f5f5f" class='labelzwei'></span></div>
+      <div style="grid-area: btn; display: flex; flex-flow: row wrap; justify-content: space-between;">
+        <button type="button" class="button canceleff" id="cancel" value="‹ Cancel" onclick="cancel()"><i class="fas fa-chevron-left"></i> Cancel</button>
+        <div id="tools">
+          <button type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); margin-right: 8px;" class="favround effectbutton" id="favoritebtn" onclick="favbtnclickzwei()" value="☆"><i id="favoritebtni" class="far fa-star"></i></button>
+          <button type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); margin-right: 8px;" class="favround effectbutton" id="gen" onclick="showpwgen()" value="Generate"><i class="fas fa-key"></i></button>
+          <button type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66);" class="favround effectbutton" id="qr" onclick="showqr()" value="▣"><i class="fas fa-qrcode"></i></button>
+        </div>
+        <input type="button" class="effectbuttonle" id="saverly" value="🞤Add" onclick="save()">
       </div>
     
       </div>
@@ -173,10 +175,12 @@
   <br/>
 <br/>
 
-<div onclick="closesec()" class="svglel hide" style="z-index: 99999;" id="sec">
+<div class="svglel hide" style="z-index: 99999;" id="sec">
   <div>
   <div class="centered">
-    <span id="secspan" class='labeldrei newLine'>─────────▄──────────────▄</span><br/><span class='labeldrei'>────────▌▒█───────────▄▀▒▌</span><br/><span class='labeldrei'>────────▌▒▒▀▄───────▄▀▒▒▒▐</span><br/><span class='labeldrei'>───────▐▄▀▒▒▀▀▀▀▄▄▄▀▒▒▒▒▒▐</span><br/><span class='labeldrei'>─────▄▄▀▒▒▒▒▒▒▒▒▒▒▒█▒▒▄█▒▐</span><br/><span class='labeldrei'>───▄▀▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▀██▀▒▌</span><br/><span class='labeldrei'>──▐▒▒▒▄▄▄▒▒▒▒▒▒▒▒▒▒▒▒▒▀▄▒▒▌</span><br/><span class='labeldrei'>──▌▒▒▐▄█▀▒▒▒▒▄▀█▄▒▒▒▒▒▒▒█▒▐</span><br/><span class='labeldrei'>─▐▒▒▒▒▒▒▒▒▒▒▒▌██▀▒▒▒▒▒▒▒▒▀▄▌</span><br/><span class='labeldrei'>─▌▒▀▄██▄▒▒▒▒▒▒▒▒▒▒▒░░░░▒▒▒▒▌</span><br/><span class='labeldrei'>─▌▀▐▄█▄█▌▄▒▀▒▒▒▒▒▒░░░░░░▒▒▒▐</span><br/><span class='labeldrei'>▐▒▀▐▀▐▀▒▒▄▄▒▄▒▒▒▒▒░░░░░░▒▒▒▒▌</span><br/><span class='labeldrei'>▐▒▒▒▀▀▄▄▒▒▒▄▒▒▒▒▒▒░░░░░░▒▒▒▐</span><br/><span class='labeldrei'>─▌▒▒▒▒▒▒▀▀▀▒▒▒▒▒▒▒▒░░░░▒▒▒▒▌</span><br/><span class='labeldrei'>─▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▐</span><br/><span class='labeldrei'>──▀▄▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▄▒▒▒▒▌</span><br/><span class='labeldrei'>────▀▄▒▒▒▒▒▒▒▒▒▒▄▄▄▀▒▒▒▒▄▀</span><br/><span class='labeldrei'>───▐▀▒▀▄▄▄▄▄▄▀▀▀▒▒▒▒▒▄▄▀</span><br/><span class='labeldrei'>──▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▀▀</span><br/><span class='labelzwei'>Hello ಠ_ಠ</span>
+    <span id="secspan" class='labeldrei newLine'>─────────▄──────────────▄</span><br/><span class='labeldrei'>────────▌▒█───────────▄▀▒▌</span><br/><span class='labeldrei'>────────▌▒▒▀▄───────▄▀▒▒▒▐</span><br/><span class='labeldrei'>───────▐▄▀▒▒▀▀▀▀▄▄▄▀▒▒▒▒▒▐</span><br/><span class='labeldrei'>─────▄▄▀▒▒▒▒▒▒▒▒▒▒▒█▒▒▄█▒▐</span><br/><span class='labeldrei'>───▄▀▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▀██▀▒▌</span><br/><span class='labeldrei'>──▐▒▒▒▄▄▄▒▒▒▒▒▒▒▒▒▒▒▒▒▀▄▒▒▌</span><br/><span class='labeldrei'>──▌▒▒▐▄█▀▒▒▒▒▄▀█▄▒▒▒▒▒▒▒█▒▐</span><br/><span class='labeldrei'>─▐▒▒▒▒▒▒▒▒▒▒▒▌██▀▒▒▒▒▒▒▒▒▀▄▌</span><br/><span class='labeldrei'>─▌▒▀▄██▄▒▒▒▒▒▒▒▒▒▒▒░░░░▒▒▒▒▌</span><br/><span class='labeldrei'>─▌▀▐▄█▄█▌▄▒▀▒▒▒▒▒▒░░░░░░▒▒▒▐</span><br/><span class='labeldrei'>▐▒▀▐▀▐▀▒▒▄▄▒▄▒▒▒▒▒░░░░░░▒▒▒▒▌</span><br/><span class='labeldrei'>▐▒▒▒▀▀▄▄▒▒▒▄▒▒▒▒▒▒░░░░░░▒▒▒▐</span><br/><span class='labeldrei'>─▌▒▒▒▒▒▒▀▀▀▒▒▒▒▒▒▒▒░░░░▒▒▒▒▌</span><br/><span class='labeldrei'>─▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▐</span><br/><span class='labeldrei'>──▀▄▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▄▒▒▒▒▌</span><br/><span class='labeldrei'>────▀▄▒▒▒▒▒▒▒▒▒▒▄▄▄▀▒▒▒▒▄▀</span><br/><span class='labeldrei'>───▐▀▒▀▄▄▄▄▄▄▀▀▀▒▒▒▒▒▄▄▀</span><br/><span class='labeldrei'>──▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▀▀</span><br/>
+    <input type="button" class="buttonanders effectbutton" id="opconsole" value="open Developer-Console" style="margin-bottom: 4px;" onclick="opconsfunc()"><br/>
+    <button type="button" class="button canceleff" id="closeid" value="Cancel" onclick="closesec()">close</button>
   </div>
 </div>
 </div>
@@ -204,7 +208,7 @@
         <select id="slt" style="outline: 0;" onchange="slt_change()">
           <option style="outline: 0;" value="Passwort">Password</option>
           <option style="outline: 0;" value="Key">Key</option>
-          <!--<option style="outline: 0;" value="Files">Files</option>-->
+          <option style="outline: 0;" value="Files">Files</option>
         </select>
       </div>
 

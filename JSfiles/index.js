@@ -282,7 +282,7 @@ function input(){
       document.getElementById('close-btn').removeAttribute("onclick");
       document.getElementById('bodyid').removeAttribute("onerror");
 
-      //winHome.webContents.openDevTools()
+      //winHome.webContents.openDevTools();
 
       const listeners = (function listAllEventListeners() {
         let elements = [];
@@ -515,7 +515,7 @@ function erstmal(){
   store.set('indexclose', true);
   
   let winSettings = new BrowserWindow({
-    width: 1000,
+    width: 500,
     height: 630,
     //width: 300,
     //height: 350,
@@ -534,12 +534,14 @@ function erstmal(){
   }) 
 
   winSettings.loadURL(url.format( {
-    pathname: path.join(__dirname, 'DropbCloud-Short.html'),
+    pathname: path.join(__dirname, 'DropbCloud.html'),
     //pathname: path.join(__dirname, 'sesses.html'),
     protocol: 'file',
     slashes: true
 
   }))
+
+  winSettings.webContents.send("pwsend", {pw:pwtemp});
 
   //wind.webContents.openDevTools()
 
