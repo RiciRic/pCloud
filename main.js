@@ -22,6 +22,14 @@ autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
 
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient('pcloud', process.execPath, [path.resolve(process.argv[1])])
+  }
+} else {
+  app.setAsDefaultProtocolClient('pcloud')
+}
+
 const gotTheLock = app.requestSingleInstanceLock()
 
 if (!gotTheLock) {
@@ -235,6 +243,20 @@ function createWindow () {
 
   }));
 
+  /*win.setThumbarButtons([
+    {
+      tooltip: 'button1',
+      icon: path.join(__dirname, 'button1.png'),
+      click () { console.log('button1 clicked') }
+    }
+    , {
+      tooltip: 'button2',
+      icon: path.join(__dirname, 'button1.png'),
+      flags: ['enabled', 'dismissonclick'],
+      click () { console.log('button2 clicked.') }
+    }
+  ])*/
+
   win.on('closed', () => {
     win = null;
     
@@ -254,23 +276,8 @@ var bytesekvar = 0;
 var transfvar = 0;
 var totalvar = 0;
 var eventvar;
-var eventhome;
-var eventanalytics;
-var eventindex;
 
 var eventdropbox;
-
-/*ipcMain.on('eventhome', (event) => {
-  eventhome = event;
-});
-
-ipcMain.on('eventanalytics', (event) => {
-  eventanalytics = event;
-});
-
-ipcMain.on('eventindex', (event) => {
-  eventindex = event;
-});*/
 
 ipcMain.on('eventdropbox', (event) => {
   eventdropbox = event;
@@ -290,46 +297,12 @@ ipcMain.on('close-paypal', (event) => {
 
 function downloadedfunc()
 {
-  /*try {
-    eventvar.sender.send('downloaded');
-  } catch (error) {
-    try {
-      eventindex.sender.send('downloaded');
-    } catch (error) {
-      try {
-        eventanalytics.sender.send('downloaded');
-      } catch (error) {
-        try {
-          eventhome.sender.send('downloaded');
-        } catch (error) {
-          
-        }
-      }
-    }
-  }*/
   let allWindows = BrowserWindow.getAllWindows();
   allWindows[0].webContents.send('downloaded');
 }
 
 function downloadfunc()
 {
-  /*try {
-    eventvar.sender.send('download');
-  } catch (error) {
-    try {
-      eventindex.sender.send('download');
-    } catch (error) {
-      try {
-        eventanalytics.sender.send('download');
-      } catch (error) {
-        try {
-          eventhome.sender.send('download');
-        } catch (error) {
-          
-        }
-      }
-    }
-  }*/
   let allWindows = BrowserWindow.getAllWindows();
   allWindows[0].webContents.send('download');
 
@@ -356,6 +329,7 @@ ipcMain.on('close_app', () => {
 ipcMain.on('update', (event) => {
   event.sender.send('update', { update: updateav});
   eventvar = event;
+  console.log(event);
   eventvar.sender.send('test', { update: updateav});
   console.log("updateav: "+updateav);
 });
@@ -395,6 +369,17 @@ autoUpdater.on('update-downloaded', info => {
     eventvar.sender.send('fertig', {update:"lel"});
   }
 });
+
+app.setUserTasks([
+  /*{
+    program: process.execPath,
+    arguments: '--new-window',
+    iconPath: process.execPath,
+    iconIndex: 0,
+    title: 'New Window',
+    description: 'Create a new window'
+  }*/
+])
 
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()

@@ -2,7 +2,7 @@ console.log('settings loaded')
 
 const { ipcRenderer } = require('electron');
 
-const Store = require('./JSfiles/store.js');
+const store = require('./JSfiles/storedata.js');
 
 $("#paniclel").attr('disabled', true);
 
@@ -29,40 +29,6 @@ const { createPublicKey } = require('crypto');
                 ],
                 showInspectElement:false
             });
-
-const store = new Store({
-  configName: 'user-preferences',
-  defaults: {
-    theme:"0",
-    pw:"",
-    pwtemp:"",
-    list:[],
-    x:455,
-    y:269,
-    width:700,
-    height:500,
-    dropdown:0,
-    favbtn:0,
-    max:false,
-    indexclose:false,
-    dropboxtoken:"",
-    ontop:false,
-    blur:true,
-    navbaricon:false,
-    lock:true,
-    lastsett:false,
-    backupkey:"",
-    eventhome:false,
-    eventindex:false,
-    eventanalytics:false,
-    download:false,
-    down:false,
-    delcache:false,
-    copyrightclick:true,
-    copystayontop:true,
-    copyseconds:10
-  }
-});
 
 var maxim = store.get('max');
 var theme = store.get('theme');
@@ -175,6 +141,11 @@ $('#ver').text("Version: "+ver);
           var checkbox = document.getElementById('toggleswitchzwei');
           checkbox.checked = !checkbox.checked;
       }
+
+      if(store.get('contentprotection') == true){
+        var checkbox = document.getElementById('toggleswitchsechs');
+        checkbox.checked = !checkbox.checked;
+    }
 
       if(lockvar == true){
         var checkbox = document.getElementById('toggleswitchdrei');
@@ -676,7 +647,7 @@ function hideqrfunc()
 }
 
 function dropdropfunc(){
-  if(document.getElementById("dropdropspan").innerHTML == "▼")
+  if(document.getElementById("dropdropspan").innerText == "▼")
   {
     $("#dropdrop").slideDown("slow", function(){});
     $('#dropdropspan').text("▲");
@@ -1019,6 +990,23 @@ function resetfunc(){
   store.set('ontop',false);
   store.set('blur',true);
   store.set('navbaricon',false);
+  store.set('dropdown',0);
+  store.set('favbtn',0);
+  store.set('indexclose',false);
+  store.set('lock',true);
+  store.set('lastsett',false);
+  store.set('backupkey',"");
+  store.set('eventhome',false);
+  store.set('eventindex',false);
+  store.set('eventanalytics',false);
+  store.set('download',false);
+  store.set('down',false);
+  store.set('delcache',false);
+  store.set('delcache',false);
+  store.set('copyrightclick',true);
+  store.set('copystayontop',true);
+  store.set('copyseconds',10);
+  store.set('contentprotection',true);
   boundslele();
 }
 
@@ -1593,7 +1581,7 @@ ipcRenderer.on('lock-Screen', (event, arg) => {
 
 function credits(){
   var dt = new Date();
-  document.getElementById('creditlabel').innerHTML = 'Copyright © ' + dt.getFullYear() + ' Ricardo Matos';
+  document.getElementById('creditlabel').innerText = 'Copyright © ' + dt.getFullYear() + ' Ricardo Matos';
   document.getElementById("cred").classList.remove("hide");
   document.getElementById("cred").classList.add("containerlezwei");
   document.getElementById("cred").classList.remove("containerremove");
@@ -1630,7 +1618,7 @@ function licensestuff()
 {
   fetch('license.txt')
   .then(response => response.text())
-  .then(text => document.getElementById("txtlicense").innerHTML = text)
+  .then(text => document.getElementById("txtlicense").innerText = text)
 }
 
 function getenkey(){
@@ -2084,7 +2072,7 @@ input.addEventListener('change',function(){
 });
 
 function activationfunc(){
-  if(document.getElementById("activationdrop").innerHTML == "▼")
+  if(document.getElementById("activationdrop").innerText == "▼")
   {
     $("#activationdropdrop").slideDown("slow", function(){});
     $('#activationdrop').text("▲");
@@ -2096,4 +2084,18 @@ function activationfunc(){
     $("#activationdropdrop").slideUp("slow", function(){});
     $('#activationdrop').text("▼");
   }
+}
+
+document.getElementById('toggleswitchsechs').addEventListener('change',function(){
+  if(this.checked) {
+    store.set('contentprotection', true);
+  } else {
+    store.set('contentprotection', false);
+  }
+  $("#restartappdiv").slideDown("slow", function(){});
+});
+
+function restartapp(){
+  app.relaunch()
+  ex();
 }

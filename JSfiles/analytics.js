@@ -1,6 +1,6 @@
 console.log('analytics loaded')
 
-const Store = require('./JSfiles/store.js');
+const store = require('./JSfiles/storedata.js');
 
 const { ipcRenderer } = require('electron');
 
@@ -16,39 +16,9 @@ const { app, globalShortcut } = require('electron').remote;
 //var request = require('request');
 const fs = require('fs');
 
-const store = new Store({
-  configName: 'user-preferences',
-  defaults: {
-    theme:"0",
-    pw:"",
-    pwtemp:"",
-    list:[],
-    x:455,
-    y:269,
-    width:700,
-    height:500,
-    dropdown:0,
-    favbtn:0,
-    max:false,
-    indexclose:false,
-    dropboxtoken:"",
-    ontop:false,
-    blur:true,
-    navbaricon:false,
-    lock:true,
-    lastsett:false,
-    backupkey:"",
-    eventhome:false,
-    eventindex:false,
-    eventanalytics:false,
-    download:false,
-    down:false,
-    delcache:false,
-    copyrightclick:true,
-    copystayontop:true,
-    copyseconds:10
-  }
-});
+const colorred = "rgb(201, 63, 74)"
+const coloryellow = "rgb(255, 241, 116)"
+const colorgreen = "rgba(71, 218, 71, 1)"
 
 var pwtemp = store.get('pwtemp');
 console.log(pwtemp);
@@ -258,13 +228,13 @@ function pew(row_id, id, titel, username, password, url, note, count){
       pw += '<td><button type="button" class="buttonzwei effectbuttonanders" id="auge' + id + '" onfocusout="mouseUp()" onmousedown="mouseDown(\'' + decrypt(password) + '\', \'auge' + id + '\')" onmouseup="mouseUp()" value="👁"><i class="far fa-eye"></i></button>' +'</td>';
       var ch = pwcheckAnfang(decrypt(password));
       if(ch < 10){
-        pw += '<td><div class="labelzwei" style="color:rgba(234, 0, 0, 1);" edit_type="click" col_name="kak"><i class="fas fa-circle"></i></div></td>';
+        pw += '<td><div class="labelzwei" style="color:'+colorred+';" edit_type="click" col_name="kak"><i class="fas fa-circle"></i></div></td>';
       }
       if(ch >= 10 && ch < 13){
-        pw += '<td><div class="labelzwei" style="color:rgba(255, 238, 0, 1);" edit_type="click" col_name="kak"><i class="fas fa-circle"></i></div></td>';
+        pw += '<td><div class="labelzwei" style="color:'+coloryellow+';" edit_type="click" col_name="kak"><i class="fas fa-circle"></i></div></td>';
       }
       if(ch >= 13){
-        pw += '<td><div class="labelzwei" style="color:rgba(71, 218, 71, 1);" edit_type="click" col_name="kak"><i class="fas fa-check-circle"></i></div></td>';
+        pw += '<td><div class="labelzwei" style="color:'+colorgreen+';" edit_type="click" col_name="kak"><i class="fas fa-check-circle"></i></div></td>';
       }
       
       pw += '</tr>';
@@ -576,16 +546,16 @@ function pwCheck(wort){
     
     if(sheesh < 10){
 
-      bgclr.push('rgba(234, 0, 0, 1)')
-      bgclrzw.push('rgba(234, 0, 0, 1)')
+      bgclr.push(colorred)
+      bgclrzw.push(colorred)
     }
     if(sheesh >= 10 && sheesh < 13){
-      bgclr.push('rgba(255, 238, 0, 1)')
-      bgclrzw.push('rgba(0, 153, 255, 1)')
+      bgclr.push(coloryellow)
+      bgclrzw.push(coloryellow)
     }
     if(sheesh >= 13){
-      bgclr.push('rgba(71, 218, 71, 1)')
-      bgclrzw.push('rgba(71, 218, 71, 1)')
+      bgclr.push(colorgreen)
+      bgclrzw.push(colorgreen)
     }
     return sheesh;
 }

@@ -1,5 +1,6 @@
 console.log('home loaded')
-const Store = require('./JSfiles/store.js');
+
+const store = require('./JSfiles/storedata.js');
 
 const { ipcRenderer } = require('electron');
 
@@ -14,8 +15,6 @@ const url = require('url');
 const { app, globalShortcut } = require('electron').remote;
 
 const { Menu } = require('electron');
-
-//var request = require('request');
 
 const nativeTheme = electron.remote.nativeTheme; 
 
@@ -44,40 +43,6 @@ const { SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG, SSL_OP_NO_SESSION_RESUMPTION_ON
 var bot = "";
 
 var edit = false;
-
-const store = new Store({
-  configName: 'user-preferences',
-  defaults: {
-    theme:"0",
-    pw:"",
-    pwtemp:"",
-    list:[],
-    x:455,
-    y:269,
-    width:700,
-    height:500,
-    dropdown:0,
-    favbtn:0,
-    max:false,
-    indexclose:false,
-    dropboxtoken:"",
-    ontop:false,
-    blur:true,
-    navbaricon:false,
-    lock:true,
-    lastsett:false,
-    backupkey:"",
-    eventhome:false,
-    eventindex:false,
-    eventanalytics:false,
-    download:false,
-    down:false,
-    delcache:false,
-    copyrightclick:true,
-    copystayontop:true,
-    copyseconds:10
-  }
-});
 
 
 var pwtemp = store.get('pwtemp');
@@ -241,7 +206,7 @@ $("#ed").click(function(){
     $('#bg-modal').css("z-index", "9999");
       
       $("#bg-modal").velocity('fadeIn', {duration: 100, display: 'flex'});
-      document.getElementById("txtpassword").placeholder = "Key";
+      document.getElementById("txtpassword").placeholder = "Key/Pin";
       document.getElementById("txtusername").placeholder = "";
       document.getElementById("txtusername").disabled = true;
       var element = document.getElementById("txtusername");
@@ -288,6 +253,12 @@ $("#ed").click(function(){
         function() {$('#con').text(bot);});
 
     $('#gen').hover(function(){$('#con').text('Generate Password');},
+    function() {$('#con').text(bot);});
+
+    $('#txtemail').hover(function(){$('#con').text('E-Mail');},
+    function() {$('#con').text(bot);});
+
+    $('#selectwrappergroup').hover(function(){$('#con').text('Select Group');},
     function() {$('#con').text(bot);});
 
     $('#ed').hover(function(){$('#con').text('Edit');},
@@ -391,10 +362,10 @@ $("#ed").click(function(){
   $('#txttitel').hover(function(){$('#con').text('Titel');},
     function() {$('#con').text(bot);});
 
-  $('#txtusername').hover(function(){$('#con').text('Username');},
+  $('#txtusernameDiv').hover(function(){$('#con').text('Username');},
     function() {$('#con').text(bot);});
 
-  $('#txtpassword').hover(function(){$('#con').text('Password');},
+  $('#txtpasswordDiv').hover(function(){$('#con').text(document.getElementById("txtpassword").placeholder);},
     function() {$('#con').text(bot);});
 
   $('#txturl').hover(function(){$('#con').text('Url');},
@@ -431,7 +402,8 @@ $("#ed").click(function(){
 
     //---------------SHEEEEEESH------------------
 
-    function getVer(){
+    
+    const getVer = () =>{
       try {
         try {
           var dropboxToken = store.get('dropboxtoken');
@@ -451,6 +423,10 @@ $("#ed").click(function(){
           if (xhr.status === 200) {
             console.log("fertig gedownloaded")
             pwlel = e.currentTarget.response;
+            /*for(var i = 1; i<pwlel.length;i++)
+            {
+              pwlel[i].selectEU = encrypt("username");
+            }*/
             console.log(pwlel);
             hideload();
             slt_change();
@@ -468,7 +444,7 @@ $("#ed").click(function(){
             sicherung = false;
           }
         };
-
+  
         xhr.onerror = function() { 
           $('#con').text('No Connection to Cloud');
           var element = document.getElementById("resetzwei");
@@ -495,9 +471,10 @@ $("#ed").click(function(){
         elementzwei.classList.add("hide");
         sicherung = false;
       }
-
+  
     }
     getVer();
+
 
 
 
@@ -507,21 +484,73 @@ $("#ed").click(function(){
   
 });
 
+function getGroups()
+    {
+      for(var i = 0; i<pwlel.length; i++)
+      {
+        if(pwlel[i].id == "0")
+        {
+          return pwlel[i].groups
+        }
+      }
+    }
+
+    function createOption(name)
+    {
+      let option = document.createElement("option");
+      if(name == "- no group -")
+      {
+        option.value = "";
+      }
+      else{
+        option.value = name;
+      }
+      option.append(document.createTextNode(name));
+      return option;
+    }
+
+
+    function changeOption()
+    {
+      document.getElementById('sltgroups').innerHTML = '';
+      var groups = getGroups();
+      document.getElementById('sltgroups').append(createOption("- no group -"));
+      document.getElementById('sltgroups').value == "";
+      for(var i = 0; i<groups.length;i++)
+      {
+        document.getElementById('sltgroups').append(createOption(groups[i]));
+      }
+    }
+
 function anfang(){
-  return '<tr style="cursor:pointer" onclick="sortieren()"><th></th><th></th><th class="labeltable">Titel</th><th class="labeltable">Username</th><th></th><th class="labeltable">Password</th><th></th><th></th><th class="labeltable">URL</th><th class="labeltable"></th><th></th></tr>';
+  return '<tr style="cursor:pointer" onclick="sortieren()"><th></th><th></th><th class="labeltable">Titel</th><th class="labeltable">Username/E-Mail</th><th></th><th class="labeltable">Password</th><th></th><th></th><th class="labeltable">URL</th><th class="labeltable"></th><th></th></tr>';
 }
 
 function anfangzwei(){
-  return '<tr style="cursor:pointer" onclick="sortieren()"><th></th><th></th><th class="labeltable">Titel</th><th class="labeltable">Key</th><th></th><th class="labeltable">URL</th><th class="labeltable"></th><th></th></tr>';
+  return '<tr style="cursor:pointer" onclick="sortieren()"><th></th><th></th><th class="labeltable">Titel</th><th class="labeltable">Key/Pin</th><th></th><th class="labeltable">URL</th><th class="labeltable"></th><th></th></tr>';
 }
 
-function pew(row_id, id, titel, username, password, url, note, fav, created, updated, a){
+function pew(row_id, id, titel, username, email, password, url, note, fav, created, updated, group, selectEU, a){
   var dec = decrypt(password);
   var us = decrypt(username);
+  var em = decrypt(email)
   var ur = decrypt(url);
+  var groupvar = decrypt(group);
+  var createdvar = decrypt(created);
+  var updatedvar = decrypt(updated);
+  var favvar = decrypt(fav);
+
+  var usem = "";
+  if(decrypt(selectEU) == "username")
+  {
+    usem = us;
+  }
+  else{
+    usem = em;
+  }
   var pw = "";
-      pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover(\''+"urlid"+id+'\', \''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\', \''+"titel"+id+'\')" onmouseleave="mleave(\''+"urlid"+id+'\', \''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\', \''+"titel"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\', \'' + created + '\', \'' + updated + '\')">';
-      if(fav == "1"){
+      pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover(\''+"urlid"+id+'\', \''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\', \''+"titel"+id+'\')" onmouseleave="mleave(\''+"urlid"+id+'\', \''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\', \''+"titel"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \''+ decrypt(email) + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + favvar + '\', \'' + createdvar + '\', \'' + updatedvar + '\', \'' + groupvar + '\', \'' + decrypt(selectEU) + '\')">';
+      if(favvar == "1"){
       pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbuttonanders gray" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /><i id="i' + id + '" class="fas fa-star"></i></button></td>';
       }
       else{
@@ -541,15 +570,15 @@ function pew(row_id, id, titel, username, password, url, note, fav, created, upd
       else{
         pw += '<td><div class="labelzwei" oncontextmenu="contextMenubar(\''+"table-row"+row_id+'\', \''+id+'\')" edit_type="click" col_name="tit">' + dectit + '</div></td>';
       }
-      var decus = kurz(us);
+      var decus = kurz(usem);
       if(a != null && decus.toLowerCase().indexOf(a.toLowerCase()) > -1){
         decus = highl(decus, a);
-        pw += '<td><div class="labelzwei" edit_type="click" col_name="user" oncontextmenu="copy(\'' + us + '\')">' + decus + '</div></td>';
+        pw += '<td><div class="labelzwei" edit_type="click" col_name="user" oncontextmenu="copy(\'' + usem + '\')">' + decus + '</div></td>';
       }
       else{
-        pw += '<td><div class="labelzwei" edit_type="click" col_name="user" oncontextmenu="copy(\'' + us + '\')">' + decus + '</div></td>';
+        pw += '<td><div class="labelzwei" edit_type="click" col_name="user" oncontextmenu="copy(\'' + usem + '\')">' + decus + '</div></td>';
       }
-      pw += '<td><button class="buttonzwei effectbuttonanders nada" id="username' + id + '" style="outline: 0;" onmouseover="copyus()" onmouseout="leave()" onclick="copy(\'' + us + '\')" value="🗐" /><i class="fas fa-copy"></i></button>' +'</td>';
+      pw += '<td><button class="buttonzwei effectbuttonanders nada" id="username' + id + '" style="outline: 0;" onmouseover="copyus()" onmouseout="leave()" onclick="copy(\'' + usem + '\')" value="🗐" /><i class="fas fa-copy"></i></button>' +'</td>';
       pw += '<td><div class="labelzwei" edit_type="click" col_name="psw" oncontextmenu="copy(\'' + dec + '\')">' + kurzst(stern(dec)) + '</div></td>'
       pw += '<td><button type="button" class="buttonzwei effectbuttonanders" id="auge' + id + '" onfocusout="mouseUp()" onmouseover="showbot()" onmouseout="leave()" onmousedown="mouseDown(\'' + dec + "\', \'auge" + id + '\')" onmouseup="mouseUp()" value="👁" /><i class="far fa-eye"></i></button>' +'</td>';
       pw += '<td><button class="buttonzwei effectbuttonanders nada" id="password' + id + '" style="outline: 0;" onmouseover="copypw()" onmouseout="leave()" onclick="copy(\'' + dec + '\')" value="🗐" /><i class="fas fa-copy"></i></button>' +'</td>';
@@ -559,7 +588,7 @@ function pew(row_id, id, titel, username, password, url, note, fav, created, upd
       else{
         pw += '<td><button style="outline: 0;" type="button" class="buttonzwei effectbuttonanders gray" id="urlid' + id + '" onmouseover="run()" onmouseout="leave()"  onclick="ope(\'' + ur + '\')" value="ᐅ" /><i class="fas fa-play"></i></button>' +'</td>';
       }
-      pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<button data-modal-target="#modallel" type="button" style="outline: 0;" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editme()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\', \'' + created + '\', \'' + updated + '\')" value="✎" /><i class="far fa-edit"></i></button></td>';
+      pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<button data-modal-target="#modallel" type="button" style="outline: 0;" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editme()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \''+ decrypt(email) + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + favvar + '\', \'' + createdvar + '\', \'' + updatedvar + '\', \'' + groupvar + '\', \'' + decrypt(selectEU) + '\')" value="✎" /><i class="far fa-edit"></i></button></td>';
       pw += '<td><button type="button" onmouseover="entfern()" onmouseout="leave()" class="buttonzwei btn_row_delete rot gray" id="delete' + id + '" value="✖" onclick="del(' + id +')"><i class="fas fa-times"></i></button>' + '</td>';
       pw += '</tr>';
       /*if(a != null && decrypt(titel).indexOf(a) != -1){
@@ -830,11 +859,16 @@ function editme(){
   $('#con').text('Edit Password');
 }
 
-function keky(row_id, id, titel, username, password, url, note, fav, created, updated, a){
+function keky(row_id, id, titel, username, email, password, url, note, fav, created, updated, group, selectEU, a){
   var pw = "";
   var ur = decrypt(url);
-  pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\', \''+"urlid"+id+'\', \''+"titel"+id+'\')" onmouseleave="mleave2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\', \''+"urlid"+id+'\', \''+"titel"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \'' + decrypt(password) + '\', \'' + decrypt(url) + '\', \'' + decrypt(note) +'\', \'' + fav + '\', \'' + created + '\', \'' + updated + '\')">';
-  if(fav == "1"){
+  var groupvar = decrypt(group);
+  var createdvar = decrypt(created);
+  var updatedvar = decrypt(updated);
+  var favvar = decrypt(fav);
+
+  pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\', \''+"urlid"+id+'\', \''+"titel"+id+'\')" onmouseleave="mleave2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\', \''+"urlid"+id+'\', \''+"titel"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \''+ decrypt(email) + '\', \'' + decrypt(password) + '\', \'' + decrypt(url) + '\', \'' + decrypt(note) +'\', \'' + favvar + '\', \'' + createdvar + '\', \'' + updatedvar + '\', \'' + groupvar + '\', \'' + decrypt(selectEU) + '\')">';
+  if(favvar == "1"){
     pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbuttonanders gray" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /><i id="i' + id + '" class="fas fa-star"></i></button></td>';
     }
     else{
@@ -862,7 +896,7 @@ function keky(row_id, id, titel, username, password, url, note, fav, created, up
   else{
     pw += '<td><button type="button" class="buttonzwei effectbuttonanders gray" id="urlid' + id + '" onmouseover="run()" onmouseout="leave()" onclick="ope(\'' + ur + '\')" value="ᐅ" /><i class="fas fa-play"></i></button>' +'</td>';
   }
-  pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<button data-modal-target="#modallel" type="button" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editmekey()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \'' + decrypt(password) + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + fav + '\', \'' + created + '\', \'' + updated + '\')" value="✎" /><i class="far fa-edit"></i></button></td>';
+  pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<button data-modal-target="#modallel" type="button" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editmekey()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \''+ decrypt(email) + '\', \'' + decrypt(password) + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + favvar + '\', \'' + createdvar + '\', \'' + updatedvar + '\', \'' + groupvar + '\', \'' + decrypt(selectEU) + '\')" value="✎" /><i class="far fa-edit"></i></button></td>';
   pw += '<td><button type="button" class="buttonzwei btn_row_delete rot gray" id="delete' + id + '" value="✖" onmouseover="entfernkey()" onmouseout="leave()" onclick="del('+ id +')"><i class="fas fa-times"></i></button>' + '</td>';
   pw += '</tr>';
   return pw;
@@ -1059,8 +1093,23 @@ function countdown(countvar){
     }
 }
 
-function check(id, titel, username, password, url, note, fav, created, updated){
+function checkIfInGroups(group){
+  var tem = getGroups();
+  for(var d = 0; d<tem.length; d++)
+  {
+    if(tem[d] == group)
+    {
+        return true;
+    }
+  }
+  return false;
+}
+
+function check(id, titel, username, email, password, url, note, fav, created, updated, group, selectEU){
     edit = true;
+
+    changeOption();
+
     document.getElementById("saverly").value = "✎Edit";
     $('#bg-modal').animate({
       opacity: 1
@@ -1074,18 +1123,35 @@ function check(id, titel, username, password, url, note, fav, created, updated){
     row_index = $(this).parent('table').index();
 
     const slt = document.getElementById('slt');
+    
+    if(checkIfInGroups(group))
+    {
+      document.getElementById('sltgroups').value = group;
+    }
+    else{
+      document.getElementById('sltgroups').value = "";
+    }
+
+    if(selectEU == "email")
+    {
+      document.getElementById('radio2').checked = "checked";
+    }
+    else{
+      document.getElementById('radio1').checked = "checked";
+    }
+
   if(slt.value == "Passwort")
   {
     document.getElementById("txtpassword").placeholder = "Password";
-    var element = document.getElementById("txtusername");
+    var element = document.getElementById("txtUsernameEmailDiv");
     document.getElementById("txtpassword").type = "password";
     document.getElementById("shsh").classList.remove("fa-eye-slash");
     document.getElementById("shsh").classList.add("fa-eye");
     element.classList.remove("hide");
   }
   else{
-    document.getElementById("txtpassword").placeholder = "Key";
-    var element = document.getElementById("txtusername");
+    document.getElementById("txtpassword").placeholder = "Key/Pin";
+    var element = document.getElementById("txtUsernameEmailDiv");
     document.getElementById("txtpassword").type = "text";
     document.getElementById("shsh").classList.remove("fa-eye");
     document.getElementById("shsh").classList.add("fa-eye-slash");
@@ -1097,6 +1163,7 @@ function check(id, titel, username, password, url, note, fav, created, updated){
   document.getElementById("txtpassword").value = password;
   document.getElementById("txturl").value = url;
   document.getElementById("txtnote").value = note;
+  document.getElementById("txtemail").value = email;
   if(fav == "1")
   {
     document.getElementById("favoritebtn").value = "★";
@@ -1186,6 +1253,8 @@ setTimeout(() => {  $('#bg-modal').css("z-index", "0"); $('#timeed').text('');},
       document.getElementById("txtpassword").value = "";
       document.getElementById("txturl").value = "";
       document.getElementById("txtnote").value = "";
+      document.getElementById("txtemail").value = "";
+      document.getElementById("radio1").checked = "checked";
     }, 500);
 }
 
@@ -1242,10 +1311,17 @@ function kurzst(str){
 
 function add(){
   edit = false;
+
+  changeOption();
   
   //document.getElementById("save").style.visibility = "hidden";
   $("#lel").attr('disabled', true);
   document.getElementById("saverly").value = "🞤Add";
+  var proghom = document.getElementById("progresshome");
+  proghom.classList.remove("progred");
+  proghom.classList.remove("progyel");
+  proghom.classList.remove("proggre");
+  proghom.value = "";
 
   if(favbtn == 0)
   {
@@ -1267,7 +1343,7 @@ function add(){
   if(slt.value == "Passwort")
   {
     document.getElementById("txtpassword").placeholder = "Password";
-    var element = document.getElementById("txtusername");
+    var element = document.getElementById("txtUsernameEmailDiv");
     element.classList.remove("hide");
     var elementzwei = document.getElementById("tools");
     elementzwei.classList.remove("hide");
@@ -1277,8 +1353,8 @@ function add(){
     $("#strich").css("height","100px");
   }
   else{
-    document.getElementById("txtpassword").placeholder = "Key";
-    var element = document.getElementById("txtusername");
+    document.getElementById("txtpassword").placeholder = "Key/Pin";
+    var element = document.getElementById("txtUsernameEmailDiv");
       element.classList.add("hide");
       var elementzwei = document.getElementById("tools");
       elementzwei.classList.add("hide");
@@ -1309,59 +1385,14 @@ function save(){
   password = encrypt(password);
   var url = document.getElementById("txturl").value;
 
-  /*if(url != "")
+  var selectEU = "";
+  if(document.getElementById("radio1").checked)
   {
-    if(!isValidURL(url))
-    {
-      console.log("URL ist falsch")
-      var kekkk = url.charAt(0);
-      kekkk += url.charAt(1);
-      kekkk += url.charAt(2);
-      kekkk += url.charAt(3);
-      kekkk += url.charAt(4);
-      kekkk += url.charAt(5);
-      kekkk += url.charAt(6);
-      if(kekkk == "http://")
-      {
-        url = url.substr(7, url.length);
-      }
-      var kekkk = url.charAt(0);
-      kekkk += url.charAt(1);
-      kekkk += url.charAt(2);
-      kekkk += url.charAt(3);
-      kekkk += url.charAt(4);
-      kekkk += url.charAt(5);
-      kekkk += url.charAt(6);
-      kekkk += url.charAt(7);
-      if(kekkk == "https://")
-      {
-        url = url.substr(8, url.length);
-      }
-      if(!isValidURL(url))
-      {
-
-      }
-    }*/
-
-    /*
-
-    var charpos = url.charAt(0);
-    charpos += url.charAt(1);
-    charpos += url.charAt(2);
-    charpos += url.charAt(3);
-    if(charpos != "www."){
-      url = "www." + url;
-    }
-
-    var end = url.charAt(url.length-1);
-    if(end == "/")
-    {
-      url = url.substr(0, url.length-1);
-    }*/
-  //}
-
-
-  //url = url.replace("http://","");
+    selectEU = encrypt("username");
+  }
+  else{
+    selectEU = encrypt("email");
+  }
 
   url = encrypt(url);
   var note = tarea();
@@ -1371,11 +1402,11 @@ function save(){
   var favinform = "";
   if(document.getElementById("favoritebtn").value == "☆")
   {
-    favinform = "0";
+    favinform = encrypt("0");
     console.log("fav: 0");
   }
   else{
-    favinform = "1";
+    favinform = encrypt("1");
     console.log("fav: 1");
   }
 
@@ -1388,13 +1419,13 @@ function save(){
 
       const slt = document.getElementById('slt');
       if(slt.value == "Passwort"){
-        const idk = {"id":count2.toString(), "fav":favinform, "titel":titel, "username":username, "password":password, "url":url, "note":note, "created":new Date().toLocaleDateString(), "updated":new Date().toLocaleDateString()};
+        const idk = {"id":count2.toString(), "fav":favinform, "titel":titel, "username":username, "email": encrypt(document.getElementById("txtemail").value), "password":password, "url":url, "note":note, "created":encrypt(new Date().toLocaleDateString()), "updated":encrypt(new Date().toLocaleDateString()), "group":encrypt(document.getElementById("sltgroups").value), "selectEU":selectEU};
         pwlel.push(idk);
         console.log(idk)
       }
       else{
         var sek = "-" + count2.toString();
-        const idk = {"id":sek, "fav":favinform, "titel":titel, "username":username, "password":password, "url":url, "note":note, "created":new Date().toLocaleDateString(), "updated":new Date().toLocaleDateString()};
+        const idk = {"id":sek, "fav":favinform, "titel":titel, "username":username, "email": encrypt(document.getElementById("txtemail").value), "password":password, "url":url, "note":note, "created":encrypt(new Date().toLocaleDateString()), "updated":encrypt(new Date().toLocaleDateString()), "group":encrypt(document.getElementById("sltgroups").value), "selectEU":selectEU};
         pwlel.push(idk);
         console.log(idk)
       }
@@ -1414,8 +1445,10 @@ function save(){
             pwlel[i].url = url;
             pwlel[i].note = note;
             pwlel[i].fav = favinform;
-            pwlel[i].updated = new Date().toLocaleDateString();
-            //editfunc(indexsheesh, titel, username, password, url, note, favinform);
+            pwlel[i].updated = encrypt(new Date().toLocaleDateString());
+            pwlel[i].group = encrypt(document.getElementById("sltgroups").value);
+            pwlel[i].email = encrypt(document.getElementById("txtemail").value);
+            pwlel[i].selectEU = selectEU;
             cancel();
             break;
           }
@@ -1423,82 +1456,20 @@ function save(){
 
     }
     var element = document.getElementById("reset");
-  element.classList.remove("hide");
-  var element = document.getElementById("reset");
-  element.classList.add("containerlezwei");
-  var element = document.getElementById("rlsave");
-  element.classList.remove("hide");
-  var element = document.getElementById("rlsave");
-  element.classList.add("containerlezwei");
-  vorhersaven = true;
-  changefunc();
+    element.classList.remove("hide");
+    var element = document.getElementById("reset");
+    element.classList.add("containerlezwei");
+    var element = document.getElementById("rlsave");
+    element.classList.remove("hide");
+    var element = document.getElementById("rlsave");
+    element.classList.add("containerlezwei");
+    vorhersaven = true;
+    changefunc();
 
   }
   else{
     $('#con').text('Titel, Username and Password need some Information');
   }
-}
-
-function editfunc(id, titel, username, password, url, note, fav){
-  //$('#passwort tbody').empty();
-  var pw;
-  var len = pwlel.length;
-  var i;
-  const slt = document.getElementById('slt');
-  if(slt.value == "Passwort"){
-    pw = anfang();
-    for(i=0; i < len; i++)
-        {
-          var row_id = random_id();
-          var pwid = pwlel[i].id;
-          var pwtitel = pwlel[i].titel;
-          var pwusername = pwlel[i].username;
-          var pwpassword = pwlel[i].password;
-          var pwurl = pwlel[i].url;
-          var pwnote = pwlel[i].note;
-
-          var pwfav = pwlel[i].fav;
-
-          if(pwlel[i].id > 0)
-          {
-            if(pwlel[i].id == id)
-            {
-              pw += pew(row_id, id, titel, username, password, url, note, fav,  pwlel[i].created,  pwlel[i].updated);
-            }
-            else{
-              pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated);
-            }
-          }
-        }
-        
-  }
-  else{
-    pw = anfangzwei();
-    for(i=0; i < len; i++)
-        {
-          var row_id = random_id();
-          var pwid = pwlel[i].id;
-          var pwtitel = pwlel[i].titel;
-          var pwusername = pwlel[i].username;
-          var pwpassword = pwlel[i].password;
-          var pwurl = pwlel[i].url;
-          var pwnote = pwlel[i].note;
-          var pwfav = pwlel[i].fav;
-
-          if(pwlel[i].id < 0)
-          {
-            if(pwlel[i].id == id)
-            {
-              pw += keky(row_id, id, titel, username, password, url, note, fav, pwlel[i].created, pwlel[i].updated);
-            }
-            else{
-              pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated);
-            }
-          }
-        }
-  }
-  //$('#passwort').append(pw);
-
 }
 
 function srch()
@@ -1531,7 +1502,7 @@ function searchfunc()
       pw = anfangzwei();
     }
 
-    for(i=0; i < len; i++)
+    for(i=1; i < len; i++)
         {
           var row_id = random_id();
           var pwid = pwlel[i].id;
@@ -1542,48 +1513,30 @@ function searchfunc()
           var pwnote = pwlel[i].note;
 
           var pwfav = pwlel[i].fav;
-
-
           var ti = decrypt(pwtitel);
           ti = ti.toString().toLowerCase();
           var us = decrypt(pwusername);
           us = us.toString().toLowerCase();
+          var em = decrypt(pwlel[i].email);
+          em = em.toString().toLowerCase();
           var ur = decrypt(pwurl);
           ur = ur.toString().toLowerCase();
           var no = decrypt(pwnote);
           no = no.toString().toLowerCase();
           
-            if(ti.indexOf(a) > -1 || us.indexOf(a) > -1 || ur.indexOf(a) > -1 || no.indexOf(a) > -1)
+            if(ti.indexOf(a) > -1 || us.indexOf(a) > -1 || ur.indexOf(a) > -1 || em.indexOf(a) > -1 || no.indexOf(a) > -1)
             {
               if(slt.value == "Passwort")
               {
                 if(pwlel[i].id > 0)
                 {
-                  if(favbtn == 0)
-                  {
-                    pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated, a);
-                  }
-                  else{
-                    if(pwfav == "1")
-                    {
-                      pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated, a);
-                    }
-                  }
+                  pw += pew(row_id, pwid, pwtitel, pwusername, pwlel[i].email, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated, pwlel[i].group, pwlel[i].selectEU, a);
                 }
               }
               else{
                 if(pwlel[i].id < 0)
                 {
-                  if(favbtn == 0)
-                  {
-                    pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated, pwlel[i].created, pwlel[i].updated, a);
-                  }
-                  else{
-                    if(pwfav == "1")
-                    {
-                      pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated, pwlel[i].created, pwlel[i].updated, a);
-                    }
-                  }
+                  pw += keky(row_id, pwid, pwtitel, pwusername, pwlel[i].email, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated, pwlel[i].group, pwlel[i].selectEU, a);
                 }
               }
             }
@@ -1757,20 +1710,30 @@ function slt_change(){
           {
             if(pwlel[i].id > 0)
             {
-              pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated);
+              pw += pew(row_id, pwid, pwtitel, pwusername, pwlel[i].email, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated, pwlel[i].group, pwlel[i].selectEU);
               count += 1;
             }
           }
           else
           {
-            if(pwlel[i].id > 0 && pwlel[i].fav == "1")
+            if(pwlel[i].id > 0 && decrypt(pwlel[i].fav) == "1")
             {
-              pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated);
+              pw += pew(row_id, pwid, pwtitel, pwusername, pwlel[i].email, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated, pwlel[i].group, pwlel[i].selectEU);
               count += 1;
             }
           }
         }
-        $('#coun').text(count + ' Passwords');
+        if(count == 0)
+        {
+          $('#coun').text('no Passwords');
+        }
+        else if(count == 1)
+        {
+          $('#coun').text(count + ' Password');
+        }
+        else{
+          $('#coun').text(count + ' Passwords');
+        }
         document.getElementById('sh').style.display = "inline";
         document.getElementById('progresshome').style.display = "inline";
         document.getElementById('txtpassword').style.width = "206px";
@@ -1796,19 +1759,29 @@ function slt_change(){
         {
           if(pwlel[i].id < 0)
           {
-              pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated);
+              pw += keky(row_id, pwid, pwtitel, pwusername, pwlel[i].email, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated, pwlel[i].group, pwlel[i].selectEU);
               count += 1;
           }
         }
         else{
-          if(pwlel[i].id < 0 && pwlel[i].fav == "1")
+          if(pwlel[i].id < 0 && decrypt(pwlel[i].fav) == "1")
           {
-              pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated);
+              pw += keky(row_id, pwid, pwtitel, pwusername, pwlel[i].email, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated, pwlel[i].group, pwlel[i].selectEU);
               count += 1;
           }
         }
       }
-      $('#coun').text(count + ' Keys');
+      if(count == 0)
+      {
+        $('#coun').text('no Keys');
+      }
+      else if(count == 1)
+      {
+        $('#coun').text(count + ' Key');
+      }
+      else{
+        $('#coun').text(count + ' Keys');
+      }
       document.getElementById('sh').style.display = "none";
       document.getElementById('progresshome').style.display = "none";
       document.getElementById('txtpassword').style.width = "240px";
@@ -1888,7 +1861,16 @@ function allesSaven(ind, wer){
   sicherung = true;
   var element = document.getElementById("hahaha");
   element.classList.remove("hide");
-  var amk = "[\n"
+  var amk = []
+
+  if(pwlel[0].groups == null)
+  {
+    amk.push({"id":"0", "groups":[]})
+  }
+  else{
+    amk.push({"id":"0", "groups":getGroups()})
+  }
+
   var i;
   var len = pwlel.length;
   var len2 = len - 1;
@@ -1913,31 +1895,38 @@ function allesSaven(ind, wer){
       newid = minuscount;
       minuscount--;
     }
-    else{
-      newid = 0;
-    }
 
-    var created = new Date().toLocaleDateString();
-    if(pwlel[i].created != null)
+    if(newid != 0)
     {
-      created = pwlel[i].created;
-    }
-    var updated = new Date().toLocaleDateString();
-    if(pwlel[i].updated != null)
-    {
-      updated = pwlel[i].updated;
-    }
-    amk += '{"id":"'+newid+'", "fav":"'+fav+'", "titel":"'+titel+'","username":"'+username+'","password":"'+password+'","url":"'+url+'","note":"'+note+'", "created":"'+created+'", "updated":"'+updated+'"}';
-    if(i < len2){
-      amk += ",\n";
-    }
-    else{
-      amk += "\n";
+      var created = new Date().toLocaleDateString();
+      if(pwlel[i].created != null)
+      {
+        created = pwlel[i].created;
+      }
+      var updated = new Date().toLocaleDateString();
+      if(pwlel[i].updated != null)
+      {
+        updated = pwlel[i].updated;
+      }
+      var group = "";
+      if(pwlel[i].group != null)
+      {
+        group = pwlel[i].group;
+      }
+      var email = encrypt("");
+      if(pwlel[i].email != null || pwlel[i].email != "")
+      {
+        email = pwlel[i].email;
+      }
+      var selectEU = encrypt("");
+      if(pwlel[i].selectEU != null)
+      {
+        selectEU = pwlel[i].selectEU;
+      }
+      amk.push({"id":""+newid, "fav":""+fav, "titel":titel, "username":username, "email":email, "password":password,"url":url,"note":note, "created":created, "updated":updated, "group":group, "selectEU":selectEU});
     }
   }
-  amk += "]";
-
-  uploadFile(amk, ind, wer);
+  uploadFile(JSON.stringify(amk, null, 1), ind, wer);
 }
 
 function favfunc(id){
@@ -1951,16 +1940,16 @@ function favfunc(id){
   {
     if(pwlel[i].id == id)
     {
-      if(pwlel[i].fav == "1")
+      if(decrypt(pwlel[i].fav) == "1")
       {
-        pwlel[i].fav = "0";
+        pwlel[i].fav = encrypt("0");
         changefunc();
         break;
       }
       else{
-      if(pwlel[i].fav == "0")
+      if(decrypt(pwlel[i].fav) == "0")
       {
-        pwlel[i].fav = "1";
+        pwlel[i].fav = encrypt("1");
         changefunc();
         break;
       }
@@ -1994,14 +1983,14 @@ function changefunc(){
           {
             if(pwlel[i].id > 0)
             {
-              pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated);
+              pw += pew(row_id, pwid, pwtitel, pwusername, pwlel[i].email, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated, pwlel[i].group, pwlel[i].selectEU);
             }
           }
           else
           {
-            if(pwlel[i].id > 0 && pwlel[i].fav == "1")
+            if(pwlel[i].id > 0 && decrypt(pwlel[i].fav) == "1")
             {
-              pw += pew(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated);
+              pw += pew(row_id, pwid, pwtitel, pwusername, pwlel[i].email, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created,  pwlel[i].updated, pwlel[i].group, pwlel[i].selectEU);
             }
           }
         }
@@ -2024,13 +2013,13 @@ function changefunc(){
         {
           if(pwlel[i].id < 0)
           {
-              pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated);
+              pw += keky(row_id, pwid, pwtitel, pwusername, pwlel[i].email, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated, pwlel[i].group, pwlel[i].selectEU);
           }
         }
         else{
-          if(pwlel[i].id < 0 && pwlel[i].fav == "1")
+          if(pwlel[i].id < 0 && decrypt(pwlel[i].fav) == "1")
           {
-              pw += keky(row_id, pwid, pwtitel, pwusername, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated);
+              pw += keky(row_id, pwid, pwtitel, pwusername, pwlel[i].email, pwpassword, pwurl, pwnote, pwfav, pwlel[i].created, pwlel[i].updated, pwlel[i].group, pwlel[i].selectEU);
           }
         }
         }
@@ -2127,13 +2116,7 @@ function canc(){
           pathname: path.join(__dirname, 'settings.html'),
           protocol: 'file',
           slashes: true
-
         }))
-      //}
-      //else{
-        //$('#con').text('Working.. Please wait');
-        //setTimeout(() => {  $('#con').text(bot); }, 2000);
-      //}
 }
 
 function uploadFile(fil, i, wer){
@@ -2293,7 +2276,7 @@ function mouseDown(text, id){
       extr += 6;
     }
   }
-  document.getElementById('cont').innerHTML = text;
+  document.getElementById('cont').innerText = text;
   event.preventDefault();
   var contextElement = document.getElementById("context-menu");
   //var y = event.clientY - 20;
@@ -2386,11 +2369,6 @@ function analy(){
     slashes: true
 
   }))
-  //}
-  //else{
-    //$('#con').text('Working.. Please wait');
-    //setTimeout(() => {  $('#con').text(bot); }, 2000);
-  //}
 }
 
 function rez(){
@@ -2837,7 +2815,11 @@ function pwCheck(){
   var wort = document.getElementById("txtpassword").value;
   if(wort == "")
   {
-    document.getElementById("progresshome").value = "";
+    var proghom = document.getElementById("progresshome");
+    proghom.classList.remove("progred");
+    proghom.classList.remove("progyel");
+    proghom.classList.remove("proggre");
+    proghom.value = "";
     return;
   }
   var lower=false;
@@ -2876,15 +2858,20 @@ function pwCheck(){
   if(wort.length > 35)
   {if(sheesh <= 18){sheesh += 2;}}
     
-    /*if(sheesh < 10){
-      
+  var proghom = document.getElementById("progresshome");
+  proghom.classList.remove("progred");
+  proghom.classList.remove("progyel");
+  proghom.classList.remove("proggre");
+
+    if(sheesh < 10){
+      proghom.classList.add("progred");
     }
     if(sheesh >= 10 && sheesh < 13){
-      
+      proghom.classList.add("progyel");
     }
     if(sheesh >= 13){
-      
-    }*/
+      proghom.classList.add("proggre");
+    }
     console.log(sheesh);
     document.getElementById("progresshome").value = ""+sheesh;
 }

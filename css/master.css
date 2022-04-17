@@ -175,7 +175,7 @@ body {
     margin: 0 2px 0 0;
     margin-bottom: 5px;
     padding: 8px 10px 8px 10px;
-    border: 1px solid rgba(82, 82, 82, 0);
+    border: 1px solid #52525200;
     /*border: none;*/
     -webkit-border-radius: 3px;
     border-radius: 6px;
@@ -462,11 +462,48 @@ border: 1px solid #dedede;
   outline: 0;
 }
 
-.canceleff {
+.buttonborder{
+  border: 1px solid var(--clr-navbar);
+}
+
+.cancelround {
+  display: inline-block;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  border-radius: 50%;
+  padding: 8px 12px 8px 12px;
   border: 1px solid rgb(124, 53, 53);
   color: rgb(143, 58, 58);
-  transition: all 0.2s;
-  
+  transition: all 250ms ease;
+  position: relative;
+  outline: 0;
+}
+
+.cancelround:hover {
+  background: var(--crl-buttonhover);
+  text-shadow: 0 0 10px rgb(124, 53, 53);
+  box-shadow: inset 0 0 0 0.2rem rgb(124, 53, 53);
+}
+
+.canceleff {
+  display: inline-block;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  cursor: pointer;
+  padding: 8px 17px;
+  border: 1px solid rgb(124, 53, 53);
+  -webkit-border-radius: 50px;
+  border-radius: 50px;
+  font: normal 15px/normal "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  color: rgb(143, 58, 58);
+  -o-text-overflow: clip;
+  text-overflow: clip;
+  background: none;
+  transition: all 250ms ease;
+  position: relative;
+  outline: 0;
 }
 
 .canceleff:hover {
@@ -815,6 +852,9 @@ h2{
   select option {
     color: var(--clr-buttoncolor);
     outline-color: var(--clr-primary);
+    border-radius: 15px;
+    outline: none;
+    
   }
   
   select::-ms-expand {
@@ -879,6 +919,7 @@ h2{
     padding-bottom:23px;
     padding-top: 2px;
     border-top: 1px solid var(--clr-bordertop);
+    border-radius: 10px;
   }
 
   .navcloud {
@@ -1260,8 +1301,8 @@ h2{
   margin:0 0 0 2rem;
   position: relative;
   display: inline-block;
-  width: 6rem;
-  height: 3.4rem;
+  width: 5rem;
+  height: 2.4rem;
 }
 
 .toggle input {
@@ -1278,15 +1319,15 @@ h2{
   background-color: var(--clr-loginbg);
   display: block;
   transition: all 0.3s;
-  border-radius: 3.4rem;
+  border-radius: 1.4rem;
   cursor: pointer;
 }
 
 .roundbutton:before {
   position: absolute;
   content: "";
-  height: 2.4rem;
-  width: 2.5rem;
+  height: 1.4rem;
+  width: 1.5rem;
   border-radius: 100%;
   display: block;
   left: 0.5rem;
@@ -1423,7 +1464,7 @@ input:checked + .roundbutton:before  {
 }
 
 #modal-contents {
-	height: 280px;
+	height: 320px;
 	width: 580px;
 	background-color: var(--clr-bgmodal);
 	text-align: center;
@@ -2026,6 +2067,24 @@ progress[value]::-webkit-progress-value {
   transition: width 0.5s; 
 }
 
+.progred[value]::-webkit-progress-value{
+  background-image:
+	   -webkit-linear-gradient(top,  rgb(201, 63, 74),  rgba(0, 0, 0, .25)),
+	   -webkit-linear-gradient(left, #97DBED, #006DFE);
+}
+
+.progyel[value]::-webkit-progress-value{
+  background-image:
+	   -webkit-linear-gradient(top,  rgb(255, 241, 116),  rgba(0, 0, 0, .25)),
+	   -webkit-linear-gradient(left, #97DBED, #006DFE);
+}
+
+.proggre[value]::-webkit-progress-value{
+  background-image:
+	   -webkit-linear-gradient(top,  rgba(71,218,71,1), rgba(0, 0, 0, .25)),
+	   -webkit-linear-gradient(left, #97DBED, #006DFE);
+}
+
 @-webkit-keyframes animate-stripes {
   100% { background-position: -100px 0px; }
 }
@@ -2283,4 +2342,8 @@ a{
 
 .highl{
   background-color: rgb(0, 153, 255, 0.8);
+}
+
+#restartappdiv{
+  display: none;
 }

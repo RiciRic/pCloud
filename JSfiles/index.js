@@ -1,6 +1,6 @@
 console.log('renderer loaded')
 
-const Store = require('./JSfiles/store.js');
+const store = require('./JSfiles/storedata.js');
 
 const { ipcRenderer } = require('electron');
 
@@ -8,47 +8,13 @@ const BrowserWindow = require('electron').remote.BrowserWindow;
 const path = require('path');
 const url = require('url');
 const electron = require('electron');
+const { removeAllListeners } = require('process');
 const Menu = electron.Menu;
 const MenuItem = electron.MenuItem;
 
 var maxim = false;
 
 const nativeTheme = electron.remote.nativeTheme; 
-
-
-const store = new Store({
-  configName: 'user-preferences',
-  defaults: {
-    theme:"0",
-    pw:"",
-    pwtemp:"",
-    list:[],
-    x:455,
-    y:269,
-    width:700,
-    height:500,
-    dropdown:0,
-    favbtn:0,
-    max:false,
-    indexclose:false,
-    dropboxtoken:"",
-    ontop:false,
-    blur:true,
-    navbaricon:false,
-    lock:true,
-    lastsett:false,
-    backupkey:"",
-    eventhome:false,
-    eventindex:false,
-    eventanalytics:false,
-    download:false,
-    down:false,
-    delcache:false,
-    copyrightclick:true,
-    copystayontop:true,
-    copyseconds:10
-  }
-});
 
 var theme = store.get('theme');
 var pw = store.get('pw');
@@ -265,26 +231,9 @@ function input(){
         
       })
 
-      require('electron').remote.getCurrentWindow().removeListener('blur', focusListener);
-      require('electron').remote.getCurrentWindow().removeListener('focus', blurListener);
-      ipcRenderer.removeAllListeners("download");
-      ipcRenderer.removeAllListeners("downloaded");
-      ipcRenderer.removeAllListeners("exit");
+      winHome.webContents.openDevTools();
 
-      weiterbtn.removeEventListener('click', weiterbtnClick);
-      document.getElementById('weiterneu').removeAttribute("onclick");
-      document.getElementById('okaydrop').removeAttribute("onclick");
-      document.getElementById('tokenuse').removeAttribute("onclick");
-      document.getElementById('btncloud').removeAttribute("onclick");
-      document.getElementById('impid').removeAttribute("onclick");
-      document.getElementById('rp').removeAttribute("onclick");
-      document.getElementById('min-btn').removeAttribute("onclick");
-      document.getElementById('close-btn').removeAttribute("onclick");
-      document.getElementById('bodyid').removeAttribute("onerror");
-
-      //winHome.webContents.openDevTools();
-
-      const listeners = (function listAllEventListeners() {
+      /*const listeners = (function listAllEventListeners() {
         let elements = [];
         const allElements = document.querySelectorAll('*');
         const types = [];
@@ -310,7 +259,7 @@ function input(){
         return elements.filter(element => element.listeners.length)
       })();
       
-      console.log(listeners);
+      console.log(listeners);*/
 
 
       winHome.loadURL(url.format( {
@@ -320,7 +269,16 @@ function input(){
 
       }))
 
+      if(store.get('contentprotection') == true)
+      {
+        winHome.setContentProtection(true);
+      }
+      else{
+        winHome.setContentProtection(false);
+      }
+
       winHome.once('ready-to-show', () => {
+        removeAllListenersFunc();
         winHome.show()
         window.close()
         return;
@@ -340,6 +298,26 @@ function input(){
   {
       renduhaha();
   }
+}
+
+function removeAllListenersFunc()
+{
+  require('electron').remote.getCurrentWindow().removeListener('blur', focusListener);
+  require('electron').remote.getCurrentWindow().removeListener('focus', blurListener);
+  ipcRenderer.removeAllListeners("download");
+  ipcRenderer.removeAllListeners("downloaded");
+  ipcRenderer.removeAllListeners("exit");
+
+  weiterbtn.removeEventListener('click', weiterbtnClick);
+  document.getElementById('weiterneu').removeAttribute("onclick");
+  document.getElementById('okaydrop').removeAttribute("onclick");
+  document.getElementById('tokenuse').removeAttribute("onclick");
+  document.getElementById('btncloud').removeAttribute("onclick");
+  document.getElementById('impid').removeAttribute("onclick");
+  document.getElementById('rp').removeAttribute("onclick");
+  document.getElementById('min-btn').removeAttribute("onclick");
+  document.getElementById('close-btn').removeAttribute("onclick");
+  document.getElementById('bodyid').removeAttribute("onerror");
 }
 
 function renduhaha(){
@@ -466,6 +444,14 @@ function okaysk(){
     
   })
 
+  if(store.get('contentprotection') == true)
+      {
+        winHome.setContentProtection(true);
+      }
+      else{
+        winHome.setContentProtection(false);
+      }
+
   winHome.loadURL(url.format( {
     pathname: path.join(__dirname, 'home.html'),
     protocol: 'file',
@@ -474,8 +460,9 @@ function okaysk(){
   }))
 
   winHome.once('ready-to-show', () => {
-    winHome.show()
-    window.close()
+    removeAllListenersFunc();
+    winHome.show();
+    window.close();
 
   })
   }

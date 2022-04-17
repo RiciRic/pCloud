@@ -22,6 +22,10 @@
 
     <script src="scripts/mousetrap.min.js"></script>
 
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+
     <!--<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>-->
     
@@ -129,18 +133,27 @@
 
         <div style="grid-area: textbox;">
       <input class="loginzwei effectkreis" type="text" placeholder="Titel" value="" id="txttitel"/><br/>
-      <input class="loginzwei effectkreis" type="text" placeholder="Username/E-Mail" value="" id="txtusername"/>
+
+      <div id="txtUsernameEmailDiv">
+        <div style="margin-bottom: 5px; position:relative"><div style="justify-content: center;" class="loginzweiDiv effectkreis" id="txtusernameDiv"><input type="text" placeholder="Username" class="loginzweiInnen" style="width: 222px" value="" id="txtusername"/><label style="float:right; top:8px; right:7px" class="containerradio"><input id="radio1" type="radio" checked="checked" name="radio"><span class="checkmarkradio"></span></label></div></div>
+        <div style="margin-bottom: 5px; position:relative"><div style="justify-content: center;" class="loginzweiDiv effectkreis" id="txtemailDiv"><input type="text" placeholder="E-Mail" class="loginzweiInnen" style="width: 222px" value="" id="txtemail"/><label style="float:right; top:8px; right:7px" class="containerradio"><input id="radio2" type="radio" name="radio"><span class="checkmarkradio"></span></label></div></div>
+      </div>
       <div style="margin-bottom: 5px; position:relative"><div style="justify-content: center;" class="loginzweiDiv effectkreis" id="txtpasswordDiv"><input onkeydown='pwCheck()' type="password" placeholder="Password" class="loginzweiInnen" value="" id="txtpassword"/><button type="button" style="float:right; top:4px" class="buttonzwei effectbuttonanders colorLikePlaceholder" id="sh" onclick="showpw()" value="👁"><i id="shsh" class="far fa-eye"></i></button></div>
-      <progress id="progresshome" value="0" max="20"></progress></div>
+      <progress id="progresshome" class="proggre" value="0" max="20"></progress></div>
       <input class="loginzwei effectkreis" type="text" placeholder="URL" value="" id="txturl"/>
     </div>
     <!--<div id="strich" style="margin-top: 13px; margin-left: 6px; float:left; width:2px; height: 100px; background-color:rgb(94, 94, 94);"></div>-->
     <div style="grid-area: note;">
       <textarea class="notelel effectkreis" style="resize: none;" placeholder="Note" id="txtnote"></textarea>
+      <div id="selectwrappergroup">
+        <select id="sltgroups" style="padding-top:0px; padding-bottom:0px; height: 32px;" class="loginzwei" onchange="qrcodevor()">
+          <option style="outline: 0;" value="">- No Group -</option>
+        </select>
+      </div>
     </div>
     <div style="grid-area: txt; height: 20px;"><span id="timeed" style="color:#5f5f5f" class='labelzwei'></span></div>
       <div style="grid-area: btn; display: flex; flex-flow: row wrap; justify-content: space-between;">
-        <button type="button" class="button canceleff" id="cancel" value="‹ Cancel" onclick="cancel()"><i class="fas fa-chevron-left"></i> Cancel</button>
+        <button type="button" class="canceleff" id="cancel" value="‹ Cancel" onclick="cancel()"><i class="fas fa-chevron-left"></i> Cancel</button>
         <div id="tools">
           <button type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); margin-right: 8px;" class="favround effectbutton" id="favoritebtn" onclick="favbtnclickzwei()" value="☆"><i id="favoritebtni" class="far fa-star"></i></button>
           <button type="button" style="float: left; border: 1px solid rgba(83, 83, 83, 0.66); margin-right: 8px;" class="favround effectbutton" id="gen" onclick="showpwgen()" value="Generate"><i class="fas fa-key"></i></button>
@@ -207,7 +220,7 @@
       <div id="lel" style="outline: 0;" class="select-wrapper">
         <select id="slt" style="outline: 0;" onchange="slt_change()">
           <option style="outline: 0;" value="Passwort">Password</option>
-          <option style="outline: 0;" value="Key">Key</option>
+          <option style="outline: 0;" value="Key">Key/Pin</option>
           <option style="outline: 0;" value="Files">Files</option>
         </select>
       </div>
@@ -238,10 +251,10 @@
   </div>
 
   <div class="navcancel">
-    <button type="button" class="button effectbutton hide" id="reset" value="↺Reset" onclick="relo()"><i class="fas fa-undo-alt"></i> Reset</button>
+    <button type="button" class="button cancelround hide" id="reset" value="↺Reset" onclick="relo()"><i class="fas fa-undo-alt"></i></button>
     <button type="button" class="effectbuttonle hide" id="rlsave" value="🖫Save" onclick="allesSaven(0,0)"><i class="fas fa-save"></i> Save</button>
     <div id="hahaha" class="loading-spinnerzwei hide"></div>
-    <button type="button" class="button effectbutton containerle" style="float: right;" id="ana" value="🗠 Analytics" onclick="analy()"><i class="fas fa-chart-line"></i> Analytics</button>
+    <button type="button" class="buttonanders effectbutton containerle" style="float: right;" id="ana" value="🗠 Analytics" onclick="analy()"><i class="fas fa-chart-line"></i> Analytics</button>
     
   </div>
 
