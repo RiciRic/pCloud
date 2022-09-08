@@ -229,7 +229,7 @@ function input(){
         
       })
 
-      winHome.webContents.openDevTools();
+      //winHome.webContents.openDevTools();
 
       /*const listeners = (function listAllEventListeners() {
         let elements = [];
