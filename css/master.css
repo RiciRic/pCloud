@@ -133,7 +133,7 @@ body {
     -moz-box-sizing: content-box;
     box-sizing: content-box;
     margin: 0 2px 0 0;
-    padding: 10px 48px 10px 21px;
+    padding: 8px 48px 8px 21px;
     padding-right: 0px;
     border: none;
     -webkit-border-radius: 3px;
@@ -320,7 +320,7 @@ border: 1px solid #dedede;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   border: none;
-  font: bold 18px/normal "Arial", "Helvetica", sans-serif;
+  font: bold 15px/normal "Arial", "Helvetica", sans-serif;
   color: var(--clr-label);
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
@@ -340,6 +340,7 @@ border: 1px solid #dedede;
   color: var(--clr-buttoncolor);
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
+  margin-top:3px
 }
 
 .labeldrei{
@@ -351,7 +352,7 @@ border: 1px solid #dedede;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   border: none;
-  font: normal 8px/normal "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  font: normal 8px/normal "Sans-serif", "Arial", sans-serif;
   color: var(--clr-buttoncolor);
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
@@ -379,11 +380,11 @@ border: 1px solid #dedede;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   cursor: pointer;
-  padding: 8px 17px;
+  padding: 5px 17px;
   border: 1.5px solid var(--clr-btnshadow);
   -webkit-border-radius: 50%;
   border-radius: 50px;
-  font: normal 15px/normal "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  font: normal 13px/normal "Lucida Sans Unicode", "Lucida Grande", sans-serif;
   color: var(--clr-buttoncolor);
   -o-text-overflow: clip;
   text-overflow: clip;
@@ -448,11 +449,11 @@ border: 1px solid #dedede;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   cursor: pointer;
-  padding: 8px 17px;
+  padding: 6px 17px;
   border: none;
   -webkit-border-radius: 50px;
   border-radius: 50px;
-  font: normal 15px/normal "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  font: normal 13px/normal "Lucida Sans Unicode", "Lucida Grande", sans-serif;
   color: var(--clr-buttoncolor);
   -o-text-overflow: clip;
   text-overflow: clip;
@@ -472,7 +473,7 @@ border: 1px solid #dedede;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   border-radius: 50%;
-  padding: 8px 12px 8px 12px;
+  padding: 4px 8px 4px 8px;
   border: 1px solid rgb(124, 53, 53);
   color: rgb(143, 58, 58);
   transition: all 250ms ease;
@@ -492,7 +493,7 @@ border: 1px solid #dedede;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   cursor: pointer;
-  padding: 8px 17px;
+  padding: 6px 17px;
   border: 1px solid rgb(124, 53, 53);
   -webkit-border-radius: 50px;
   border-radius: 50px;
@@ -662,7 +663,7 @@ h2{
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   cursor: pointer;
-  padding: 8px 17px;
+  padding: 6px 20px;
   border: none;
   font: normal 15px/normal "Lucida Sans Unicode", "Lucida Grande", sans-serif;
   color: var(--clr-buttoncolor);
@@ -814,7 +815,7 @@ h2{
   
   .select-wrapper::before {
     color: rgb(255, 0, 0);
-    font-size: 20px;
+    font-size: 8px;
     pointer-events: none;
     position: static;
     right: 15px;
@@ -830,7 +831,7 @@ h2{
     color: var(--clr-buttoncolor);
     cursor: pointer;
     
-    height: 40px;
+    height: 32px;
     outline: none;
     padding-left: 5px;
     width: 100%;
@@ -881,7 +882,7 @@ h2{
     background-color: var(--clr-navbarlel);
     overflow: hidden;
     position: fixed;
-    height: 30px;
+    height: 28px;
     width: 100%;
     box-shadow: 0px 0px 10px 3px rgba(0, 0, 0, 0.295);
     z-index: 9999;
@@ -920,6 +921,7 @@ h2{
     padding-top: 2px;
     border-top: 1px solid var(--clr-bordertop);
     border-radius: 10px;
+    height:65px
   }
 
   .navcloud {
@@ -1749,17 +1751,17 @@ svg circle{
    animation: 1s spin infinite ease-in-out
  }
 
- .loading-spinnerzwei{
-  width:3rem;
-  height:3rem;
+.loading-spinnerzwei{
   position: absolute;
+  top:6px;
+  left: 45px;
+  width:20px;
+  height:20px;
   display: inline-block;
   border: 3px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   border-top-color: var(--clr-load);
-  top:6px;
-  margin-left:4px;
-  animation: 1s spin infinite ease-in-out
+  animation: 1s spin infinite ease-in-out;
 }
 
  @keyframes spin{
@@ -2246,6 +2248,10 @@ progress[value]::-webkit-progress-value::after {
 .centered {
   margin-left: auto !important;
   margin-right: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center;
 }
 
 * > .centered {
@@ -2346,4 +2352,60 @@ a{
 
 #restartappdiv{
   display: none;
+}
+
+#strich2{
+  margin-top: 6px;
+  float:right;
+  width:1px;
+  height: 18px;
+  background-color:rgb(94, 94, 94);
+  margin-right:4px;
+  margin-left:4px;
+}
+
+.save-bar{
+  background-color: var(--clr-label);
+  display:flex; 
+  justify-content: center;
+  align-items: center;
+  height:26px;
+}
+
+.save-bar-border{
+  display: inline-block;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  cursor: pointer;
+  padding: 6px 20px;
+  border: none;
+  font: normal 12px/normal "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  color: var(--clr-buttoncolor);
+  -o-text-overflow: clip;
+  text-overflow: clip;
+  background: none;
+  outline-color: none;
+  background-color: transparent; 
+  transition: all 0.2s;
+  position: relative;
+  width: 70px;
+  border-radius:5px
+}
+
+.save-bar-reset{
+  color: var(--clr-primary);
+}
+
+.save-bar-reset:hover{
+  text-decoration: underline;
+}
+
+.save-bar-save{
+  border-radius: 0px;
+  background-color: rgba(0, 0, 0, 0.123);
+}
+
+.save-bar-save:hover{
+  background-color: rgba(0, 0, 0, 0.26);
 }

@@ -1,18 +1,19 @@
 console.log('home loaded')
 
-const store = require('./JSfiles/storedata.js');
+const store = require('./js/storedata.js');
+const init = require('./js/home/init.js');
+const {anfang, anfangzwei, pew, keky} = require('./js/home/table.js');
+const initIpcRenderer = require('./js/home/ipcRenderer.js');
+
+const encryptModule = require('./js/modules/encrypt.js');
+const decryptModule = require('./js/modules/decrypt.js');
+const checkPassword = require('./js/modules/checkPassword.js');
+const TimerFunc = require('./js/modules/timerFunc.js');
 
 const { ipcRenderer } = require('electron');
-
-const { shell } = window.require('electron');
-const { BrowserWindow, systemPreferences } = require('electron')
-const fs = require('fs');
-
-const axios = require('axios');
 const electron = require('electron');
 const path = require('path');
 const url = require('url');
-const { app, globalShortcut } = require('electron').remote;
 
 const { Menu } = require('electron');
 
@@ -25,6 +26,9 @@ var vorhersaven = false;
 
 var idkvar = false;
 var idkcount = 0;
+
+init();
+initIpcRenderer();
 
 
 /*const contextMenu = require('electron-context-menu');
@@ -49,8 +53,6 @@ var pwtemp = store.get('pwtemp');
 store.set('pwtemp','');
 
 var maxim = store.get('max');
-var theme = store.get('theme');
-var ver = store.get('version');
 var xpos = store.get('x');
 var ypos = store.get('y');
 var widthvar = store.get('width');
@@ -68,28 +70,6 @@ var lastsettvar = store.get('lastsett');
       store.set('lastsett',false);
     }
 
-    if (theme == '1'){
-      document.body.classList.add('hell');
-      nativeTheme.themeSource = "light"; 
-    }
-    else if(theme == '0'){
-      
-      document.body.classList.remove('hell');
-      nativeTheme.themeSource = "dark"; 
-    }
-    else{
-      if(nativeTheme.shouldUseDarkColors == true)
-      {
-        
-        document.body.classList.remove('hell');
-        nativeTheme.themeSource = "dark"; 
-      }
-      else{
-        
-        document.body.classList.add('hell');
-        nativeTheme.themeSource = "light"; 
-      }
-    }
 
     if(ontopvar == true){
       let remote = require('electron').remote;
@@ -141,25 +121,15 @@ var pwkey = 1;
 
 var quitsicherung = true;
 
-ipcRenderer.on('will-Quit', (event, arg) => {
-  //globalShortcut.unregister('CommandOrControl+X')
-  globalShortcut.unregisterAll()
+function encrypt(text)
+{
+  return encryptModule(text, pwtemp);
+}
 
-  if(quitsicherung == true)
-  {
-    let remote = require('electron').remote;
-  const bounds = remote.getCurrentWindow().getBounds();
-  xpos = bounds.x;
-  ypos = bounds.y;
-  widthvar = bounds.width;
-  heightvar = bounds.height;
-
-  store.set('x', xpos);
-  store.set('y', ypos);
-  store.set('width', widthvar);
-  store.set('height', heightvar);
-  }
-})
+function decrypt(text)
+{
+  return decryptModule(text, pwtemp);
+}
 
 var random_id = function(){
   var id_str = Math.random().toString(36).substr(2);
@@ -215,171 +185,6 @@ $("#ed").click(function(){
     }
   });
 
-  $('#max-btn').hover(function(){
-    if(maxim == false)
-    {
-    $('#con').text('Maximize');
-    }
-    else
-    {
-      $('#con').text('Back to normal');
-    }
-  },
-    function() {$('#con').text(bot);});
-
-    $('#topkek').hover(function(){
-      ontopvar = store.get('ontop');
-      if(ontopvar == false)
-      {
-      $('#con').text('Stay on Top');
-      }
-      else
-      {
-        $('#con').text('Back to normal');
-      }
-    },
-      function() {$('#con').text(bot);});
-
-      $('#sh').hover(function(){
-        var ch = document.getElementById("txtpassword").type;
-        if(ch == "password")
-        {
-          $('#con').text('Show Password');
-        }
-        else{
-          $('#con').text('Hide Password');
-        }
-      },
-        function() {$('#con').text(bot);});
-
-    $('#gen').hover(function(){$('#con').text('Generate Password');},
-    function() {$('#con').text(bot);});
-
-    $('#txtemail').hover(function(){$('#con').text('E-Mail');},
-    function() {$('#con').text(bot);});
-
-    $('#selectwrappergroup').hover(function(){$('#con').text('Select Group');},
-    function() {$('#con').text(bot);});
-
-    $('#ed').hover(function(){$('#con').text('Edit');},
-    function() {$('#con').text(bot);});
-
-  $('#min-btn').hover(function(){$('#con').text('Minimize');},
-    function() {$('#con').text(bot);});
-  
-  $('#close-btn').hover(function(){$('#con').text('Exit');},
-    function() {$('#con').text(bot);});
-
-    $('#favoritebtn').hover(function(){$('#con').text('Flag as Favorite');},
-    function() {$('#con').text(bot);});
-
-    $('#da').hover(function(){document.getElementById("da").style.cursor = "pointer";},
-      function() {document.getElementById("da").style.cursor = "initial";});
-
-    if(store.get('download')==true)
-    {
-      document.getElementById("da").classList.remove('hide');
-    }
-
-  $('#save').hover(function(){
-    const slt = document.getElementById('slt');
-    if(slt.value == "Passwort"){
-      $('#con').text('Add Password');
-    }
-    else{
-      $('#con').text('Add Key');
-    }
-    },
-    function() {$('#con').text(bot);});
-
-    $('#favbutton').hover(function()
-    {
-      if(favbtn == '0')
-      {
-        const slt = document.getElementById('slt');
-        if(slt.value == "Passwort")
-        {
-          $('#con').text('Show only favorite Passwords');
-        }
-        else{
-          $('#con').text('Show only favorite Keys');
-        }
-      }
-      else{
-        const slt = document.getElementById('slt');
-        if(slt.value == "Passwort")
-        {
-          $('#con').text('Show all Passwords');
-        }
-        else{
-          $('#con').text('Show all Keys');
-        }
-      }
-    },
-    function() {$('#con').text(bot);});
-
-    $('#saverly').hover(function(){
-      if(edit == true)
-      {
-        $('#con').text('Edit');
-      }
-      else{
-        $('#con').text('Add');
-      }
-    },
-    function() {$('#con').text(bot);});
-
-    $('#qr').hover(function(){$('#con').text('Create QR Code for Password');},
-    function() {$('#con').text(bot);});
-
-    $('#cancel').hover(function(){$('#con').text('Cancel');},
-    function() {$('#con').text(bot);});
-
-    $('#delsearch').hover(function(){$('#con').text('Clear Search');},
-    function() {$('#con').text(bot);});
-
-    $('#relobut').hover(function(){$('#con').text('Refresh');},
-    function() {$('#con').text(bot);});
-
-    $('#reset').hover(function(){$('#con').text('Reset Changes');},
-    function() {$('#con').text(bot);});
-
-    $('#rlsave').hover(function(){$('#con').text('Save Changes');},
-    function() {$('#con').text(bot);});
-
-    $('#ana').hover(function(){$('#con').text('Charts and Stuff');},
-    function() {$('#con').text(bot);});
-
-  $('#search').hover(function(){$('#con').text('Search');},
-    function() {$('#con').text(bot);});
-
-  $('#searchbtn').hover(function(){$('#con').text('Search');},
-    function() {$('#con').text(bot);});
-
-  $('#lel').hover(function(){$('#con').text('Change Table');},
-    function() {$('#con').text(bot);});
-
-  $('#txttitel').hover(function(){$('#con').text('Titel');},
-    function() {$('#con').text(bot);});
-
-  $('#txtusernameDiv').hover(function(){$('#con').text('Username');},
-    function() {$('#con').text(bot);});
-
-  $('#txtpasswordDiv').hover(function(){$('#con').text(document.getElementById("txtpassword").placeholder);},
-    function() {$('#con').text(bot);});
-
-  $('#txturl').hover(function(){$('#con').text('Url');},
-    function() {$('#con').text(bot);});
-
-  $('#txtnote').hover(function(){$('#con').text('Note');},
-    function() {$('#con').text(bot);});
-
-    $('#topkekle').hover(function(){$('#con').text('Lock Program');},
-    function() {$('#con').text(bot);});
-
-  $('#btnEd').hover(function(){$('#con').text('Settings');},
-    function() {$('#con').text(bot);});
-
     $('.table-row').hover(function() {             
 			$(this).addClass('current-row');
 		}, function() {
@@ -399,6 +204,20 @@ $("#ed").click(function(){
       }
 
     });
+
+/*var horizontalContainer = document.getElementById("horizontalScroll")
+horizontalContainer.addEventListener("wheel", function (e) {
+    if (e.deltaY > 0) {
+      horizontalContainer.scrollLeft += 100;
+      e.preventDefault();
+// prevenDefault() will help avoid worrisome 
+// inclusion of vertical scroll 
+    }
+    else {
+      horizontalContainer.scrollLeft -= 100;
+      e.preventDefault();
+    }
+  });*/
 
     //---------------SHEEEEEESH------------------
 
@@ -474,11 +293,6 @@ $("#ed").click(function(){
   
     }
     getVer();
-
-
-
-
-
     //----------------ENDSHEEEESH-----------------
 
   
@@ -521,110 +335,6 @@ function getGroups()
         document.getElementById('sltgroups').append(createOption(groups[i]));
       }
     }
-
-function anfang(){
-  return '<tr style="cursor:pointer" onclick="sortieren()"><th></th><th></th><th class="labeltable">Titel</th><th class="labeltable">Username/E-Mail</th><th></th><th class="labeltable">Password</th><th></th><th></th><th class="labeltable">URL</th><th class="labeltable"></th><th></th></tr>';
-}
-
-function anfangzwei(){
-  return '<tr style="cursor:pointer" onclick="sortieren()"><th></th><th></th><th class="labeltable">Titel</th><th class="labeltable">Key/Pin</th><th></th><th class="labeltable">URL</th><th class="labeltable"></th><th></th></tr>';
-}
-
-function pew(row_id, id, titel, username, email, password, url, note, fav, created, updated, group, selectEU, a){
-  var dec = decrypt(password);
-  var us = decrypt(username);
-  var em = decrypt(email)
-  var ur = decrypt(url);
-  var groupvar = decrypt(group);
-  var createdvar = decrypt(created);
-  var updatedvar = decrypt(updated);
-  var favvar = decrypt(fav);
-
-  var usem = "";
-  if(decrypt(selectEU) == "username")
-  {
-    usem = us;
-  }
-  else{
-    usem = em;
-  }
-  var pw = "";
-      pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover(\''+"urlid"+id+'\', \''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\', \''+"titel"+id+'\')" onmouseleave="mleave(\''+"urlid"+id+'\', \''+"delete"+id+'\', \''+"ed"+id+'\', \''+"username"+id+'\', \''+"password"+id+'\', \''+"titel"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \''+ decrypt(email) + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + favvar + '\', \'' + createdvar + '\', \'' + updatedvar + '\', \'' + groupvar + '\', \'' + decrypt(selectEU) + '\')">';
-      if(favvar == "1"){
-      pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbuttonanders gray" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /><i id="i' + id + '" class="fas fa-star"></i></button></td>';
-      }
-      else{
-        pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; border-radius: 50%;" class="buttonzwei effectbuttonanders gray" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="☆" /><i id="i' + id + '" class="far fa-star"></i></button></td>';
-      }
-      if(ur == ""){
-        pw += '<td style="user-select: none;"></td>';
-      }
-      else{
-        pw += '<td style="user-select: none;"><img style="max-width:16px; max-height:16px;" src="https://www.google.com/s2/favicons?domain=' + ur + '"></td>';
-      }
-      var dectit = decrypt(titel);
-      if(a != null && dectit.toLowerCase().indexOf(a.toLowerCase()) > -1){
-        dectit = highl(dectit, a);
-        pw += '<td><div class="labelzwei" oncontextmenu="contextMenubar(\''+"table-row"+row_id+'\', \''+id+'\')" edit_type="click" col_name="tit">' + dectit + '</div></td>';
-      }
-      else{
-        pw += '<td><div class="labelzwei" oncontextmenu="contextMenubar(\''+"table-row"+row_id+'\', \''+id+'\')" edit_type="click" col_name="tit">' + dectit + '</div></td>';
-      }
-      var decus = kurz(usem);
-      if(a != null && decus.toLowerCase().indexOf(a.toLowerCase()) > -1){
-        decus = highl(decus, a);
-        pw += '<td><div class="labelzwei" edit_type="click" col_name="user" oncontextmenu="copy(\'' + usem + '\')">' + decus + '</div></td>';
-      }
-      else{
-        pw += '<td><div class="labelzwei" edit_type="click" col_name="user" oncontextmenu="copy(\'' + usem + '\')">' + decus + '</div></td>';
-      }
-      pw += '<td><button class="buttonzwei effectbuttonanders nada" id="username' + id + '" style="outline: 0;" onmouseover="copyus()" onmouseout="leave()" onclick="copy(\'' + usem + '\')" value="🗐" /><i class="fas fa-copy"></i></button>' +'</td>';
-      pw += '<td><div class="labelzwei" edit_type="click" col_name="psw" oncontextmenu="copy(\'' + dec + '\')">' + kurzst(stern(dec)) + '</div></td>'
-      pw += '<td><button type="button" class="buttonzwei effectbuttonanders" id="auge' + id + '" onfocusout="mouseUp()" onmouseover="showbot()" onmouseout="leave()" onmousedown="mouseDown(\'' + dec + "\', \'auge" + id + '\')" onmouseup="mouseUp()" value="👁" /><i class="far fa-eye"></i></button>' +'</td>';
-      pw += '<td><button class="buttonzwei effectbuttonanders nada" id="password' + id + '" style="outline: 0;" onmouseover="copypw()" onmouseout="leave()" onclick="copy(\'' + dec + '\')" value="🗐" /><i class="fas fa-copy"></i></button>' +'</td>';
-      if(ur == ""){
-        pw += '<td style="user-select: none;"></td>';
-      }
-      else{
-        pw += '<td><button style="outline: 0;" type="button" class="buttonzwei effectbuttonanders gray" id="urlid' + id + '" onmouseover="run()" onmouseout="leave()"  onclick="ope(\'' + ur + '\')" value="ᐅ" /><i class="fas fa-play"></i></button>' +'</td>';
-      }
-      pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<button data-modal-target="#modallel" type="button" style="outline: 0;" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editme()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ us + '\', \''+ decrypt(email) + '\', \'' + dec + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + favvar + '\', \'' + createdvar + '\', \'' + updatedvar + '\', \'' + groupvar + '\', \'' + decrypt(selectEU) + '\')" value="✎" /><i class="far fa-edit"></i></button></td>';
-      pw += '<td><button type="button" onmouseover="entfern()" onmouseout="leave()" class="buttonzwei btn_row_delete rot gray" id="delete' + id + '" value="✖" onclick="del(' + id +')"><i class="fas fa-times"></i></button>' + '</td>';
-      pw += '</tr>';
-      /*if(a != null && decrypt(titel).indexOf(a) != -1){
-        pw.replace(a, '<span class="highl">'+a+'</span>')
-      }*/
-      return pw;
-
-}
-
-function highl(str, search){
-  for(var i = 0; i<str.length;i++)
-  {
-    if(str.toLowerCase().charAt(i) == search.toLowerCase().charAt(0))
-    {
-      for(var b = 0; b<search.length;b++)
-      {
-        var start = i;
-        var stop;
-        if(str.toLowerCase().charAt(i+b) == search.toLowerCase().charAt(b))
-        {
-          if(b==search.length-1)
-          {
-            stop = i+b;
-            var output = str.substring(0, start) + '<span class="highl">' + str.substring(start);
-            output = output.substring(0, stop+21) + '</span>' + output.substring(stop+21);
-            return output;
-          }
-        }
-        else{
-          break;
-        }
-      }
-    }
-  }
-}
-highl("Hallo", "a");
 
   function contextMenubar(id, ID)
   {
@@ -673,7 +383,7 @@ highl("Hallo", "a");
           
           webPreferences: {
             nodeIntegration: true,
-            preload: path.join(__dirname, 'JSfiles/preload.js')
+            preload: path.join(__dirname, 'js/preload.js')
           }
         }) 
       
@@ -738,67 +448,11 @@ highl("Hallo", "a");
       console.log((count+pwlel.length))
       pwlel[objPWKEY].id = (count+pwlel.length);
     }
-    var element = document.getElementById("rlsave");
-    element.classList.remove("hide");
-      var element = document.getElementById("reset");
-    element.classList.remove("hide");
+      //var element = document.getElementById("saveBar");
+    //element.classList.remove("hide");
+    $("#saveBar").slideDown("slow", function(){});
     slt_change();
   }
-
-
-function mover(playidd, delid, edid, usid, passid, favid)
-{
-  document.getElementById(delid).classList.remove("gray");
-  document.getElementById(edid).classList.remove("gray");
-  document.getElementById(usid).classList.remove("nada");
-  document.getElementById(passid).classList.remove("nada");
-  document.getElementById(favid).classList.remove("gray");
-  try {
-    document.getElementById(playidd).classList.remove("gray");
-  } catch (error) {
-    
-  }
-}
-
-function mleave(playidd, delid, edid, usid, passid, favid)
-{
-  document.getElementById(delid).classList.add("gray");
-  document.getElementById(edid).classList.add("gray");
-  document.getElementById(usid).classList.add("nada");
-  document.getElementById(passid).classList.add("nada");
-  document.getElementById(favid).classList.add("gray");
-  try {
-    document.getElementById(playidd).classList.add("gray");
-  } catch (error) {
-    
-  }
-}
-
-function mover2(delid, edid, passid, playidd, favid)
-{
-  document.getElementById(delid).classList.remove("gray");
-  document.getElementById(edid).classList.remove("gray");
-  document.getElementById(passid).classList.remove("nada");
-  document.getElementById(favid).classList.remove("gray");
-  try {
-    document.getElementById(playidd).classList.remove("gray");
-  } catch (error) {
-    
-  }
-}
-
-function mleave2(delid, edid, passid, playidd, favid)
-{
-  document.getElementById(delid).classList.add("gray");
-  document.getElementById(edid).classList.add("gray");
-  document.getElementById(passid).classList.add("nada");
-  document.getElementById(favid).classList.add("gray");
-  try {
-    document.getElementById(playidd).classList.add("gray");
-  } catch (error) {
-    
-  }
-}
 
 var rever = false;
 
@@ -824,83 +478,10 @@ function sortieren(){
     pwlel.reverse()
   }
   slt_change();
-  var element = document.getElementById("reset");
-  element.classList.remove("hide");
-  var element = document.getElementById("rlsave");
-  element.classList.remove("hide");
+  //var element = document.getElementById("saveBar");
+  //element.classList.remove("hide");
+  $("#saveBar").slideDown("slow", function(){});
   vorhersaven = true;
-}
-
-function leave(){
-  $('#con').text(bot);
-}
-
-function copyus(){
-  $('#con').text('Copy Username');
-}
-
-function copypw(){
-  $('#con').text('Copy Password');
-}
-
-function showbot(){
-  $('#con').text('Show Password');
-}
-
-function run(){
-  $('#con').text('Open Webside');
-}
-
-function entfern(){
-  $('#con').text('Delete Password');
-}
-
-function editme(){
-  $('#con').text('Edit Password');
-}
-
-function keky(row_id, id, titel, username, email, password, url, note, fav, created, updated, group, selectEU, a){
-  var pw = "";
-  var ur = decrypt(url);
-  var groupvar = decrypt(group);
-  var createdvar = decrypt(created);
-  var updatedvar = decrypt(updated);
-  var favvar = decrypt(fav);
-
-  pw += '<tr row_id="' + row_id +'" id="table-row'+row_id+'" onmouseover="mover2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\', \''+"urlid"+id+'\', \''+"titel"+id+'\')" onmouseleave="mleave2(\''+"delete"+id+'\', \''+"ed"+id+'\', \''+"password"+id+'\', \''+"urlid"+id+'\', \''+"titel"+id+'\')" draggable="true" ondragstart="start(\''+id+'\')" ondragover="dragover(\'table-row'+row_id+'\')" onDragLeave="dragleave(\'table-row'+row_id+'\')" onDrop="std(\''+id+'\')" class="trsh bordertr" ondblclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \''+ decrypt(email) + '\', \'' + decrypt(password) + '\', \'' + decrypt(url) + '\', \'' + decrypt(note) +'\', \'' + favvar + '\', \'' + createdvar + '\', \'' + updatedvar + '\', \'' + groupvar + '\', \'' + decrypt(selectEU) + '\')">';
-  if(favvar == "1"){
-    pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; color: rgb(1, 138, 230); border-radius: 50%;" class="buttonzwei effectbuttonanders gray" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="★" /><i id="i' + id + '" class="fas fa-star"></i></button></td>';
-    }
-    else{
-      pw += '<td><button type="button" style="padding: 0px 5px 2px 5px; font-size: 15px; border-radius: 50%;" class="buttonzwei effectbuttonanders gray" id="titel' + id + '" onclick="favfunc(\'' + id + '\')" value="☆" /><i id="i' + id + '" class="far fa-star"></i></button></td>';
-    }
-  if(ur == ""){
-    pw += '<td style="user-select: none;"></td>';
-  }
-  else{
-    pw += '<td style="user-select: none;"><img style="max-width:16px; max-height:16px;" src="https://s2.googleusercontent.com/s2/favicons?domain=' + ur + '"></td>';
-  }
-  var dectit = decrypt(titel);
-  if(a != null && dectit.toLowerCase().indexOf(a.toLowerCase()) > -1){
-    dectit = highl(dectit, a);
-    pw += '<td><div class="labelzwei" edit_type="click" oncontextmenu="contextMenubar(\''+"table-row"+row_id+'\', \''+id+'\')" col_name="tit">' + dectit + '</div></td>';
-  }
-  else{
-    pw += '<td><div class="labelzwei" edit_type="click" oncontextmenu="contextMenubar(\''+"table-row"+row_id+'\', \''+id+'\')" col_name="tit">' + dectit + '</div></td>';
-  }
-  pw += '<td><div class="labelzwei" edit_type="click" col_name="psw" oncontextmenu="copy(\'' + decrypt(password) + '\')">' + decrypt(password) + '</div></td>';
-  pw += '<td><button class="buttonzwei effectbuttonanders nada" id="password' + id + '" onmouseover="copykey()" onmouseout="leave()" onclick="copy(\'' + decrypt(password) + '\')" value="🗐" /><i class="fas fa-copy"></i></button>' +'</td>';
-  if(ur == ""){
-    pw += '<td style="user-select: none;"></td>';
-  }
-  else{
-    pw += '<td><button type="button" class="buttonzwei effectbuttonanders gray" id="urlid' + id + '" onmouseover="run()" onmouseout="leave()" onclick="ope(\'' + ur + '\')" value="ᐅ" /><i class="fas fa-play"></i></button>' +'</td>';
-  }
-  pw += '<td><div class="labelzwei" edit_type="click" col_name="but">' + '<button data-modal-target="#modallel" type="button" class="buttonzwei effectbuttonanders gray" id="ed' + id + '" onmouseover="editmekey()" onmouseout="leave()" onclick="check(\''+ id + '\', \'' + decrypt(titel) + '\', \''+ decrypt(username) + '\', \''+ decrypt(email) + '\', \'' + decrypt(password) + '\', \'' + ur + '\', \'' + decrypt(note) +'\', \'' + favvar + '\', \'' + createdvar + '\', \'' + updatedvar + '\', \'' + groupvar + '\', \'' + decrypt(selectEU) + '\')" value="✎" /><i class="far fa-edit"></i></button></td>';
-  pw += '<td><button type="button" class="buttonzwei btn_row_delete rot gray" id="delete' + id + '" value="✖" onmouseover="entfernkey()" onmouseout="leave()" onclick="del('+ id +')"><i class="fas fa-times"></i></button>' + '</td>';
-  pw += '</tr>';
-  return pw;
-
 }
 
 var row;
@@ -931,130 +512,6 @@ function dragover(id){
     document.getElementById(''+id+'').classList.remove("dragdropoben")
   }
   oldY = event.pageY;
-}
-
-function std(einf)
-{
-  var i = 0;
-  var objeinf;
-  var ind = 0;
-  for(i=0; i < pwlel.length; i++)
-  {
-    if(pwlel[i].id == einf)
-    {
-      ind = i+direct;
-      console.log("einf gefunden | "+pwlel[i].id+" == "+einf);
-    }
-    if(pwlel[i].id == entfrow)
-    {
-      objeinf = pwlel[i];
-      pwlel.splice(i, 1);
-      console.log("entf gefunden | " +objeinf.id+" == "+entfrow);
-    }
-  }
-  pwlel.splice(ind, 0, objeinf);
-  var element = document.getElementById("reset");
-  element.classList.remove("hide");
-  var element = document.getElementById("rlsave");
-  element.classList.remove("hide");
-  vorhersaven = true;
-  slt_change();
-}
-
-function dragleave(id){
-  document.getElementById(''+id+'').classList.remove("dragdropoben")
-  document.getElementById(''+id+'').classList.remove("dragdropunten")
-  document.getElementById(''+id+'').classList.add("bordertr")
-}
-
-function copykey(){
-  $('#con').text('Copy Key');
-}
-
-function entfernkey(){
-  $('#con').text('Delete Key');
-}
-
-function editmekey(){
-  $('#con').text('Edit Key');
-}
-
-function encrypt(text){
-  var message = text;
-  var key= pwtemp;
-  var encrypted = CryptoJS.AES.encrypt(message, key); 
-  return encrypted.toString();
-}
-
-function decrypt(text){
-  var encrypted = text;
-  var key= pwtemp;
-  var decrypted = CryptoJS.AES.decrypt(encrypted, key);
-  return decrypted.toString(CryptoJS.enc.Utf8);
-}
-
-function ope(link){
-  if(link.charAt(0) == "w" && link.charAt(1) == "w" && link.charAt(2) == "w" && link.charAt(3) == ".")
-  {
-    link = "https://" + link;
-  }
-  shell.openExternal(link);
-}
-
-function stern(lel){
-  var stern = "";
-  for (i = 0; i < lel.length; i++) {
-    stern = stern + "*"
-  }
-  return stern;
-}
-
-function del(idsheesh){
-  var i;
-  for(i=0; i < pwlel.length; i++)
-  {
-    if(pwlel[i].id == idsheesh)
-    {
-      pwlel.splice(i, 1);
-      break;
-    }
-  }
-  var element = document.getElementById("reset");
-  element.classList.remove("hide");
-  var element = document.getElementById("rlsave");
-  element.classList.remove("hide");
-  vorhersaven = true;
-}
-
-function TimerFunc(time) 
-{
-    this.time = time;
-    this.stop = false;
-    this.setstop = function() 
-    {
-      this.stop = true;
-    };
-    this.start = function(time) 
-    {
-      console.log(this.stop)
-      if(this.stop == true)return;
-      if(time !=0)
-      {
-        $('#con').text('Copied for '+ time +' seconds..');
-        setTimeout(() => { 
-          if(this.stop == true)return;
-          this.start(time-1);
-        }, 1000);
-      }
-      else{
-        $('#con').text(bot); 
-        /*if(store.get('ontop') == false)
-        {
-          ontop();
-        }*/
-        clipboard.writeText('');
-      }
-    };
 }
 
 let timerfunc = null;
@@ -1243,7 +700,7 @@ setTimeout(() => {  $('#bg-modal').css("z-index", "0"); $('#timeed').text('');},
     contextElementzwei.classList.remove("bordercolor");
     var contextElementzwei = document.getElementById("txturl");
     contextElementzwei.classList.remove("bordercolor");
-    var contextElementzwei = document.getElementById("txtusername");
+    var contextElementzwei = document.getElementById("txtusernameDiv");
     contextElementzwei.classList.remove("bordercolor");
     modalcanc = false;
 
@@ -1455,13 +912,10 @@ function save(){
         }
 
     }
-    var element = document.getElementById("reset");
-    element.classList.remove("hide");
-    var element = document.getElementById("reset");
-    element.classList.add("containerlezwei");
-    var element = document.getElementById("rlsave");
-    element.classList.remove("hide");
-    var element = document.getElementById("rlsave");
+    //var element = document.getElementById("saveBar");
+    //element.classList.remove("hide");
+    $("#saveBar").slideDown("slow", function(){});
+    var element = document.getElementById("saveBar");
     element.classList.add("containerlezwei");
     vorhersaven = true;
     changefunc();
@@ -1861,6 +1315,7 @@ function allesSaven(ind, wer){
   sicherung = true;
   var element = document.getElementById("hahaha");
   element.classList.remove("hide");
+  document.getElementById("hideAllesSavenLbl").classList.add("hide");
   var amk = []
 
   if(pwlel[0].groups == null)
@@ -1930,10 +1385,9 @@ function allesSaven(ind, wer){
 }
 
 function favfunc(id){
-  var element = document.getElementById("reset");
-  element.classList.remove("hide");
-  var element = document.getElementById("rlsave");
-  element.classList.remove("hide");
+  //var element = document.getElementById("saveBar");
+  //element.classList.remove("hide");
+  $("#saveBar").slideDown("slow", function(){});
   vorhersaven = true;
   var i;
   for(i=0; i < pwlel.length; i++)
@@ -2145,6 +1599,7 @@ xhr.onerror = function () {
   sicherung = false;
   var element = document.getElementById("hahaha");
   element.classList.add("hide");
+  document.getElementById("hideAllesSavenLbl").classList.remove("hide");
   $('#con').text("Something went wrong..");
 }
  
@@ -2155,11 +1610,11 @@ xhr.onload = function() {
     console.log(fileInfo);
     var element = document.getElementById("hahaha");
     element.classList.add("hide");
-    var element = document.getElementById("reset");
-  element.classList.add("hide");
-  var element = document.getElementById("rlsave");
-  element.classList.add("hide");
+    document.getElementById("hideAllesSavenLbl").classList.remove("hide");
+    //var element = document.getElementById("saveBar");
+  //element.classList.add("hide");
   vorhersaven = false;
+  $("#saveBar").slideUp("slow", function(){});
     if(i != 0)
     {
       if(wer == 0)
@@ -2182,6 +1637,7 @@ xhr.onload = function() {
     sicherung = false;
     var element = document.getElementById("hahaha");
     element.classList.add("hide");
+    document.getElementById("hideAllesSavenLbl").classList.remove("hide");
     $('#con').text("Something went wrong..");
   }
 };
@@ -2468,7 +1924,7 @@ function showqr(){
     contextElementzwei.classList.add("bordercolor");
   }
   else{
-    var contextElementzwei = document.getElementById("txtusername");
+    var contextElementzwei = document.getElementById("txtusernameDiv");
     contextElementzwei.classList.add("bordercolor");
     var contextElementzwei = document.getElementById("txtpasswordDiv");
     contextElementzwei.classList.add("bordercolor");
@@ -2481,7 +1937,7 @@ function urlwifi(){
   if(slt.value == "URL"){
     var contextElementzwei = document.getElementById("txturl");
     contextElementzwei.classList.add("bordercolor");
-    var contextElementzwei = document.getElementById("txtusername");
+    var contextElementzwei = document.getElementById("txtusernameDiv");
     contextElementzwei.classList.remove("bordercolor");
     var contextElementzwei = document.getElementById("txtpasswordDiv");
     contextElementzwei.classList.remove("bordercolor");
@@ -2491,7 +1947,7 @@ function urlwifi(){
     
   }
   else{
-    var contextElementzwei = document.getElementById("txtusername");
+    var contextElementzwei = document.getElementById("txtusernameDiv");
     contextElementzwei.classList.add("bordercolor");
     var contextElementzwei = document.getElementById("txtpasswordDiv");
     contextElementzwei.classList.add("bordercolor");
@@ -2581,7 +2037,7 @@ function oncl(){
     contextElementzwei.classList.remove("bordercolor");
     var contextElementzwei = document.getElementById("txturl");
     contextElementzwei.classList.remove("bordercolor");
-    var contextElementzwei = document.getElementById("txtusername");
+    var contextElementzwei = document.getElementById("txtusernameDiv");
     contextElementzwei.classList.remove("bordercolor");
   }
 }
@@ -2619,18 +2075,26 @@ function qrcodefunc(){
     if(sltdrei.value == "WPA/WPA2"){
       wpa = "WPA";
       console.log(wpa);
+      var contextElementzwei = document.getElementById("txtpasswordDiv");
+      contextElementzwei.classList.add("bordercolor");
     }
     if(sltdrei.value == "No Password"){
       wpa = "nopass";
       console.log(wpa);
+      var contextElementzwei = document.getElementById("txtpasswordDiv");
+      contextElementzwei.classList.remove("bordercolor");
     }
     if(sltdrei.value == "WEP"){
       wpa = "WEP";
       console.log(wpa);
+      var contextElementzwei = document.getElementById("txtpasswordDiv");
+      contextElementzwei.classList.add("bordercolor");
     }
     if(sltdrei.value == "WPA2-EAP"){
       wpa = "WPA2-EAP";
       console.log(wpa);
+      var contextElementzwei = document.getElementById("txtpasswordDiv");
+      contextElementzwei.classList.add("bordercolor");
     }
     textqr = "WIFI:T:" + wpa + ";S:" + qrname + ";P:"+ qrpw +";;";
     console.log(textqr);
@@ -2641,7 +2105,7 @@ function qrcodefunc(){
  
   QRCode.toCanvas(canvas, textqr, function (error) {
     if (error) console.error(error)
-    console.log('success!');
+    console.log('success! '+textqr);
   })
 }
 
@@ -2731,7 +2195,7 @@ function lock(){
     frame: false,
     webPreferences: {
       nodeIntegration: true,
-      preload: path.join(__dirname, 'JSfiles/preload.js')
+      preload: path.join(__dirname, 'js/preload.js')
     }
     
   }) 
@@ -2777,12 +2241,6 @@ function closesec(){
   setTimeout(() => {  document.getElementById("sec").classList.add("hide"); }, 600);
 }
 
-ipcRenderer.on('lock-Screen', (event, arg) => {
-  if(lockvar == true){
-    lock();
-  }
-});
-
 const { remote } = require('electron');
 
 function once(){
@@ -2798,19 +2256,6 @@ remote.getCurrentWindow().on('resize', function() {
 });
 
 
-ipcRenderer.on('download', (event, arg) => {
-  store.set('download',true);
-});
-
-ipcRenderer.on('downloaded', (event, arg) => {
-  store.set('down',true);
-});
-
-ipcRenderer.on('exit', (event, arg) => {
-  ex();
-});
-
-
 function pwCheck(){
   var wort = document.getElementById("txtpassword").value;
   if(wort == "")
@@ -2822,41 +2267,8 @@ function pwCheck(){
     proghom.value = "";
     return;
   }
-  var lower=false;
-  var upper=false;
-  var number=false;
-  var symbol=false;
-  sheesh = 0;
-  for (var i = 0; i < wort.length; i++) {
-    if(lower == false)
-    {lower = getLower(wort.charAt(i));}
-    if(upper == false)
-    {upper = getUpper(wort.charAt(i));}
-    if(number == false)
-    {number = getNumber(wort.charAt(i));}
-    if(symbol == false)
-    {symbol = getSymbol(wort.charAt(i));}
-  }
-  if(lower == true)
-  {sheesh += 3;}
-  if(upper == true)
-  {sheesh += 3;}
-  if(number == true)
-  {sheesh += 4;}
-  if(symbol == true)
-  {sheesh += 4;}
-  if(wort.length > 8)
-  {sheesh += 3;}
-  if(wort.length > 13)
-  {sheesh += 3;}
-  if(wort.length == 1)
-  {sheesh = 0;}
-  if(wort.length == 2)
-  {sheesh = 1;}
-  if(wort.length > 25)
-  {if(sheesh <= 17){sheesh += 3;}}
-  if(wort.length > 35)
-  {if(sheesh <= 18){sheesh += 2;}}
+
+  var sheesh = checkPassword(wort);
     
   var proghom = document.getElementById("progresshome");
   proghom.classList.remove("progred");
@@ -2876,53 +2288,6 @@ function pwCheck(){
     document.getElementById("progresshome").value = ""+sheesh;
 }
 
-function getLower(wert) {
-  var lower = 97;
-  var i;
-  for (i = lower; i < 123; i++) {
-    if(String.fromCharCode(i) == wert)
-    {
-      return true;
-    }
-  }
-  return false;
-}
-
-function getUpper(wert) {
-  var lower = 65;
-  var i;
-  for (i = lower; i < 91; i++) {
-    if(String.fromCharCode(i) == wert)
-    {
-      return true;
-    }
-  }
-  return false;
-}
-
-function getNumber(wert) {
-  var lower = 48;
-  var i;
-  for (i = lower; i < 58; i++) {
-    if(String.fromCharCode(i) == wert)
-    {
-      return true;
-    }
-  }
-  return false;
-}
-
-function getSymbol(wert) {
-  var symbol = ['!', '@','#', '$','%', '^','&', '*','(', ')','{', '}','[', ']','=', '<', '>', '/', ',', '', '.'];
-	for (i = 0; i < symbol.length; i++) {
-    if(symbol[i] == wert)
-    {
-      return true;
-    }
-  }
-  return false;
-}
-
 function opconsfunc()
 {
   let remote = require('electron').remote;
@@ -2934,6 +2299,20 @@ Mousetrap.bind(['command+f', 'ctrl+f'], function() {
   document.getElementById('search').focus()
   return false;
 });
+
+function checkEmptyEmail(){
+  if(document.getElementById("txtemail").value == "")
+  {
+    document.getElementById("radio1").checked = "checked";
+  }
+}
+
+function checkEmptyUsername(){
+  if(document.getElementById("txtusername").value == "")
+  {
+    document.getElementById("radio2").checked = "checked";
+  }
+}
 
 
 

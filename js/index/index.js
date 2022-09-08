@@ -1,8 +1,10 @@
 console.log('renderer loaded')
 
-const store = require('./JSfiles/storedata.js');
+const store = require('./js/storedata.js');
 
 const { ipcRenderer } = require('electron');
+
+const typing = require('./js/index/typing.js');
 
 const BrowserWindow = require('electron').remote.BrowserWindow;
 const path = require('path');
@@ -74,11 +76,7 @@ var password = "";
 const weiterbtn = document.getElementById('weiter');
 const text = document.getElementById('pw');
 
-/*if(store.get("eventindex") == false)
-{
-  ipcRenderer.send('eventindex');
-  store.set("eventindex", true);
-}*/
+typing();
 
 document.getElementById("pw").addEventListener('keydown', (event)=>{
   if(event.getModifierState("CapsLock"))
@@ -214,7 +212,7 @@ function input(){
       winHome = new BrowserWindow({
         width: widthvar,
         height: heightvar,
-        minWidth:700,
+        minWidth:760,
         minHeight:500,
         show: false,
         x: xpos,
@@ -226,12 +224,12 @@ function input(){
         webPreferences: {
           nodeIntegration: true,
           webViewTag: true,
-          preload: path.join(__dirname, 'JSfiles/preload.js')
+          preload: path.join(__dirname, 'js/preload.js')
         }
         
       })
 
-      //winHome.webContents.openDevTools();
+      winHome.webContents.openDevTools();
 
       /*const listeners = (function listAllEventListeners() {
         let elements = [];
@@ -427,7 +425,7 @@ function okaysk(){
     winHome = new BrowserWindow({
     width: widthvar,
     height: heightvar,
-    minWidth:700,
+    minWidth:760,
     minHeight:500,
     show: false,
     x: xpos,
@@ -439,7 +437,7 @@ function okaysk(){
     webPreferences: {
       nodeIntegration: true,
       webViewTag: true,
-      preload: path.join(__dirname, 'JSfiles/preload.js')
+      preload: path.join(__dirname, 'js/preload.js')
     }
     
   })
@@ -516,7 +514,7 @@ function erstmal(){
     webPreferences: {
       nodeIntegration: true,
       webViewTag: true,
-      preload: path.join(__dirname, 'JSfiles/preload.js')
+      preload: path.join(__dirname, 'js/preload.js')
     }
   }) 
 

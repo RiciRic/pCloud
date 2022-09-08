@@ -1,17 +1,17 @@
 .loader{
     float: left;
     position: relative;
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     padding: 0px 0px 0px 0px;
     padding-bottom: 5px;
     border-radius: 50%;
     background: linear-gradient(#97DBED, #00B2EE, #006DFE);
     animation: animate 1.9s linear infinite;
     margin: 0 auto;
-    
-    
-    
+    margin-top: 4px;
+    margin-right: 2px;
+    margin-left: 4px;
     }
     
     .loader span{

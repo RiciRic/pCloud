@@ -76,7 +76,7 @@
 
     <div id="sklel" class="navbarlel">
 
-      <div style="margin-top: 2px; margin-right: 2px; margin-left: 2px;" class="loader">
+      <div class="loader">
         <span></span>
         <span></span>
         <span></span>
@@ -89,7 +89,7 @@
         <input type="button" class="button effectnavbutton navlabel exit leexit" id="close-btn" value="✖" onclick="ex()">
         <input type="button" class="button effectnavbutton navlabel navbtn" id="max-btn" value="🗖" onclick="maxi()">
         <input type="button" class="button effectnavbutton navlabel navbtn" id="min-btn" value="🗕" onclick="mini()">
-        <div id="strich2" style="margin-top: 6px; float:right; width:1px; height: 20px; background-color:rgb(94, 94, 94); margin-right:4px; margin-left:4px;"></div>
+        <div id="strich2"></div>
         <button type="button" style="padding-top:5px; padding-bottom:2px; float: right; color: rgb(160, 160, 160); -webkit-app-region: no-drag;" class="containerle button effectnavsettbutton navbtnzw" id="btnEd" value="▢ Credits" onclick="credits()"><i class="fas fa-info-circle"></i></button>
       </div>
     
@@ -180,10 +180,10 @@
 
       <div id="versuchlelediv" class="labelzwei containersettings"> <label style="margin-left: 8px; margin-top: 3px;"><i class="fas fa-cloud"></i> Connect with Dropbox</label><br/>
         <div class="fuchs">
-          <label class="containerradio">Dropbox
+          <!--<label class="containerradio">Dropbox
             <input type="radio" checked="checked" name="radio">
             <span class="checkmarkradio"></span>
-          </label>
+          </label>-->
           <div class="containersettingsborder">
             <div class="fuchs">
               <!--<img src="pictures/dropbox.png" alt="Dropbox" width="50" height="50">-->
@@ -439,12 +439,12 @@
   <div class="navbartwo" id="sk">
     <button type="button" id="topkek" style="border-top-left-radius: 10px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px; border-top-right-radius: 0px; padding-top: 4px; height:12px; margin-right: 0px; margin-top:0px;" class='buttonzwei effectbutton' onclick="ontop()" value="○"><i id="topkeki" class="far fa-dot-circle"></i></button>
     <button type="button" id="topkekle" style="padding-top: 4px; height:12px; border-bottom-left-radius: 0px; border-top-left-radius: 0px; padding-bottom:5px; margin-top: 0;" class='buttonzwei effectbutton' onclick="lock()" value="⚿"><i class="fas fa-lock"></i></button>
-      <span id="con" style="margin-left: 0.3em" class='labelzwei'></span>
+    <span id="con" style="margin-left: 0.3em" class='labelzwei'></span>
     <span id="ver" style="margin-right: 1.5em; float: right;" class='labelzwei'></span>
     <!--<input type="button" id="infobutt" style="float:right; padding-top: 2px; height:12px; border-bottom-right-radius: 0px; border-top-right-radius: 0px; margin-right:5px;" class='buttonzwei effectbutton' onclick="infofunc()" value="🛈">-->
   </div>
 
-    <script src = './JSfiles/settings.js'>
+    <script src = './js/settings/settings.js'>
     
     </script>
   </body>

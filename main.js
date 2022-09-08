@@ -216,10 +216,10 @@ function createWindow () {
 
   win = new BrowserWindow({
     width: 383,
-    height: 240,
-    minHeight: 240,
+    height: 255,
+    minHeight: 255,
     minWidth: 383,
-    maxHeight: 240,
+    maxHeight: 255,
     maxWidth: 383,
     icon: 'pictures/icon.ico',
     //show: false,
@@ -229,7 +229,7 @@ function createWindow () {
     frame: false,
     webPreferences: {
       nodeIntegration: true,
-      preload: path.join(__dirname, 'JSfiles/preload.js')
+      preload: path.join(__dirname, 'js/preload.js')
     }
 
     

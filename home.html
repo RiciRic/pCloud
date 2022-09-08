@@ -92,7 +92,7 @@
     
       <div id="context-menudrei">
         <div class="item centered">
-
+          <div style="display:flex; flex-direction:row">
           <div id="lel2" style="outline: 0; float: left; width: 63px;" class="select-wrapper">
             <select id="sltzwei" style="outline: 0; -moz-border-radius: 6px 0px 0px 6px; border-radius: 50px 0px 0px 50px;" onchange="urlwifi()">
               <option style="outline: 0;" value="URL">URL</option>
@@ -108,6 +108,7 @@
               <option style="outline: 0;" value="WPA2-EAP">WPA2-EAP</option>
             </select>
           </div>
+        </div>
           <canvas id="canvas" width="112" height="112" style="margin-top:8px; background-color: white; border: 2px solid white; border-radius: 20px;"></canvas>
           <!--<input type="button" class="button effectbutton" id="btnqrcode" value="Show QR Code" onclick="qrcodevor()" >
           <input type="button" class="button effectbutton" id="cancelpw" value="‹ Cancel" onclick=" oncl()">-->
@@ -132,19 +133,19 @@
       <div id="modal-contents" onmousedown="setcanc()">
 
         <div style="grid-area: textbox;">
-      <input class="loginzwei effectkreis" type="text" placeholder="Titel" value="" id="txttitel"/><br/>
+      <input tabindex="1" class="loginzwei effectkreis" type="text" placeholder="Titel" value="" id="txttitel"/><br/>
 
       <div id="txtUsernameEmailDiv">
-        <div style="margin-bottom: 5px; position:relative"><div style="justify-content: center;" class="loginzweiDiv effectkreis" id="txtusernameDiv"><input type="text" placeholder="Username" class="loginzweiInnen" style="width: 222px" value="" id="txtusername"/><label style="float:right; top:8px; right:7px" class="containerradio"><input id="radio1" type="radio" checked="checked" name="radio"><span class="checkmarkradio"></span></label></div></div>
-        <div style="margin-bottom: 5px; position:relative"><div style="justify-content: center;" class="loginzweiDiv effectkreis" id="txtemailDiv"><input type="text" placeholder="E-Mail" class="loginzweiInnen" style="width: 222px" value="" id="txtemail"/><label style="float:right; top:8px; right:7px" class="containerradio"><input id="radio2" type="radio" name="radio"><span class="checkmarkradio"></span></label></div></div>
+        <div style="margin-bottom: 5px; position:relative"><div style="justify-content: center;" class="loginzweiDiv effectkreis" id="txtusernameDiv"><input onkeydown="checkEmptyEmail()" tabindex="2" type="text" placeholder="Username" class="loginzweiInnen" style="width: 222px" value="" id="txtusername"/><label style="float:right; top:8px; right:7px" class="containerradio"><input id="radio1" type="radio" checked="checked" name="radio"><span class="checkmarkradio"></span></label></div></div>
+        <div style="margin-bottom: 5px; position:relative"><div style="justify-content: center;" class="loginzweiDiv effectkreis" id="txtemailDiv"><input onkeydown="checkEmptyUsername()" tabindex="3" type="email" placeholder="E-Mail" class="loginzweiInnen" style="width: 222px" value="" id="txtemail"/><label style="float:right; top:8px; right:7px" class="containerradio"><input id="radio2" type="radio" name="radio"><span class="checkmarkradio"></span></label></div></div>
       </div>
-      <div style="margin-bottom: 5px; position:relative"><div style="justify-content: center;" class="loginzweiDiv effectkreis" id="txtpasswordDiv"><input onkeydown='pwCheck()' type="password" placeholder="Password" class="loginzweiInnen" value="" id="txtpassword"/><button type="button" style="float:right; top:4px" class="buttonzwei effectbuttonanders colorLikePlaceholder" id="sh" onclick="showpw()" value="👁"><i id="shsh" class="far fa-eye"></i></button></div>
+      <div style="margin-bottom: 5px; position:relative"><div style="justify-content: center;" class="loginzweiDiv effectkreis" id="txtpasswordDiv"><input tabindex="4" onkeydown='pwCheck()' type="password" placeholder="Password" class="loginzweiInnen" value="" id="txtpassword"/><button type="button" style="float:right; top:4px" class="buttonzwei effectbuttonanders colorLikePlaceholder" id="sh" onclick="showpw()" value="👁"><i id="shsh" class="far fa-eye"></i></button></div>
       <progress id="progresshome" class="proggre" value="0" max="20"></progress></div>
-      <input class="loginzwei effectkreis" type="text" placeholder="URL" value="" id="txturl"/>
+      <input tabindex="4" class="loginzwei effectkreis" type="url" placeholder="URL" value="" id="txturl"/>
     </div>
     <!--<div id="strich" style="margin-top: 13px; margin-left: 6px; float:left; width:2px; height: 100px; background-color:rgb(94, 94, 94);"></div>-->
     <div style="grid-area: note;">
-      <textarea class="notelel effectkreis" style="resize: none;" placeholder="Note" id="txtnote"></textarea>
+      <textarea tabindex="5" class="notelel effectkreis" style="resize: none;" placeholder="Note" id="txtnote"></textarea>
       <div id="selectwrappergroup">
         <select id="sltgroups" style="padding-top:0px; padding-bottom:0px; height: 32px;" class="loginzwei" onchange="qrcodevor()">
           <option style="outline: 0;" value="">- No Group -</option>
@@ -167,7 +168,7 @@
     
     <div id="sklel" class="navbarlel">
 
-      <div style="margin-top: 2px; margin-right: 2px; margin-left: 2px;" class="loader">
+      <div class="loader">
         <span></span>
         <span></span>
         <span></span>
@@ -181,9 +182,9 @@
       <input type="button" class="button effectnavbutton navlabel exit leexit" id="close-btn" value="✖" onclick="ex()">
       <input type="button" class="button effectnavbutton navlabel navbtn" id="max-btn" value="🗖" onclick="maxi()">
       <input type="button" class="button effectnavbutton navlabel navbtn" id="min-btn" value="🗕" onclick="mini()">
-      <div id="strich2" style="margin-top: 6px; float:right; width:1px; height: 20px; background-color:rgb(94, 94, 94); margin-right:4px; margin-left:4px;"></div>
-      <button style="padding-top:5px; padding-bottom:2px; float: right; color: rgb(160, 160, 160); -webkit-app-region: no-drag; align-items: center;" class="button effectnavsettbutton navbtnzw" id="btnEd" onclick="canc()"><i class="fas fa-cog"></i></button>
-    
+      <div id="strich2"></div>
+      <button style="padding-top:5px; padding-bottom:2px; float: right; color: rgb(160, 160, 160); -webkit-app-region: no-drag; align-items: center; border-radius: 0px;" class="button effectnavsettbutton" id="btnEd" onclick="canc()"><i class="fas fa-cog"></i></button>
+      <button style="padding-top:5px; padding-bottom:2px; float: right; color: rgb(160, 160, 160); -webkit-app-region: no-drag; align-items: center;" class="button effectnavsettbutton navbtnzw" id="ana" onclick="analy()"><i class="fas fa-chart-line"></i></i></button>
     </div>
   <br/>
 <br/>
@@ -216,7 +217,6 @@
       
       <!--<div onclick="document.getElementById('pw').focus()" class="login inputDiv effectkreis"><input class="inputNormal" style="padding: 10px 170px 10px 21px;" type="text" placeholder="Search" onkeyup="srch()" value="" id="search"/><button class="buttonzwei effectbuttonanders" onmousedown="showfunc()" onmouseup="hidefunc()"><i class="far fa-eye"></i></button></div>-->
       <div onclick="document.getElementById('search').focus()" onblur='console.log("ye")' oncontextmenu="showContextMenuText()" class="login inputDiv effectkreis"><input class="inputNormal" type="text" style="padding-left:0px; padding-right:0px; margin-bottom: 6px; color:white; width:250px; background: none;" placeholder="Search" id="search" value="" onkeyup="srch()"/><button style="right:5px; bottom:1px;" onclick="clearsrch()" class="buttonzwei effectbuttonanders colorLikePlaceholder"><i class="fas fa-times"></i></button></div>
-      
       <div id="lel" style="outline: 0;" class="select-wrapper">
         <select id="slt" style="outline: 0;" onchange="slt_change()">
           <option style="outline: 0;" value="Passwort">Password</option>
@@ -231,8 +231,13 @@
 
       
       
-    <div style="margin-top: 5px; margin-bottom: 55px;">
+    <div style="margin-top: 5px; margin-bottom: 200px;">
     <div  class="scrollbar" id="scrollbar-custom">
+
+      <div id="saveBar" class="save-bar" style="display:none">
+        <button type="button" style="height:20px" class="save-bar-border save-bar-save" id="rlsave" value="🖫Save" onclick="allesSaven(0,0)"><div id="hahaha" class="loading-spinnerzwei hide"></div><div id="hideAllesSavenLbl"><i class="fas fa-save"></i> Save</div></button>
+        <button type="button" style="height:20px" class="save-bar-border save-bar-reset" id="resetBar" onclick="relo()">Reset</button>
+      </div>
 
       <div id="context-menu">
         <div class="item">
@@ -251,10 +256,23 @@
   </div>
 
   <div class="navcancel">
-    <button type="button" class="button cancelround hide" id="reset" value="↺Reset" onclick="relo()"><i class="fas fa-undo-alt"></i></button>
-    <button type="button" class="effectbuttonle hide" id="rlsave" value="🖫Save" onclick="allesSaven(0,0)"><i class="fas fa-save"></i> Save</button>
-    <div id="hahaha" class="loading-spinnerzwei hide"></div>
-    <button type="button" class="buttonanders effectbutton containerle" style="float: right;" id="ana" value="🗠 Analytics" onclick="analy()"><i class="fas fa-chart-line"></i> Analytics</button>
+    <!--<div id="horizontalScroll" style="float:left; display:flex; flex-direction: row; width:100%; overflow-y: scroll; overflow: hidden;">
+      <div style="border:1px solid red; font-size: large; padding: 5px 10px 5px 10px; border-radius: 20px;">Cocks</div>
+      <div style="border:1px solid red; font-size: large; padding: 5px 10px 5px 10px; border-radius: 20px;">Cocks</div>
+      <div style="border:1px solid red; font-size: large; padding: 5px 10px 5px 10px; border-radius: 20px;">Cocks</div>
+      <div style="border:1px solid red; font-size: large; padding: 5px 10px 5px 10px; border-radius: 20px;">Cocks</div>
+      <div style="border:1px solid red; font-size: large; padding: 5px 10px 5px 10px; border-radius: 20px;">Cocks</div>
+      <div style="border:1px solid red; font-size: large; padding: 5px 10px 5px 10px; border-radius: 20px;">Cocks</div>
+      <div style="border:1px solid red; font-size: large; padding: 5px 10px 5px 10px; border-radius: 20px;">Cocks</div>
+      <div style="border:1px solid red; font-size: large; padding: 5px 10px 5px 10px; border-radius: 20px;">Cocks</div>
+      <div style="border:1px solid red; font-size: large; padding: 5px 10px 5px 10px; border-radius: 20px;">Cocks</div>
+      <div style="border:1px solid red; font-size: large; padding: 5px 10px 5px 10px; border-radius: 20px;">Cocks</div>
+      <div style="border:1px solid red; font-size: large; padding: 5px 10px 5px 10px; border-radius: 20px;">Cocks</div>
+      <div style="border:1px solid red; font-size: large; padding: 5px 10px 5px 10px; border-radius: 20px;">Cocks</div>
+      <div style="border:1px solid red; font-size: large; padding: 5px 10px 5px 10px; border-radius: 20px;">Cocks</div>
+      <div style="border:1px solid red; font-size: large; padding: 5px 10px 5px 10px; border-radius: 20px;">Cocks</div>
+      <div style="border:1px solid red; font-size: large; padding: 5px 10px 5px 10px; border-radius: 20px;">Cocks</div>
+    </div>-->
     
   </div>
 
@@ -267,7 +285,8 @@
       <a id="da" class="labelzwei hide" style="color: rgb(1, 138, 230); float:right; margin-right: 0.5em" onclick="canc()">Update Available!</a>
       <!--<input type="button" style="float: right; outline-color: #272727;" class="buttonzwei effectbutton" id="btnEd" value="Analytics" onclick="window.location.href='analytics.html'">-->
     </div>
-    <script src="JSfiles/home.js"></script>
+    <script src="js/home/home.js"></script>
+    <script src="js/home/hover.js"></script>
   </body>
 
 

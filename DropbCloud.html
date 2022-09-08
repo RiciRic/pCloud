@@ -25,7 +25,7 @@
 
     <div id="sklel" class="navbarlel">
 
-      <div style="margin-top: 2px; margin-right: 2px; margin-left: 2px;" class="loader">
+      <div class="loader">
         <span></span>
         <span></span>
         <span></span>
@@ -75,7 +75,7 @@
 
     <script>
       const axios = require('axios');
-      const store = require('./JSfiles/storedata.js');
+      const store = require('./js/storedata.js');
       const electron = require('electron');
       const BrowserWindow = require('electron').remote.BrowserWindow;
       const { remote } = require('electron');
@@ -130,7 +130,7 @@
         modal:false,
         frame: false,
         webPreferences: {
-        preload: `${__dirname}/JSfiles/pre.js`
+        preload: `${__dirname}/js/pre.js`
       }
       });
 
@@ -478,7 +478,7 @@ function winclose()
     frame: false,
     webPreferences: {
       nodeIntegration: true,
-      preload: path.join(__dirname, 'JSfiles/preload.js')
+      preload: path.join(__dirname, 'js/preload.js')
     }
 
     
@@ -522,7 +522,7 @@ function indexclosefunc(){
     frame: false,
     webPreferences: {
       nodeIntegration: true,
-      preload: path.join(__dirname, 'JSfiles/preload.js')
+      preload: path.join(__dirname, 'js/preload.js')
     }
     
   })
