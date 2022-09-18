@@ -31,7 +31,8 @@ const store = new Store({
       copyrightclick:true,
       copystayontop:true,
       copyseconds:10,
-      contentprotection:true
+      contentprotection:true,
+      displayName:""
     }
   });
 

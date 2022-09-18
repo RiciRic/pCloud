@@ -1940,3 +1940,21 @@ function restartapp(){
   app.relaunch()
   ex();
 }
+
+function setDisplayName()
+{
+  var displayName = store.get("username");
+  if(displayName == null || displayName == "" || displayName == undefined)
+  {
+  }
+  else{
+    document.getElementById("displayName").value = displayName;
+  }
+}
+
+setDisplayName();
+
+function changeDisplayName()
+{
+  store.set("username", document.getElementById("displayName").value)
+}
