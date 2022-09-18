@@ -130,6 +130,7 @@ function ope(link){
   {
     link = "https://" + link;
   }
+  const {shell} = require('electron')
   shell.openExternal(link);
 }
 
